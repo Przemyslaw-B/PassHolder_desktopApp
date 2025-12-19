@@ -1,0 +1,33 @@
+const { app, BrowserWindow, ipcMain } = require('electron');
+const Database = require('better-sqlite3');
+const path = require('path');
+const userTable = require('./Tables/UserTable');
+const credentialsTable = require('./Tables/CredentialsTable');
+const initModificationDateTrigger = require('./Triggers/modificationDateTrigger');
+let db;
+
+function initDatabase(){
+    const dbPath = path.join(app.getPath('userData'), 'passhholderdata.db');
+    db = new Database(dbPath);
+    initTables();
+    initTriggers();
+}
+
+function initTables(){
+   initUserTable();
+   initCredentialsTable();
+}
+
+function initUserTable(){
+    userTable.userTableInit(db);
+}
+
+function initCredentialsTable(){
+    credentialsTable.initCredentialTable(db);
+}
+
+function initTriggers(){
+    initModificationDateTrigger.initModificationDateTrigger(db)
+}
+
+module.exports = {initDatabase}

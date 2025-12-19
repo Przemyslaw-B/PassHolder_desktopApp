@@ -1,0 +1,25 @@
+
+  <!-- Szablon -->
+<template id="storage-row-template"> 
+  <div class="storage-row"> 
+    <span class="single-data" id="number"></span> 
+    <span class="single-data" id="idPass" style="display:none;"></span> 
+    <span class="single-data" id="url"></span> 
+    <span class="single-data" id="login"></span> 
+    <span class="single-data" id="password"></span> 
+    <span class="toggle-eye" id="toggle-eye"></span>
+    <div class="single-data" id="exp-date"></div> 
+    <div class="options-dots"></div>
+  </div>
+</template>
+
+<div class="single-data" id="titlesClass">
+  <span class="title" id="titleNumber">No.</span>
+  <span class="title" id="titleUrl">url</span>
+  <span class="title" id="titleLogin">Login</span>
+  <span class="title" id="titlePassword">Password</span>
+  <div class="title" id="titleExpDate">Expiration Date</div>
+  <div class="title" id="titleEdit">Edit</div> 
+</div>
+<!-- Główna zawartość -->
+<div id="storage-list"></div>

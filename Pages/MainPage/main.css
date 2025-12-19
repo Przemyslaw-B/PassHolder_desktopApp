@@ -1,0 +1,16 @@
+
+
+.app-container {
+  display: flex;          /* ustawia elementy obok siebie */
+  height: 100vh;          /* pełna wysokość okna */
+}
+
+.sidebar {
+  width: 220px;
+}
+
+.content-global {
+  padding: 20px;
+  background-color: #f9f9f9;
+  transition: margin-left 0.3s ease; /* płynne przesuwanie */
+}

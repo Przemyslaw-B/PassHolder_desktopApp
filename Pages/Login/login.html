@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" http-equiv="Content-Security-Policy">
+  <title>Logowanie</title>
+
+  <meta http-equiv="Content-Security-Policy" 
+  content="default-src 'self'; 
+    script-src 'self'; 
+    style-src 'self'; 
+    connect-src 'self' http://localhost:8081/api/;
+    object-src 'none'">
+
+  <link rel="stylesheet" href="login.css">
+  <script src="login.js" defer></script>
+</head>
+<body>
+  <div class="language-switch">
+    <button id="lang-PL">PL</button>
+    <button id="lang-EN">EN</button>
+  </div>
+
+  <div class="login-container">
+    <h1 id="loginTitle">Log in</h1>
+    <input type="text" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="loginButton">Log in</button>
+    <div class="links">
+      <a href="#" id="createAccount">Create new account</a>
+      <a href="#" id="forgotPassword">Forgotten password?</a>
+    </div>
+  </div>
+
+</body>
+</html>

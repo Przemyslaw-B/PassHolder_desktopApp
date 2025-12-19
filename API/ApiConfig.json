@@ -1,0 +1,7 @@
+{
+    "loginValidation": "http://localhost:8081/api/userValidation",
+    "publicKey":"http://localhost:8081/api/GetPublicKey",
+    "register": "",
+    "forgotPass": "",
+    "storage": "http://localhost:8081/api/recieveStorage"
+}

@@ -1,0 +1,57 @@
+:root{
+    --content-margin: 50px;
+}
+
+/* rozwijane menu ikona */
+.showMenu {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1001; /* nad menu */
+}
+
+/* Menu boczne */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -220px;/* ukryte poza ekranem */
+  width: 220px;
+  height: 100vh;
+  background-color: #2c3e50;
+  color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: left 0.3s ease; /* animacja wysuwania */
+  z-index: 1000;  /* zawsze na wierzchu */
+  padding-top: 10vh;   /* <-- odstęp od góry */
+}
+
+.sidebar a {
+  display: block;
+  margin: 15px 0;
+  text-decoration: none;
+  color: #ecf0f1;
+  font-weight: bold;
+}
+
+.sidebar a:hover {
+  color: #1abc9c;
+}
+
+/* Widoczny stan menu */
+.sidebar.active {
+  left: 0;
+}
+
+/* Po rozwinięciu menu odsuń głowną treść w prawo*/
+body.sidebar-open { 
+  --content-margin: 220px;
+}
+
+/*Odsunięcie treści w prawo + animacja*/
+.content-global{ 
+  margin-left: var(--content-margin);
+  transition: margin-left 0.3s ease; /* płynne przesuwanie */
+}

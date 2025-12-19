@@ -1,0 +1,11 @@
+{
+  "appName": "PassHolder",
+  "loginTitle": "Zaloguj",
+  "email": "Email",
+  "password": "Hasło",
+  "loginButton": "Zaloguj",
+  "createAccount": "Utwórz nowe konto",
+  "forgotPassword": "Przypomnij hasło",
+  "openApp": "Otwórz",
+  "exit": "Wyjście"
+}
