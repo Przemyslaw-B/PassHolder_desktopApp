@@ -11,6 +11,7 @@ function initDatabase(){
     db = new Database(dbPath);
     initTables();
     initTriggers();
+    return db;
 }
 
 function initTables(){

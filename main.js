@@ -9,6 +9,8 @@ const {makeLoginWindow} = require('./WindowsMakers/Login/MakeLoginWindow.js')
 const {makeMainWindow} = require('./WindowsMakers/Main/MakeMainWindow.js')
 const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js')
 const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js')
+const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
+const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
 
 const path = require('path')
 const fs = require('fs');
@@ -26,6 +28,8 @@ let isQuitting = false; // Flaga zamknięcia aplikacji
 let selectedLanguage;
 let languageData; 
 let user;
+let userId;
+let db;
 
 
 // Blokuj skróty klawiszove DevTools
@@ -137,9 +141,10 @@ ipcMain.on('login-success', ()=>{
 });
 
 // Ustaw nazwę zalogowanego użytkownika
-ipcMain.on('set-user', (username)=>{
+ipcMain.on('set-user', (event, username)=>{
     if(loginWindow){
         user=username
+        userId = createNewUserIfNotExist(db, user);
     }
 });
 
@@ -197,7 +202,7 @@ ipcMain.handle('clear-token', async ()=>{
 
 // Inicjalizacja lokalnej bazy danych
 function initDB(){
-    initDatabase();
+    db = initDatabase();
 }   
 
 // Wywołanie aplikacji w Tray - menu ukrytych ikon

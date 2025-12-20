@@ -17,6 +17,11 @@ function getCredential(db, url){
     return null;
 }
 
+function getCredentialByCloudId(db, cloudId){
+const credentials = new Map()
+    
+}
+
 function isRecordExist(db, url){
     return isCredentialExist(db, url);
 }

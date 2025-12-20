@@ -1,7 +1,7 @@
 function isUserExist(db, username){
-    statement = `SELECT COUNT(*) FROM user WHERE username=${username}`;
-    sql = db.prepare(statement).get();
-    if(sql>0){return true;}
+    const statement = db.prepare("SELECT COUNT(*) FROM user WHERE username=?");
+    const row = statement.get(username);
+    if(row.count>0){return true;}
     return false;
 }
 
