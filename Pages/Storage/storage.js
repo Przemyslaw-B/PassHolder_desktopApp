@@ -40,6 +40,7 @@ async function loadStorage(){
     }
     const data = await response.json();
     console.log("Odebrane dane ze storage: ", data.storage);
+    await window.api.storageUpdate(data.storage);
     //TODO AKTUALIZACJA DANYCH W ZAKŁADCE STORAGE
     //renderStorage(data);
     await loadDataToHtml(data);

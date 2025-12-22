@@ -11,6 +11,8 @@ const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js')
 const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js')
 const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
 const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
+const {checkChangesAndUpdate} = require("./StorageParser/updateChanges.js");
+
 
 const path = require('path')
 const fs = require('fs');
@@ -143,7 +145,7 @@ ipcMain.on('login-success', ()=>{
 // Ustaw nazwę zalogowanego użytkownika
 ipcMain.on('set-user', (event, username)=>{
     if(loginWindow){
-        user=username
+        user=username;
         userId = createNewUserIfNotExist(db, user);
     }
 });
@@ -166,6 +168,16 @@ ipcMain.on('switch-card', (event, pageName)=>{
     }
     if (mainWindow) {
         mainWindow.loadFile(filePath);
+    }
+});
+
+ipcMain.handle('update-storage', async (event, cloudData)=>{
+    try{
+        console.log("test userId:", userId);
+        checkChangesAndUpdate(db, cloudData, userId);
+    } catch(err){
+        console.error("Błąd aktualizacji danych haseł.", err);
+        return {success: false};
     }
 });
 

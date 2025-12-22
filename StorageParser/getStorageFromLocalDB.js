@@ -2,5 +2,5 @@ const {getAllCredentialsDetails} = require=("./../LocalDB/StoredCredentials/GetC
 
 
 function getAllCredentials(db, userId){
-    return getAllCredentials(db, userId);
+    return getAllCredentialsDetails(db, userId);
 }

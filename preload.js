@@ -20,5 +20,7 @@ contextBridge.exposeInMainWorld('api', {
   //Odczytaj token użytkownika
   loadToken: () => ipcRenderer.invoke('load-token'),
   //Wyczyść zapisany token
-  clearToken:() => ipcRenderer.invoke('clear-token')
+  clearToken:() => ipcRenderer.invoke('clear-token'),
+  //Aktualizacja danych haseł
+  storageUpdate:(data) => ipcRenderer.invoke('update-storage', data)
 });
