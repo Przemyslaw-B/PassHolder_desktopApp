@@ -1,4 +1,3 @@
-
   <!-- Szablon -->
 <template id="storage-row-template"> 
   <div class="storage-row"> 
@@ -12,6 +11,17 @@
     <div class="options-dots"></div>
   </div>
 </template>
+
+<div id="storage-header">
+  <div id="addRecord-form" class="hidden">
+    <input type="text" id="new-url" placeholder="URL">
+    <input type="text" id="new-login" placeholder="Login">
+    <input type="password" id="new-password" placeholder="Password">
+    <button id="cancelRecord-button">✕</button>
+    <button id="saveRecord-button">✓︎</button>
+  </div>
+  <button id="addRecord-button">✚</button>
+</div>
 
 <div class="single-data" id="titlesClass">
   <span class="title" id="titleNumber">No.</span>

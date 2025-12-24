@@ -22,5 +22,7 @@ contextBridge.exposeInMainWorld('api', {
   //Wyczyść zapisany token
   clearToken:() => ipcRenderer.invoke('clear-token'),
   //Aktualizacja danych haseł
-  storageUpdate:(data) => ipcRenderer.invoke('update-storage', data)
+  storageUpdate:(data) => ipcRenderer.invoke('update-storage', data),
+  //Zapisanie nowego rekordu w lokalnej DB
+  localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data)
 });

@@ -1,3 +1,13 @@
+let formInitialized = false;
+
+function initAddRecordFormOnce() { 
+  if (formInitialized) {
+    return; 
+  }
+  formInitialized = true; 
+  initAddRecordForm(); 
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const storageContainer = document.getElementById("storage-content");
 
@@ -6,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.text())
     .then(html => {
       storageContainer.innerHTML = html;
+      initAddRecordFormOnce();
+      loadStorage();
     });
 });
 
@@ -51,6 +63,7 @@ async function loadStorage(){
   async function loadDataToHtml(data){
     const container = document.getElementById("storage-list");
     const template = document.getElementById("storage-row-template");
+    container.innerHTML = ""; //Wyczyszczenie poprzednich wierszy w celu uniknięcia powielania po kolejnynm otwarciu
     let counter = 0;
     data.storage.forEach(picked=>{
       counter = counter+1;
@@ -79,4 +92,63 @@ async function loadStorage(){
       container.appendChild(clone);
     });
   }
+}
+
+//Obsługa formularza
+async function initAddRecordForm(){
+  const addRecordButton = document.getElementById("addRecord-button");
+  const form = document.getElementById("addRecord-form");
+  const cancelRecordButton = document.getElementById("cancelRecord-button");
+  const saveRecordButton = document.getElementById("saveRecord-button");
+
+  const newUrl = document.getElementById("new-url");
+  const newLogin = document.getElementById("new-login");
+  const newPassword = document.getElementById("new-password");
+
+  //Rozwinięcie formularza
+  addRecordButton.addEventListener("click", ()=>{
+    addRecordButton.style.display="none"  //Ukryj ten przycisk
+    form.classList.remove("hidden");  //Pokaż formularz
+  });
+
+  //Odrzucenie
+  cancelRecordButton.addEventListener("click", ()=>{
+    newUrl.value="";
+    newLogin.value="";
+    newPassword.value="";
+    form.classList.add("hidden"); //ukryj formularz
+    addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
+  });
+
+  //Zapisanie zmian
+  saveRecordButton.replaceWith(saveRecordButton.cloneNode(true));
+  const newSaveButton = document.getElementById("saveRecord-button");
+  newSaveButton.addEventListener("click", async ()=>{
+    valUrl=newUrl.value;
+    valLogin=newLogin.value;
+    valPassword=newPassword.value;
+    const data = {
+      url: valUrl,
+      login: valLogin,
+      password: valPassword
+    };
+    if(valUrl !="" && valPassword != "" && valLogin != ""){
+      const result = await window.api.localStorageUpdate(data);
+      if(result.success){
+        await loadStorage();  //załaduj nową listę
+      }
+    } else{
+      //TODO Powiadomienie o nie wypełnieniu całego formularza
+    }
+   
+    newUrl.value="";
+    newLogin.value="";
+    newPassword.value="";
+    form.classList.add("hidden"); //ukryj formularz
+    addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
+  });
+}
+
+async function waitForSync(){
+
 }

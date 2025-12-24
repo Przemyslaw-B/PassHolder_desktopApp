@@ -11,11 +11,13 @@ const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js')
 const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js')
 const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
 const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
-const {checkChangesAndUpdate} = require("./StorageParser/updateChanges.js");
+const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
+const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
 
 
 const path = require('path')
 const fs = require('fs');
+const { config } = require('process')
 
 let loginWindow;
 let mainWindow;
@@ -173,10 +175,24 @@ ipcMain.on('switch-card', (event, pageName)=>{
 
 ipcMain.handle('update-storage', async (event, cloudData)=>{
     try{
-        console.log("test userId:", userId);
-        checkChangesAndUpdate(db, cloudData, userId);
+        const configData = getConfigData();
+        const token = await getToken();
+        checkChangesAndUpdate(db, cloudData, userId, configData, token);
     } catch(err){
         console.error("Błąd aktualizacji danych haseł.", err);
+        return {success: false};
+    }
+});
+
+ipcMain.handle('save-local-storage', async (event, data)=>{
+    try{
+        const configData = getConfigData();
+        const token = await getToken();
+        await addNewRecordToLocal(db, userId, data);
+        await checkLocalChangesAndUpdate(db, userId, configData, token);
+        return {success: true};
+    }catch(err){
+        console.error("Błąd zapisu do lokalnej DB", err)
         return {success: false};
     }
 });

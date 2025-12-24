@@ -3,18 +3,32 @@ const { getToken } = require("../SecureStorage/tokenStorage.js");
 const {getAllCredentialsDetails} = require("./../LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
 const {getCredentialByCloudId} = require("./../LocalDB/StoredCredentials/Read/GetCredential.js");
 const {isCredentialExistByCloudIdAndUserId}=require("./../LocalDB/StoredCredentials/Read/IsCredentialExist.js");
+const {sendLocalRecordOnCloud} = require("./sendLocalRecordOnCloud.js");
+const {updateLocalCredentialCloudId}=require("./../LocalDB/StoredCredentials/Update/UpdateCredentialCloudId.js");
 let localCredentials;
 let db;
 let idUser;
+let config;
+let token;
 
 //Save record if not exist, update record if new version on cloud
-function checkChangesAndUpdate(database, cloudCredentials, userId){
+async function checkChangesAndUpdate(database, cloudCredentials, userId, configData, tokenMain){
     db=database;
     idUser = userId;
+    config=configData;
+    token=tokenMain;
     localCredentials = getAllCredentialsDetails(db, idUser);
     loopOnCloudRecords(cloudCredentials);
-    //console.log("Cloud zakończone, czas na local..");
-    //loopOnLocalRecords(localCredentials);
+    loopOnLocalRecords(localCredentials);
+}
+
+async function checkLocalChangesAndUpdate(database, userId, configData, tokenMain){
+    db=database;
+    idUser = userId;
+    config=configData;
+    token=tokenMain;
+    localCredentials = getAllCredentialsDetails(database, userId);
+    await loopOnLocalRecords(localCredentials);
 }
 
 function loopOnCloudRecords(cloudCredentials){
@@ -23,22 +37,24 @@ function loopOnCloudRecords(cloudCredentials){
         if(localRecord == null){    //Record does not exist in local
             saveRecordToLocal(cloudCredential);
         } else{
-            //updateRecord(cloudCredential, localRecord);
+            // updateRecord(cloudCredential, localRecord);
         }
     });
 }
 
-function loopOnLocalRecords(localCredentials){
-    localCredentials.forEach(localCredential =>{
+async function loopOnLocalRecords(localCredentials){
+    for (const localCredential of localCredentials){
         if(localCredential.id_cloud==null){
-            //TODO SEND RECORD TO CLOUD
-            //idCloud=sendToCloud(userId, localCredential);
+            const idCloud = await sendToCloud(localCredential);
+            const idRow = localCredential.id;
+            updateLocalCredentialCloudId(db, idRow, idCloud);
         }
-    });
+    };
 }
 
-function sendToCloud(userId, localCredential){
-    token = getToken();
+function sendToCloud(localCredential){
+    const idCloud = sendLocalRecordOnCloud(localCredential, token, config);
+    return idCloud
 }
 
 //Return last modification date if record exist
@@ -98,4 +114,4 @@ function updateLocalRecord(){
 
 }
 
-module.exports={checkChangesAndUpdate}
+module.exports={checkChangesAndUpdate, checkLocalChangesAndUpdate}
