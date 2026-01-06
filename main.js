@@ -13,6 +13,8 @@ const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js"
 const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
 const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
 const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
+const {getAllCredentialsDetails} = require("./LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
+const {removeCredential} = require("./LocalDB/StoredCredentials/Delete/RemoveCredential.js");
 
 
 const path = require('path')
@@ -173,6 +175,16 @@ ipcMain.on('switch-card', (event, pageName)=>{
     }
 });
 
+ipcMain.handle('get-storage', async (event)=>{
+    try {
+       const storageList = await getAllCredentialsDetails(db, userId);
+       return storageList;
+    }catch(err){
+        console.error("Błąd pobierania danych z lokalnej BD.");
+        return {success: false};
+    }
+});
+
 ipcMain.handle('update-storage', async (event, cloudData)=>{
     try{
         const configData = getConfigData();
@@ -184,9 +196,18 @@ ipcMain.handle('update-storage', async (event, cloudData)=>{
     }
 });
 
+ipcMain.handle('remove-storage', async (event, data)=>{
+    try{
+        removeCredential(db, data);
+    }catch(err){
+        console.err("Błąd usuwania rekordu z lokalnej BD.");
+        return {success: false}
+    }
+});
+
 ipcMain.handle('save-local-storage', async (event, data)=>{
     try{
-        const configData = getConfigData();
+        const configData = getConfigData();     
         const token = await getToken();
         await addNewRecordToLocal(db, userId, data);
         await checkLocalChangesAndUpdate(db, userId, configData, token);

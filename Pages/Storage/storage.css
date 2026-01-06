@@ -16,6 +16,7 @@
     text-overflow: ellipsis; /* przycięcie długiego tekstu */
     white-space: nowrap; /* nie łam wiersza */
     padding: 0 4px;
+    user-select: none;
 }
 
 /*Numer wiersza*/
@@ -30,12 +31,14 @@
     text-align: center;
     color: #0073e6;
     text-decoration: none;
+    cursor: pointer;
 }
 
 /*user Login*/
 #login{
     text-align: center;
     color: #333;
+    cursor: pointer;
 }
 
 /*user Password*/
@@ -50,6 +53,7 @@
 .show-password{
     letter-spacing: normal;
     background-color: transparent;
+    cursor: pointer;
 }
 
 /* Exp-date – ukryte domyślnie */ 
@@ -62,10 +66,12 @@
 /* Opcje (trzy kropki) */ 
 .options-dots{
     justify-self: end;
+    cursor: pointer;
 }
 
 .options-dots::before{ 
-    content: "⋮";
+    /* content: "⋮"; */
+    /* content: "🗑️"; */
     font-size: 18px;
     cursor: pointer;
 }
@@ -76,9 +82,10 @@
 
 /*Nagłówki do kolumn*/
 #titlesClass{
+    
     display: grid; 
     min-height: 2rem;
-    grid-template-columns: 5% 25% 25% auto 15% 7%; /* proporcje takie same jak w .storage-row */ 
+    grid-template-columns: 5% 25% 25% auto 15% 5%; /* proporcje takie same jak w .storage-row */ 
     align-items: center; 
     text-align: center; /* wyśrodkowanie tekstu w każdej kolumnie */ 
     font-size: 1rem;
@@ -96,6 +103,7 @@
     word-break: break-word;
     overflow-wrap: anywhere;
     line-height: 1.2;
+    user-select: none;
 }
 
 #titleEdit{

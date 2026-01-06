@@ -33,14 +33,15 @@ body {
 
 .login-container {
   background-color: white;
-  padding: 30px;
   border-radius: 10px;
-  width: 300px;
+  padding: 30px;
+  width: 75%;
+  height: 50%;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   text-align: center;
 }
 
-.login-container h1 {
+.title-class{
   color: #007BFF;
   margin-bottom: 20px;
 }
@@ -75,3 +76,57 @@ body {
   color: #28a745;
   text-decoration: none;
 }
+/* Domyślne przyciski */
+.default-button{
+  background-color: #28a745; /* zielony */
+  color: white;
+  font-size: 1.1rem;
+  border: none;
+  padding: 10px;
+  width: 40%;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+.button-row{
+  display: flex;
+  justify-content: space-between;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.formular-box{
+  width: 90%;
+  justify-content: space-between;
+  margin: 0 auto;
+}
+
+.formular-row{
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+  height: 2rem;
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+
+/* Okno autoryzacji */
+.auth-container{
+  display: none;
+  width: 90%;
+}
+
+/* Okno zakładania konta */
+.new-account-container{
+  display: none;
+  background-color: white;
+  border-radius: 10px;
+  width: 90%;
+  height: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  text-align: center;
+}
+

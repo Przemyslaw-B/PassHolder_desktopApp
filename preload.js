@@ -21,8 +21,12 @@ contextBridge.exposeInMainWorld('api', {
   loadToken: () => ipcRenderer.invoke('load-token'),
   //Wyczyść zapisany token
   clearToken:() => ipcRenderer.invoke('clear-token'),
+  //Pobierz rekordy z lokalnej bazy danych
+  getStorage:() => ipcRenderer.invoke('get-storage'),
   //Aktualizacja danych haseł
   storageUpdate:(data) => ipcRenderer.invoke('update-storage', data),
+  //Usuwanie lokalnego rekordu
+  removeLocalRecord:(data) => ipcRenderer.invoke('remove-storage', data),
   //Zapisanie nowego rekordu w lokalnej DB
   localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data)
 });

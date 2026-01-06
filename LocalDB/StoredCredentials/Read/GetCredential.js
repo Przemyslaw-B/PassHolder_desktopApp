@@ -17,6 +17,12 @@ function getCredential(db, url){
     return null;
 }
 
+function getCredentialCloudId(db, userId, id){
+    const statement = db.prepare("SELECT id_cloud FROM credentials WHERE id_user=? AND id=?");
+    const row = statement.get(userId, id);
+    return row;
+}
+
 function getCredentialByCloudId(db, userId, cloudId){
     const statement = db.prepare("SELECT * FROM credentials WHERE id_user=? AND id_cloud=?");
     const row = statement.get(userId, cloudId);
@@ -38,4 +44,4 @@ function saveMap(id, url, login, password){
     credentialData.set("password", password);
 }
 
-module.exports = { getCredential, getCredentialByCloudId};
+module.exports = { getCredential, getCredentialByCloudId, getCredentialCloudId};

@@ -17,7 +17,7 @@ async function checkChangesAndUpdate(database, cloudCredentials, userId, configD
     idUser = userId;
     config=configData;
     token=tokenMain;
-    localCredentials = getAllCredentialsDetails(db, idUser);
+    localCredentials = await getAllCredentialsDetails(db, idUser);
     loopOnCloudRecords(cloudCredentials);
     loopOnLocalRecords(localCredentials);
 }
@@ -27,7 +27,7 @@ async function checkLocalChangesAndUpdate(database, userId, configData, tokenMai
     idUser = userId;
     config=configData;
     token=tokenMain;
-    localCredentials = getAllCredentialsDetails(database, userId);
+    localCredentials = await getAllCredentialsDetails(database, userId);
     await loopOnLocalRecords(localCredentials);
 }
 

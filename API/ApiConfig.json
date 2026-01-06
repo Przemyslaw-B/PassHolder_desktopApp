@@ -4,5 +4,7 @@
     "register": "",
     "forgotPass": "",
     "storage": "http://localhost:8081/api/recieveStorage",
-    "uploadNewRecord": "http://localhost:8081/api/UploadNewRecord"
+    "uploadNewRecord": "http://localhost:8081/api/UploadNewRecord", 
+    "removePassFromCloud": "http://localhost:8081/api/RemoveRecordFromStorage",
+    "authentication": "http://localhost:8081/api/2FA"
 }

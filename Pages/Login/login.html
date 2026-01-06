@@ -21,7 +21,7 @@
   </div>
 
   <div class="login-container">
-    <h1 id="loginTitle">Log in</h1>
+    <h1 id="loginTitle" class="title-class">Log in</h1>
     <input type="text" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
     <button id="loginButton">Log in</button>
@@ -30,6 +30,26 @@
       <a href="#" id="forgotPassword">Forgotten password?</a>
     </div>
   </div>
+
+  <div class="auth-container">
+    <h1 id="authorization-title" class="title-class">Authorization</h1>
+    <h2 id="auth-explain">Use the code that was sent to you..</h2>
+    <input type="text" id="auth-input" class="formular-row" name="code" maxlength="6"> 
+    <button type="button" id="auth-cancel-button" class="default-button">Cancel</button>
+    <button type="button" id="auth-confirm-button" class="default-button">Confirm</button>
+  </div>
+
+<div class="new-account-container">
+  <h1 id="create-account-title" class="title-class">Create account</h1>
+  <div class="formular-box">
+    <input type="text" id="cratingAcc-email-input" class="formular-row" placeholder="Email">
+    <input type="password" id="cratingAcc-passwordinput" class="formular-row" placeholder="Password">
+  </div>
+  <div class="button-row">
+    <button type="button" id="new-account-cancel-button" class="default-button">Cancel</button>
+    <button type="button" id="new-account-confirm-button" class="default-button">Confirm</button>
+  </div>
+</div>
 
 </body>
 </html>
