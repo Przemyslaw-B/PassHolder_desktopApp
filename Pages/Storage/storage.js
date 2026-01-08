@@ -1,3 +1,5 @@
+// const { read } = require("original-fs");
+
 let formInitialized = false;
 
 function initAddRecordFormOnce() { 
@@ -88,9 +90,9 @@ const container = document.getElementById("storage-list");
       });
       clone.querySelector("#password").textContent = "••••••";
       const pwdListener = clone.querySelector("#password");
-      pwdListener.addEventListener("click", ()=>{
+      pwdListener.addEventListener("click", async ()=>{
         if(passField.classList.contains("show-password")){
-          navigator.clipboard.writeText(picked.access_pwd);
+          navigator.clipboard.writeText(await decryptPassword(picked.access_pwd));
         }
       });
       clone.querySelector("#remove-record").textContent="✕";
@@ -106,7 +108,7 @@ const container = document.getElementById("storage-list");
       const passField=clone.querySelector("#password");
       //passField.classList.add("show-password");
       eye.textContent = "👁️";
-      eye.addEventListener("click", ()=>{
+      eye.addEventListener("click", async ()=>{
       if(passField.classList.contains("show-password")){
         passField.classList.remove("show-password");
         eye.textContent="👁️";
@@ -114,10 +116,10 @@ const container = document.getElementById("storage-list");
       } else{
         passField.classList.add("show-password");
         eye.textContent="🙈";
-        passField.textContent = picked.access_pwd;
+        passField.textContent = await decryptPassword(picked.access_pwd); //picked.access_pwd;
       }
   });
-      clone.querySelector("#exp-date").textContent = "Brak";
+      //clone.querySelector("#exp-date").textContent = "Brak";
       container.appendChild(clone);
     });
   }
@@ -152,7 +154,7 @@ const container = document.getElementById("storage-list");
         passField.textContent = picked.password;
       }
   });
-      clone.querySelector("#exp-date").textContent = "Brak";
+      //clone.querySelector("#exp-date").textContent = "Brak";
       container.appendChild(clone);
     });
   }
@@ -189,7 +191,7 @@ async function initAddRecordForm(){
   newSaveButton.addEventListener("click", async ()=>{
     valUrl=newUrl.value;
     valLogin=newLogin.value;
-    valPassword=newPassword.value;
+    valPassword=await encryptPassword(newPassword.value);
     const data = {
       url: valUrl,
       login: valLogin,
@@ -218,8 +220,6 @@ async function removeRecord(id, idCloud){
   const url = config.removePassFromCloud; 
   const tokenObj = await window.api.loadToken();
   const token = tokenObj.token;
-  console.log("Wysyłam prośbę o usunięcie: id:",id, " idCloud:", idCloud);
-  console.log("Dla url: ", url, ", token: ", token);
   if(token!= null && url!=null){
     //Remove from local:
     await window.api.removeLocalRecord(id);
@@ -236,5 +236,46 @@ async function removeRecord(id, idCloud){
       })
     });
     return response.ok ? await response.json() : null;
+  }
+}
+
+//Zaszyfruj
+async function encryptPassword(password){
+  const safePass = await window.api.encryptPassword(password);
+  return safePass;
+}
+
+//Odszyfruj
+async function decryptPassword(password){
+  const readedPass = await window.api.decryptPassword(password);
+  return readedPass;
+}
+
+// Odebranie klucza publicznego
+async function getPublicKey(email) {
+  const responseUrl = await window.api.loadApiConfig();
+  const url = responseUrl.config.publicKey;
+
+  const tokenObj = await window.api.loadToken();
+  const token = tokenObj.token;
+  try{
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    });
+    if (!response.ok) {
+      throw new Error(`Błąd API: ${response.status}`);
+    }
+     const data = await response.json();
+     console.log("publicKey", data.publicKey);
+     return data.publicKey;
+  }catch(error){
+      console.error("Błąd pobierania klucza.", error);
+      return null;
   }
 }

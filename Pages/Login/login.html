@@ -22,12 +22,12 @@
 
   <div class="login-container">
     <h1 id="loginTitle" class="title-class">Log in</h1>
-    <input type="text" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
+    <input type="text" id="email" class="formular-row" placeholder="Email" />
+    <input type="password" id="password" class="formular-row" placeholder="Password" />
     <button id="loginButton">Log in</button>
     <div class="links">
       <a href="#" id="createAccount">Create new account</a>
-      <a href="#" id="forgotPassword">Forgotten password?</a>
+      <!-- <a href="#" id="forgotPassword">Forgotten password?</a> -->
     </div>
   </div>
 
@@ -35,20 +35,27 @@
     <h1 id="authorization-title" class="title-class">Authorization</h1>
     <h2 id="auth-explain">Use the code that was sent to you..</h2>
     <input type="text" id="auth-input" class="formular-row" name="code" maxlength="6"> 
-    <button type="button" id="auth-cancel-button" class="default-button">Cancel</button>
-    <button type="button" id="auth-confirm-button" class="default-button">Confirm</button>
+    <div class="button-row">
+      <button type="button" id="auth-cancel-button" class="default-button">Cancel</button>
+      <button type="button" id="auth-confirm-button" class="default-button">Confirm</button>
+    </div>
   </div>
 
 <div class="new-account-container">
   <h1 id="create-account-title" class="title-class">Create account</h1>
   <div class="formular-box">
-    <input type="text" id="cratingAcc-email-input" class="formular-row" placeholder="Email">
-    <input type="password" id="cratingAcc-passwordinput" class="formular-row" placeholder="Password">
+    <input type="text" id="creatingAcc-email-input" class="formular-row" placeholder="Email">
+    <input type="text" id="creatingAcc-name-input" class="formular-row" placeholder="Name">
+    <input type="password" id="creatingAcc-passwordinput" class="formular-row" placeholder="Password">
   </div>
   <div class="button-row">
     <button type="button" id="new-account-cancel-button" class="default-button">Cancel</button>
     <button type="button" id="new-account-confirm-button" class="default-button">Confirm</button>
   </div>
+</div>
+
+<div class="message-container" id="message-container">
+  <p id="message" class="notification-message">Message</p>
 </div>
 
 </body>

@@ -1,25 +1,45 @@
+//Pobierz język
+async function getLanguagePack(){
+  return await window.api.getLanguagePack();
+}
+
 // Wybór wersji językowej
 async function setLanguage(lang) {
   if (!window.api || !window.api.loadLanguage) {
     console.error('window.api nie jest dostępne');
     return;
   }
-
   const response = await window.api.loadLanguage(lang);
   if(!response.success) {
     setLanguage('en');
     return;
   }
-
   const labels = response.data;
   if (!labels || !labels.loginTitle) return;
 
+  //logowanie
   document.getElementById('loginTitle').textContent = labels.loginTitle;
   document.getElementById('email').placeholder = labels.email;
   document.getElementById('password').placeholder = labels.password;
   document.getElementById('loginButton').textContent = labels.loginButton;
   document.getElementById('createAccount').textContent = labels.createAccount;
-  document.getElementById('forgotPassword').textContent = labels.forgotPassword;
+  //document.getElementById('forgotPassword').textContent = labels.forgotPassword;
+
+  //zakładanie konta
+  document.getElementById('create-account-title').textContent = labels.creatingAcount;
+  document.getElementById('creatingAcc-email-input').placeholder = labels.creatingAcountEmail;
+  document.getElementById('creatingAcc-name-input').placeholder = labels.creatingAcountName;
+  document.getElementById('creatingAcc-passwordinput').placeholder = labels.creatingAcountPassword;
+  document.getElementById('new-account-cancel-button').textContent = labels.creatingAcountCancelButton;
+  document.getElementById('new-account-confirm-button').textContent = labels.creatingAcountConfirmButton;
+ 
+  //2FA
+  document.getElementById('authorization-title').textContent = labels.authTitle;
+  document.getElementById('auth-explain').textContent = labels.authExplain;
+  document.getElementById('auth-input').placeholder = labels.authInput;
+  document.getElementById('auth-cancel-button').textContent = labels.authCancelButton;
+  document.getElementById('auth-confirm-button').textContent = labels.authConfirmButton;
+ 
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -52,20 +72,16 @@ async function loginValidation(){
   const passwordTemp = document.getElementById('password').value;
 
   if(email != null && passwordTemp != null && email !== "" && passwordTemp !== ""){
-    const publicKey = await getPublicKey(email, keyUrl);
     // Szyfrowanie wpisanego hasła
-    password = await window.api.encryptPassword(passwordTemp, publicKey);
+    const password = await window.api.hashPassword(passwordTemp);
     //Wysyłanie danych do API
     const loginData = await loginRequest(email, password, url);
+    console.log(loginData);
     if(loginData != null){
       if(loginData.status === "Validated" && loginData.username != null){
-        //console.log("login status:", loginData.status, " username:", loginData.username, " token:", loginData.token);
         const rep = await window.api.setUser(loginData.username);
         const tokenRes = await window.api.saveToken(loginData.token);
-        //const readedToken = await window.api.loadToken();
-        //console.log("Odczyt zapisanego tokenu:", readedToken);
         if (loginData.status=="Validated") {
-          //console.log("Zapis tokenu:", tokenRes);
           const isAuthenticated = loginData.auth;
           if(isAuthenticated === "true"){ // Jeśli 2FA nie jest wymagane
             const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
@@ -74,12 +90,17 @@ async function loginValidation(){
         }
       } else{
         //Błędne dane logowania
-        //..
+        const labels = await getLanguagePack();
+        const message = labels.wrongPassword;
+        showMessage(message);
+        
       }
     }
   } else {
     //Nie podano danych logowania
-    //..
+    const labels = await getLanguagePack();
+    const message = labels.lackOfLoginDetails;
+    showMessage(message);
   }
 }
 
@@ -109,27 +130,6 @@ async function loginRequest(email, password, url){
   }
 }
 
-// Odebranie klucza publicznego
-async function getPublicKey(email, keyUrl) {
-  try{
-    const response = await fetch(keyUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email })
-    });
-    if (!response.ok) {
-      throw new Error(`Błąd API: ${response.status}`);
-    }
-     const data = await response.json();
-     return data.publicKey;
-  }catch(error){
-      console.error("Błąd pobierania klucza.", error);
-      return null;
-  }
-}
-
 // Po pomyślnym logowaniu zmień okno..
 async function openMainPage(){
   if (!window.api || !window.api.loadLanguage) {
@@ -152,7 +152,9 @@ async function setUser(username){
   document.getElementById("auth-confirm-button").addEventListener("click", async () => {
     const authCode = document.getElementById("auth-input").value.trim();
     if(authCode==="" || authCode.length != 6){
-      // Obsluga wpisania złego kodu
+      const labels = await getLanguagePack();
+      const message = labels.wrongAuthKey;
+      showMessage(message);
     } else{
       const response = await authentication(authCode);
       const authStatus = response.auth;
@@ -160,7 +162,10 @@ async function setUser(username){
       if(authStatus==="success"){
         const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
       } else{
-        // Błędny kod
+        //Podano zły klucz autoryzacji
+        const labels = await getLanguagePack();
+        const message = labels.wrongAuthKey;
+        showMessage(message);
       }
     }
   });
@@ -191,8 +196,74 @@ async function setUser(username){
     }
   }
 
+  async function creatingAccount(){
+    const responseUrl = await window.api.loadApiConfig();
+    const url = responseUrl.config.creatingAccount;
+    
+    const email = document.getElementById("creatingAcc-email-input").value.trim();
+    const name = document.getElementById("creatingAcc-name-input").value.trim();
+    const passwordTemp = document.getElementById("creatingAcc-passwordinput").value.trim();
+    const passSize = passwordTemp.length;
+    if(passSize > 6){
+      if(email !== "" && name !== "" && passwordTemp !== ""){
+      const password = await window.api.hashPassword(passwordTemp);
+      const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+          email: email,
+          name: name,
+          password: password
+        })
+      });
+    const data = await response.json();
+    if(data.status==="emptyForm"){
+      //Nie wypełniono całego formularza
+      const labels = await getLanguagePack();
+      const message = labels.creatingAccountEmptyForm;
+      showMessage(message);
+  } else if(data.status==="alreadyExist"){
+    //Email jest już zajęty
+    const labels = await getLanguagePack();
+    const message = labels.creatingAccountAlreadyExist;
+    console.log(labels);
+    showMessage(message);
+  } else if(data.status==="accountCreated"){
+    //Konto zostało utworzone
+    const labels = await getLanguagePack();
+    const message = labels.creatingAccountAccountCreated;
+    showMessage(message);
+    setLoginContent();
+  }
+    } else{
+      //Nie wypełniono całego formularza
+      const labels = await getLanguagePack();
+      const message = labels.creatingAccountEmptyForm;
+      showMessage(message);
+    }
+  } else{
+    //Hasło jest zbyt krótkie
+    const labels = await getLanguagePack();
+    const message = labels.toShortPassword;
+    showMessage(message);
+  }
+    
+  }
 
-  // Obsługa przycisku tworzenia nowego konta
+  //Zawsze chowaj powiadomienie po wciśnięciu lewego przycisku
+  document.addEventListener("click", ()=>{
+    hideMessage();
+  });
+
+  //Obsługa przycisku zatwierdzenia utworzenia nowego konta
+  document.getElementById("new-account-confirm-button").addEventListener("click", ()=>{
+    creatingAccount();
+  });
+
+
+  // Obsługa przycisku przejścia do tworzenia nowego konta
   document.getElementById("createAccount").addEventListener("click", ()=>{
     setCreatingAccountContent();
   });
@@ -212,6 +283,7 @@ async function setUser(username){
     hideLoginContent();
     hideAuthenticationContent();
     showCreatingAccountContent();
+    clearInputsRegistration();
   }
 
   // Zmiana zawartości okna na logowanie
@@ -219,6 +291,7 @@ async function setUser(username){
     hideAuthenticationContent();
     hideCreatingAccountContent();
     showLoginContent();
+    clearInputsLogin();
   }
 
   // Zmiana zawartości okna na weryfikację
@@ -226,6 +299,25 @@ async function setUser(username){
     hideCreatingAccountContent();
     hideLoginContent();
     showAuthenticationContent();
+    clearInputsAuthentication();
+  }
+
+  //Wyczyść inputy Logowanie
+  function clearInputsLogin(){
+    document.getElementById("email").value="";
+    document.getElementById("password").value="";
+  }
+
+  //Wyczyść inputy Zakładanie konta
+  function clearInputsRegistration(){
+    document.getElementById("creatingAcc-email-input").value="";
+    document.getElementById("creatingAcc-name-input").value="";
+    document.getElementById("creatingAcc-passwordinput").value="";
+  }
+
+  //Wyczyść inputy Weryfikacja
+  function clearInputsAuthentication(){
+    document.getElementById("auth-input").value="";
   }
 
   // Ukryj treść logowania
@@ -253,4 +345,19 @@ async function setUser(username){
   //pokaż treść weryfikacji
   function showAuthenticationContent(){
     document.querySelector(".auth-container").style.display="block";
+  }
+
+  //pokaż powiadomienie
+  function showMessage(text){
+    //document.getElementById("message-container").style.display="block";
+    const msgBox = document.querySelector(".message-container");
+    msgBox.classList.add("show");
+    document.getElementById("message").textContent=text;
+  }
+
+  //ukryj powiadomienie
+  function hideMessage(){
+    const msgBox = document.querySelector(".message-container");
+    msgBox.classList.remove("show");
+    //document.getElementById("message-container").style.display="none";
   }

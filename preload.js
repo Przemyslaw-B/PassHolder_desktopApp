@@ -3,10 +3,16 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   //Załaduj wybrany pakiet językowy
   loadLanguage: (lang) => ipcRenderer.invoke('load-language', lang),
+  //Zwróć paczkę używaną paczkę językową
+  getLanguagePack: () => ipcRenderer.invoke('get-language-pack'),
   //Załaduj konfigurację endpointów.
   loadApiConfig: () => ipcRenderer.invoke("load-apiConfig"),
-  // Hashuj Hasło
-  encryptPassword: (password, publicKey) => ipcRenderer.invoke("encrypt-password", password, publicKey),
+  //Szyfruj Hasło
+  encryptPassword: (password) => ipcRenderer.invoke("encrypt-password", password),
+  //Odszyfruj Hasło
+  decryptPassword: (password) => ipcRenderer.invoke("decrypt-password", password),
+  //Hashuj hasło
+  hashPassword: (password) => ipcRenderer.invoke("hash", password),
   //Wykonaj Zapytanie do API z danymi logowania.
   sendLoginRequest: (credentials) => ipcRenderer.invoke("send-login-request", credentials),
   //Zamknij okno logowania i otwórz ekran główny.

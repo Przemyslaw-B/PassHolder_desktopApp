@@ -1,7 +1,8 @@
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron')
 const {selectLanguage} = require('./Language/LanguageSelector.js')
 const {getConfigData} = require('./API/GetConfigData.js')
-const {encrypt} = require('./Encryption/Encrypt.js')
+const {encrypt,decrypt} = require('./Encryption/Encrypt.js')
+const {hash} = require('./Encryption/Hash.js')
 const {defaultLanguage} = require('./Language/DefaultLanguage.js')
 const {runTray} = require('./Tray/RunTray.js')
 const {loadTrayLanguage, setCurrentWindowForTray, trayOpenFunction} = require('./Tray/LoadTrayLanguage.js')
@@ -115,6 +116,16 @@ ipcMain.handle('load-language', async (event, lang) => {
   }
 });
 
+//Zwróć używaną paczkę językową
+ipcMain.handle('get-language-pack', async(event)=>{
+    try{
+        return languageData;
+    }catch (error) {
+    console.error('Błąd:', error);
+    return { success: false, error: error.message };
+  }
+});
+
 // Załaduj plik konfiguracji endpointów api
 ipcMain.handle('load-apiConfig', async (event) => {
     try{
@@ -127,12 +138,31 @@ ipcMain.handle('load-apiConfig', async (event) => {
 });
 
 // Szyfrowanie Hasła
-ipcMain.handle('encrypt-password', async (event, password, publicKey)=>{
+ipcMain.handle('encrypt-password', async (event, password)=>{
     try{
-        return encrypt(password, publicKey);
+        return encrypt(password);
     }catch(error){
         console.error('Bład:', error);
         return { success: false, error: error.message };
+    }
+});
+
+// Odszyfrowanie Hasła
+ipcMain.handle('decrypt-password', async(event, password)=>{
+    try{
+        return decrypt(password);
+    }catch(error){
+        console.error('Bład:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+//Hashowanie hasła
+ipcMain.handle('hash', async (event, password)=>{
+    try{
+        return hash(password);
+    }catch(error){
+        console.error('Błąd:', error);
     }
 });
 
