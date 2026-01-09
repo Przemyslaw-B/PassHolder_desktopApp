@@ -16,6 +16,11 @@ const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StoragePa
 const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
 const {getAllCredentialsDetails} = require("./LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
 const {removeCredential} = require("./LocalDB/StoredCredentials/Delete/RemoveCredential.js");
+const {changeRotationTime} = require("./Rotation/changeRotationTime.js");
+const {checkIfExpired} = require("./Rotation/checkIfExpired.js");
+const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js");
+const {isRotationOn} = require("./Rotation/isRotationOn.js");
+const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
 
 
 const path = require('path')
@@ -100,7 +105,6 @@ function createMainWindow(){
         }
     });
 }
-
 
 
 //  Załadowanie wersji językowej. (Domyślnie język systemowy (pl) lub en)
@@ -278,6 +282,34 @@ ipcMain.handle('clear-token', async ()=>{
     }
 });
 
+// czy rotacja jest włączona
+ipcMain.handle('is-rotation-on', async ()=>{
+    const isOn = await isRotationOn(db, userId);
+    return isOn;
+});
+
+// Pobierz aktualną wartość rotation time
+ipcMain.handle('get-rotation-time', async ()=>{
+    const val = await getUserRotationTime(db, userId);
+    return val;
+});
+
+// pobierz datę wygaśnięcia hasła
+ipcMain.handle('get-expiration-date', async (event, idPass)=>{
+    const calculatedDate = await calculateExpirationDate(db, userId, idPass);
+    return calculatedDate;
+});
+
+// aktualizacja ilości dni wygasania haseł
+ipcMain.handle('update-rotation-time', async (event, newTime)=>{
+    changeRotationTime(db, userId, newTime);
+});
+
+// Sprawdź czy hasło wygasło
+ipcMain.handle('is-password-expired', async (event, idPass)=>{
+    const isExpiretd = await checkIfExpired(db, userId, idPass);
+    return isExpiretd
+});
 
 // Inicjalizacja lokalnej bazy danych
 function initDB(){

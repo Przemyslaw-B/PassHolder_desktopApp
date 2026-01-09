@@ -7,7 +7,7 @@ const initModificationDateTrigger = require('./Triggers/modificationDateTrigger'
 let db;
 
 function initDatabase(){
-    const dbPath = path.join(app.getPath('userData'), 'passhholderdata.db');
+    const dbPath = path.join(app.getPath('userData'), 'passholderdata.db');
     db = new Database(dbPath);
     initTables();
     initTriggers();

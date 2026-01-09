@@ -6,7 +6,8 @@ function userTableInit(db){
         CREATE TABLE IF NOT EXISTS user (
             id_user INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
-            access_pwd TEXT
+            access_pwd TEXT,
+            rotation INTEGER DEFAULT 0
         );
         `);
 }

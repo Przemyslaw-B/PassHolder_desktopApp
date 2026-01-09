@@ -34,5 +34,15 @@ contextBridge.exposeInMainWorld('api', {
   //Usuwanie lokalnego rekordu
   removeLocalRecord:(data) => ipcRenderer.invoke('remove-storage', data),
   //Zapisanie nowego rekordu w lokalnej DB
-  localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data)
+  localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data),
+  //Czy rotacja haseł jest włączona
+  isRotationOn:() => ipcRenderer.invoke('is-rotation-on'),
+  // Pobierz wartość rotation Time
+  getRotationTime:() => ipcRenderer.invoke('get-rotation-time'),
+  //Zwróć datę wygaśnięcia hasła
+  getExpirationDate: (idPass) => ipcRenderer.invoke('get-expiration-date', idPass),
+  //Zmiana ilości dni wygaśnięcia hasła
+  rotationTimeUpdate:(time) => ipcRenderer.invoke('update-rotation-time', time),
+  // Sprawdź czy hasło wygasło
+  isPasswordExpired:(idPass) => ipcRenderer.invoke('is-password-expired', idPass)
 });
