@@ -1,3 +1,4 @@
+//Dezaktywowana funkcja
 
 function isUserValidated(){
     return true;

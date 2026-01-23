@@ -8,10 +8,11 @@ const setHeigh = 600;
 function makeMainWindow(){
     mainWindow=new BrowserWindow({
             width: setWidth,
-            heigh: setHeigh,
+            height: setHeigh,
             resizable: false,
             autoHideMenuBar: true, // Ukryj pasek narzędzi.
-    
+            icon: path.join(__dirname, '/../../Icons/ikona.ico'),
+
             webPreferences: {
                 preload: path.join(__dirname, '../../preload.js'),
                 contextIsolation: true,

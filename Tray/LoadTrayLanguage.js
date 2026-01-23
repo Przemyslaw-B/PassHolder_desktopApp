@@ -13,7 +13,7 @@ function loadTrayLanguage(tray, languageData){
             // Obsługa podwójnego kliknięcia
             tray.on('double-click', () => {
                 trayOpenFunction();
-            });
+            }); 
         }
     return tray; 
 }

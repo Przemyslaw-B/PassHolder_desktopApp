@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   //Załaduj wybrany pakiet językowy
   loadLanguage: (lang) => ipcRenderer.invoke('load-language', lang),
-  //Zwróć paczkę używaną paczkę językową
+  //Zwróć używaną paczkę językową
   getLanguagePack: () => ipcRenderer.invoke('get-language-pack'),
   //Załaduj konfigurację endpointów.
   loadApiConfig: () => ipcRenderer.invoke("load-apiConfig"),
@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld('api', {
   sendLoginRequest: (credentials) => ipcRenderer.invoke("send-login-request", credentials),
   //Zamknij okno logowania i otwórz ekran główny.
   loginSuccess: () => ipcRenderer.send('login-success'),
+  //Wylogowanie
+  logout: () => ipcRenderer.send('logout'),
   //Ustaw nazwę użytkownika
   setUser: (username) => ipcRenderer.send('set-user', username),
   //Przełączanie zakładek

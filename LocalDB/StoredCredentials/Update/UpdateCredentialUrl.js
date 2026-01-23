@@ -1,3 +1,4 @@
+//Dezaktywowana funkcja
 function updateCredentialUrl(db, id, url){
 
 }

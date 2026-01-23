@@ -33,6 +33,8 @@ let currentWindow;
 
 let tray;
 const trayIconPath = path.join(__dirname, 'Icons', './tray.png');
+let main_icon = { width: 1200, height: 800, icon: path.join(__dirname, 'Icons', './ikona.ico')};
+
 
 let isLoggedIn = false; //flaga zalogowania
 let isQuitting = false; // Flaga zamknięcia aplikacji
@@ -42,6 +44,7 @@ let languageData;
 let user;
 let userId;
 let db;
+
 
 
 // Blokuj skróty klawiszove DevTools
@@ -59,15 +62,18 @@ app.on('browser-window-created', (_, window) => {
 });
 }
 
+
 // Kolejność ładowania  
 app.whenReady().then(() => {
-    //disableDevTools();            //Wyłącz DevTools w aplikacji
+    disableDevTools();            //Wyłącz DevTools w aplikacji
     initDB();                       //Inicjalizacja lokalnej Bazy Danych
     selectDefaultLanguage();        //Domyślny język
     createLoginWindow();            //Otwarcie okna Logowania
     startInTray();                  //Uruchomienie Aplikacji w Tray
     trayOpenFunction();             //Otwieranie okien z paska ukrytych ikon
 });
+
+
 
 // Ustawienie języka domyślnego.
 function selectDefaultLanguage(){
@@ -99,13 +105,12 @@ function createMainWindow(){
     setCurrentWindowForTray(currentWindow)
     // Jeśli aplikacja nie jest zamykana z Tray, to zamiast zamknąć aplikację schowa się na dole do tray
     mainWindow.on('close', (event) =>{
-        if(!isQuitting){
+        if(!isQuitting && isLoggedIn){
             event.preventDefault();
             mainWindow.hide();
         }
     });
 }
-
 
 //  Załadowanie wersji językowej. (Domyślnie język systemowy (pl) lub en)
 ipcMain.handle('load-language', async (event, lang) => {    
@@ -178,6 +183,14 @@ ipcMain.on('login-success', ()=>{
         loginWindow=null;
     }
     createMainWindow();
+});
+
+//Wylogowanie
+ipcMain.on('logout', ()=>{
+    isLoggedIn = false;
+    mainWindow.close();
+    mainWindow=null;
+    createLoginWindow();
 });
 
 // Ustaw nazwę zalogowanego użytkownika

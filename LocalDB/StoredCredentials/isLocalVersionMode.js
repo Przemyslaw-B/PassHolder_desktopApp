@@ -1,4 +1,4 @@
-
+//Dezaktywowana funkcja
 function isLocalMode(){
     return true
 }
