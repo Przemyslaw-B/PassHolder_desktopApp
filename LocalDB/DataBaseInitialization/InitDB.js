@@ -10,13 +10,13 @@ function initDatabase(){
     const dbPath = path.join(app.getPath('userData'), 'passholderdata.db');
     db = new Database(dbPath);
     initTables();
-    initTriggers();
+    //initTriggers();
     return db;
 }
 
 function initTables(){
    initUserTable();
-   initCredentialsTable();
+   //initCredentialsTable();
 }
 
 function initUserTable(){

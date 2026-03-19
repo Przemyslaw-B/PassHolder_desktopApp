@@ -11,7 +11,7 @@ function makeLoginWindow(){
             height: setHeigh,
             resizable: false,
             autoHideMenuBar: true, // Ukryj pasek narzędzi.
-            icon: path.join(__dirname, '/../../Icons/ikona.ico'),
+            icon: path.join(__dirname, '../../Icon/ikona.ico'),
     
             webPreferences: {
                 preload: path.join(__dirname, '../../preload.js'),

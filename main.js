@@ -22,7 +22,6 @@ const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js
 const {isRotationOn} = require("./Rotation/isRotationOn.js");
 const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
 
-
 const path = require('path')
 const fs = require('fs');
 const { config } = require('process')
@@ -32,9 +31,8 @@ let mainWindow;
 let currentWindow;
 
 let tray;
-const trayIconPath = path.join(__dirname, 'Icons', './tray.png');
-let main_icon = { width: 1200, height: 800, icon: path.join(__dirname, 'Icons', './ikona.ico')};
-
+//const trayIconPath = path.join(__dirname, 'Icons', './tray.png');
+//let main_icon = { width: 1200, height: 800, icon: path.join(__dirname, 'Icons', './ikona.ico')};
 
 let isLoggedIn = false; //flaga zalogowania
 let isQuitting = false; // Flaga zamknięcia aplikacji
@@ -45,7 +43,33 @@ let user;
 let userId;
 let db;
 
+const getInstanceLock = app.requestSingleInstanceLock();
 
+if(!getInstanceLock){
+    //jeśli aplikacja już uruchomiona
+    app.quit(); // ponowne uruchomienie nic nie otworzy
+} else{
+    //kolejna instancja
+    app.on('second-instance', () => {
+        // Przywróć okno logowania lub główne, jeśli jest zminimalizowane
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.focus();
+        } else if (loginWindow) {
+            if (loginWindow.isMinimized()) loginWindow.restore();
+            loginWindow.focus();
+        }
+    });
+    // Kolejność ładowania  
+    app.whenReady().then(() => {
+    //disableDevTools();            //Wyłącz DevTools w aplikacji
+    initDB();                       //Inicjalizacja lokalnej Bazy Danych
+    selectDefaultLanguage();        //Domyślny język
+    createLoginWindow();            //Otwarcie okna Logowania
+    startInTray();                  //Uruchomienie Aplikacji w Tray
+    trayOpenFunction();             //Otwieranie okien z paska ukrytych ikon
+});
+}
 
 // Blokuj skróty klawiszove DevTools
 function disableDevTools(){
@@ -61,19 +85,6 @@ app.on('browser-window-created', (_, window) => {
   });
 });
 }
-
-
-// Kolejność ładowania  
-app.whenReady().then(() => {
-    disableDevTools();            //Wyłącz DevTools w aplikacji
-    initDB();                       //Inicjalizacja lokalnej Bazy Danych
-    selectDefaultLanguage();        //Domyślny język
-    createLoginWindow();            //Otwarcie okna Logowania
-    startInTray();                  //Uruchomienie Aplikacji w Tray
-    trayOpenFunction();             //Otwieranie okien z paska ukrytych ikon
-});
-
-
 
 // Ustawienie języka domyślnego.
 function selectDefaultLanguage(){
