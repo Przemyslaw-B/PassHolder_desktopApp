@@ -1,5 +1,7 @@
 let formInitialized = false;
 let pickedId;
+let selectedRecord = null;
+let recordToDelete = null
 
 function initAddRecordFormOnce() { 
   if (formInitialized) {
@@ -18,6 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
       storageContainer.innerHTML = html;
       initAddRecordFormOnce();
       loadStorage();
+      closingMenuByClick();
+      confirmDeleting();
+      cancelDeleting();
     });
 });
 
@@ -103,28 +108,34 @@ async function setStorageGUI(data){
       optionBtn.dataset.id=picked.id;
       optionBtn.dataset.id_cloud=picked.id;
       optionBtn.addEventListener("click", (e)=>{
+        e.stopPropagation();
         //Najpierw zamknąć inne menu jeśli były otwarte
+        const row = optionBtn.closest(".storage-row");
+        const menu = row.querySelector(".options-menu");
+        const isOpen = !menu.classList.contains("hidden");
         document.querySelectorAll(".options-menu").forEach(menu => {
           menu.classList.add("hidden");
         });
-        //otwarcie nowego menu
-        e.stopPropagation(); //zapobiegnij natychmiastowemu zamknięciu menu
-        const row = optionBtn.closest(".storage-row");
-        const menu = row.querySelector(".options-menu");
-        menu.classList.toggle("hidden");
-        pickedId = picked.id;
-        const editButton = menu.querySelector(".edit-btn");
-        editButton.addEventListener("click", async (e)=>{
-          //Menu edycji rekordu
-        })
-        const deleteButton = menu.querySelector(".delete-btn");
-        deleteButton.addEventListener("click", async (e)=>{
-          //console.log("Id rekordu dla wybranego wiersza: ", pickedId);
-          await removeRecord(picked.id);
-          optionBtn.closest(".storage-row").remove();
-          await loadStorage();
-        })
+        if (!isOpen) {
+          menu.classList.remove("hidden");
+        }
+        selectedRecord = picked.id;
       });
+      
+      const menu = clone.querySelector(".options-menu");
+      menu.addEventListener("click", e => e.stopPropagation());
+      const editButton = menu.querySelector(".edit-btn");
+        editButton.addEventListener("click", async (e)=>{
+          //Menu edycji rekordu 
+        })
+      const deleteButton = menu.querySelector(".delete-btn");
+      deleteButton.addEventListener("click", async (e)=>{
+      //e.stopPropagation();
+      showDeletingPopUp();
+      //await removeRecord();
+      //await loadStorage();
+      })
+
       const eye = clone.querySelector("#toggle-eye");
       const passField=clone.querySelector("#password");
       //passField.classList.add("show-password");
@@ -211,7 +222,7 @@ async function initAddRecordForm(){
     form.classList.remove("hidden");  //Pokaż formularz
   });
 
-  //Odrzucenie
+  //Odrzucenie formularze
   cancelRecordButton.addEventListener("click", ()=>{
     newUrl.value="";
     newLogin.value="";
@@ -220,7 +231,7 @@ async function initAddRecordForm(){
     addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
   });
 
-  //Zapisanie zmian
+  //Zapisanie zmian formularza
   saveRecordButton.replaceWith(saveRecordButton.cloneNode(true));
   const newSaveButton = document.getElementById("saveRecord-button");
   newSaveButton.addEventListener("click", async ()=>{
@@ -241,7 +252,6 @@ async function initAddRecordForm(){
     } else{
       //TODO Powiadomienie o nie wypełnieniu całego formularza
     }
-   
     newUrl.value="";
     newLogin.value="";
     newPassword.value="";
@@ -279,14 +289,14 @@ async function addCredentialRecordToDataBase(data){
   }
 }
 
-
-async function removeRecord(idCloud){
+async function removeRecord(){
   try{
     const responseConfig = await window.api.loadApiConfig();
     const config = responseConfig.config;
     const url = config.removePassFromCloud; 
     const tokenObj = await window.api.loadToken();
     const token = tokenObj.token;
+    console.log("Wysyłam request usunięcia rekordu: ", selectedRecord);
     if(token!= null && url!=null){
       //Remove from local:
       //await window.api.removeLocalRecord(id);
@@ -299,15 +309,46 @@ async function removeRecord(idCloud){
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          recordId: idCloud
+          recordId: recordToDelete
         })
       });
+        recordToDelete = null;
       return response.ok ? await response.json() : null;
    }
   } catch(err){
     await window.api.logout();
   }
-  
+}
+
+
+
+
+//Pokaż okno potwierdzenia usunięcia rekordu
+function showDeletingPopUp(){
+  document.getElementById("confirm-modal").classList.remove("hidden");
+}
+
+// Zatwierdź usunięcie rekordu
+function confirmDeleting(){
+  document.getElementById("confirm-delete").addEventListener("click", async () => {
+    console.log("Id wybranego rekordu: ", selectedRecord);
+    if (selectedRecord) {
+      recordToDelete = selectedRecord;
+      //recordToDelete.remove(); // tutaj możesz też wywołać backend
+      await removeRecord();
+      await loadStorage();
+    }
+    document.getElementById("confirm-modal").classList.add("hidden");
+  });
+  selectedRecord = null;
+}
+
+// Anuluj usunięcie rekordu
+function cancelDeleting(){
+  document.getElementById("cancel-delete").addEventListener("click", () => {
+  selectedRecord = null;
+  document.getElementById("confirm-modal").classList.add("hidden");
+});
 }
 
 //Zaszyfruj
@@ -346,11 +387,16 @@ async function getExpirationDate(passId){
   */
 
 //zamykanie rozwijanych menu po naciśnięciu w inne miejsce na ekranie
-document.addEventListener("click", () => {
-  document.querySelectorAll(".options-menu").forEach(menu => {
-    menu.classList.add("hidden");
-  });
-});
+function closingMenuByClick(){
+  document.addEventListener("click", (e) => {
+    console.log("Wykryto naciśnięcie w ekran :O");
+      document.querySelectorAll(".options-menu").forEach(menu => {
+        menu.classList.add("hidden");
+      });
+      selectedRecord = null;
+  }); 
+}
+
 
 // Odebranie klucza publicznego
 async function getPublicKey(email) {
