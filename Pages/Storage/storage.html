@@ -9,9 +9,8 @@
     <span class="single-data" id="password"></span> 
     <span class="toggle-eye" id="toggle-eye"></span>
     <div class="single-data" id="exp-date"></div>
-  <!--<div class="options-dots" data-id="" id="remove-record"></div> -->
     <div class="options-dots" data-id="" id="dots-menu">
-      <span class="dots-icon">⋮</span>
+      <div class="dots-icon">⋮</div>
       <div class="options-menu hidden">
         <button class="edit-btn">Edit</button>
         <button class="delete-btn" id="remove-button">Delete</button>
@@ -20,6 +19,7 @@
   </div>
 </template>
 
+<!-- Dodawanie nowego rekordu -->
 <div id="storage-header">
   <div id="addRecord-form" class="hidden">
     <input type="text" id="new-url" placeholder="URL">
@@ -31,18 +31,53 @@
   <button id="addRecord-button">✚</button>
 </div>
 
+<!-- Nagłówki tabeli -->
 <div class="single-data" id="titlesClass">
   <span class="title" id="titleNumber">No.</span>
   <span class="title" id="titleUrl">url</span>
   <span class="title" id="titleLogin">Login</span>
   <span class="title" id="titlePassword">Password</span>
-  <div class="title" id="titleExpDate">Expiration Date</div>
-  <div class="title" id="titleEdit"></div> 
+  <span class="title" id="titleExpDate">Expiration Date</span>
+  <span class="title" id="titleEdit"></span> 
 </div>
-<!-- Główna zawartość -->
+
+<!-- Główna zawartość listy -->
 <div id="storage-list"></div>
 
-<!-- okno potwierdzenia -->
+<!-- okno edycji rekordu -->
+<div id="modify-modal" class="hidden">
+  <div id="modify-modal-content"> 
+    <div id="modify-url-slot">
+      <span id="modify-url-span">URL:</span>
+      <input type="text" id="modify-url">
+    </div>
+    <div id="modify-login-slot">
+      <span id="modify-login-span">Login:</span>
+      <input type="text" id="modify-login">
+    </div>
+    <div id="modify-password-slot">
+      <span id="modify-password-span">Password:</span>
+      <input type="text" id="modify-password">
+    </div>
+    <div id="modify-rotation-slot">
+      <span id="modify-rotation-span">Rotation:</span>
+      <select id="modify-rotation" name="rotation">
+        <option value="0">off</option>
+        <option value="30">30</option>
+        <option value="60">60</option>
+        <option value="90">90</option>
+        <option value="180">180</option>
+        <option value="365">365</option>
+      </select>
+    </div>
+    <div id="modify-modal-buttons-place">
+      <button id="cancel-modify">cancel</button>
+      <button id="confirm-modify">confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- okno potwierdzenia usunięcia rekordu -->
 <div id="confirm-modal" class="hidden">
   <div class="modal-content">
     <p>Are you sure you want to delete this record?</p>

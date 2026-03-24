@@ -2,6 +2,7 @@ let formInitialized = false;
 let pickedId;
 let selectedRecord = null;
 let recordToDelete = null
+let recordToModify = null;
 
 function initAddRecordFormOnce() { 
   if (formInitialized) {
@@ -23,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
       closingMenuByClick();
       confirmDeleting();
       cancelDeleting();
+      confirmModify();
+      cancelModifyModal();
     });
 });
 
@@ -125,17 +128,17 @@ async function setStorageGUI(data){
       const menu = clone.querySelector(".options-menu");
       menu.addEventListener("click", e => e.stopPropagation());
       const editButton = menu.querySelector(".edit-btn");
-        editButton.addEventListener("click", async (e)=>{
-          //Menu edycji rekordu 
-        })
+      editButton.addEventListener("click", async (e)=>{
+        //Menu edycji rekordu
+        recordToModify = selectedRecord;
+        showModifyModal();
+      })
       const deleteButton = menu.querySelector(".delete-btn");
       deleteButton.addEventListener("click", async (e)=>{
-      //e.stopPropagation();
-      showDeletingPopUp();
-      //await removeRecord();
-      //await loadStorage();
+        //Zatwierdzenie usuwania
+        recordToDelete=selectedRecord;
+        showDeletingPopUp();
       })
-
       const eye = clone.querySelector("#toggle-eye");
       const passField=clone.querySelector("#password");
       //passField.classList.add("show-password");
@@ -244,7 +247,6 @@ async function initAddRecordForm(){
       password: valPassword
     };
     if(valUrl !="" && valPassword != "" && valLogin != ""){
-      //const result = await window.api.localStorageUpdate(data);
       const result = await addCredentialRecordToDataBase(data)
       if(result){
         await loadStorage();  //załaduj nową listę
@@ -298,8 +300,6 @@ async function removeRecord(){
     const token = tokenObj.token;
     console.log("Wysyłam request usunięcia rekordu: ", selectedRecord);
     if(token!= null && url!=null){
-      //Remove from local:
-      //await window.api.removeLocalRecord(id);
       //Remove from Cloud:
       const response = await fetch(url,{
         method: 'POST',
@@ -320,8 +320,21 @@ async function removeRecord(){
   }
 }
 
+//Pokaż okno edycji rekordu
+function showModifyModal(){
+  document.getElementById("modify-modal").classList.remove("hidden");
+}
 
+//Anuluj i zamknij okno edycji rekordu
+function cancelModifyModal(){
+  document.getElementById("cancel-modify").addEventListener("click", () => {
+  recordToModify = null;
+  document.getElementById("modify-modal").classList.add("hidden");
+});
+}
 
+//Zatwierdź zmiany rekordu
+function confirmModify(){}
 
 //Pokaż okno potwierdzenia usunięcia rekordu
 function showDeletingPopUp(){
@@ -331,9 +344,9 @@ function showDeletingPopUp(){
 // Zatwierdź usunięcie rekordu
 function confirmDeleting(){
   document.getElementById("confirm-delete").addEventListener("click", async () => {
-    console.log("Id wybranego rekordu: ", selectedRecord);
-    if (selectedRecord) {
-      recordToDelete = selectedRecord;
+    //console.log("Id wybranego rekordu: ", selectedRecord);
+    if (recordToDelete) {
+      //recordToDelete = selectedRecord;
       //recordToDelete.remove(); // tutaj możesz też wywołać backend
       await removeRecord();
       await loadStorage();
@@ -369,27 +382,9 @@ async function isRotationOn(){
   return isOn;
 }
 
-/*
-//Sprawdź czy hasło jest przedawnione
-async function isPassExpired(passId){
-  if(!passId){return true;}
-    const isExpired = false; //await window.api.isPasswordExpired(passId);
-  return isExpired;
-}
-  */
-
-/*
-//Pobierz datę upłynięcia ważności hasła
-async function getExpirationDate(passId){
-  const expDate = await window.api.getExpirationDate(passId);
-  return expDate;
-}
-  */
-
 //zamykanie rozwijanych menu po naciśnięciu w inne miejsce na ekranie
 function closingMenuByClick(){
   document.addEventListener("click", (e) => {
-    console.log("Wykryto naciśnięcie w ekran :O");
       document.querySelectorAll(".options-menu").forEach(menu => {
         menu.classList.add("hidden");
       });
