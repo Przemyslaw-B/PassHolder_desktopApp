@@ -9,7 +9,7 @@
 }
 
 .sidebar {
-  width: 220px;
+  width: 8rem;
   flex-shrink: 0; /* brak zwężania*/
   transition: width 0.3s ease;
 }
@@ -23,8 +23,8 @@
 .content-global { 
   flex: 1;  /* Zajęcie całego miejsca*/
   min-width: 0; /* zwężanie zamiast przesuwania treści */
-  padding: 20px;
+  padding: 1.3rem;
   background-color: #f9f9f9;
-  transition: margin-left 0.3s ease; /* płynne przesuwanie */
+  /* transition: margin-left 0.3s ease;  płynne przesuwanie */
   overflow-x: auto; /* Zapobieganie poziomemu przewijaniu*/
 }

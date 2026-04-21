@@ -16,7 +16,7 @@ function initAddRecordFormOnce() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const storageContainer = document.getElementById("storage-content");
-  // pobierz treść z home.html i wstaw do kontenera
+  // pobierz treść z html i wstaw do kontenera
   fetch("../Storage/storage.html")
     .then(res => res.text())
     .then(html => {

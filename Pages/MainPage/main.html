@@ -10,23 +10,31 @@
   <link rel="stylesheet" href="../Home/home.css">
   <link rel="stylesheet" href="../Settings/settings.css">
   <link rel="stylesheet" href="../Storage/storage.css">
+  <link rel="stylesheet" href="../Logs/logs.css">
+  <link rel="stylesheet" href="../Roles/roles.css">
 </head>
 
 <body>
 <div class="app-container">
   <!-- ~ SIDEBAR ~ import menu w pasku bocznym aplikacji -->
-  <div id="sidebar-container"></div>
+  <div id="sidebar-container" class="sidebar"></div>
 
   <!-- Główna zawartość -->
    <div class="content-global">
         <div id="home-content" class="tab" style="display:none;">
-            <!-- Content Home Page -->
+          <!-- Content Home Page -->
         </div>
         <div id="settings-content" class="tab" style="display:none;"> 
-            <!-- Content Settings Page -->
+          <!-- Content Settings Page -->
         </div>
         <div id="storage-content" class="tab"> 
-            <!-- Content Storage Page -->
+          <!-- Content Storage Page -->
+        </div>
+        <div id="logs-content" class = "tab" style="display:none;"> 
+          <!-- Content Logs Page -->
+        </div>
+        <div id="role-content" class = "tab" style="display:none;"> 
+          <!-- Content Role Page -->
         </div>
     </div>
 </div>
@@ -36,5 +44,7 @@
   <script src="../Home/home.js" defer></script>
   <script src="../Settings/settings.js" defer></script>
   <script src="../Storage/storage.js" defer></script>
+  <script src="../Logs/logs.js" defer></script>
+  <script src="../Roles/roles.js" defer></script>
 </body>
 </html>
