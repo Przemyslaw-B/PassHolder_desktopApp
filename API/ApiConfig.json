@@ -10,5 +10,6 @@
     "authentication": "http://localhost:8081/api/2FA",
     "creatingAccount": "http://localhost:8081/api/CreateNewAccount",
     "getPassword": "http://localhost:8081/api/getPassword",
-    "getLogs": "http://localhost:8081/api/recieveLogs"
+    "getLogs": "http://localhost:8081/api/recieveLogs",
+    "getRoles": "http://localhost:8081/api/recieveRoles"
 }

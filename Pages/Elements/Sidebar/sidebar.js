@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(html => {
       const container = document.getElementById("sidebar-container");   //import kontenera gdzie ma być zaimportowany fragment z sidebar
       container.innerHTML = html
-      const menuIcon = document.getElementById("showMenu"); //Import ikonki
+      const menuIcon = document.getElementById("menu-icon"); //Import ikonki
       const sidebar = document.getElementById("sidebar");   //Import menu do rozwinięcia
       
       //Odczytaj zapisany stan menu: rozwinięte/ukryte
@@ -23,12 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.toggle("sidebar-open");
       }
 
-        // Obsługa kliknięcia ikonki rozwijanego Menu
-      menuIcon.addEventListener("click", ()=>{
+      // Obsługa kliknięcia ikonki rozwijanego Menu
+      menuIcon.addEventListener("click", (e)=>{
         sidebar.classList.toggle("active");
         //zapisz status menu: rozwinięte/ukryte
         localStorage.setItem("sidebarStatus", sidebar.classList.contains("active"));
-        document.body.classList.toggle("sidebar-open"); //Dodaje klasę sidebar-open aby móc jej używać do przesuwania treści po aktywacji rozwijanego menu
+        document.body.classList.toggle("sidebar-open"); //Dodaje/usuwa klasę sidebar-open aby móc jej używać do przesuwania treści po aktywacji rozwijanego menu
       });
     });
   });

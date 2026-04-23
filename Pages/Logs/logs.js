@@ -36,7 +36,7 @@
       const responseConfig = await window.api.loadApiConfig();  //odczytanie pliku endpointów
       const config = responseConfig.config;
       const url = config.getLogs;
-      console.log("pobieranie logów - uderzenie do api url:", url);
+      //console.log("pobieranie logów - uderzenie do api url:", url);
       const token = await getToken();
       const response = await fetch(url,{
         method: 'POST',
@@ -70,14 +70,15 @@
       let counter = 0;
       for(let i=0; i<data.length; i++){
         const picked = data[i];
+        console.log("data:", data[i]);
         counter++;
         const clone = template.content.cloneNode(true);
         clone.querySelector("#number").textContent = counter;
         clone.querySelector("#number").dataset.id = picked.id;
-        clone.querySelector("#event").textContent = picked.event;
-        clone.querySelector("#user").textContent = picked.user;
+        clone.querySelector("#event").textContent = picked.idEvent;
+        clone.querySelector("#user").textContent = picked.userId;
         clone.querySelector("#setted-by").textContent = picked.settedBy;
-        clone.querySelector("#record").textContent = picked.record;
+        clone.querySelector("#record").textContent = picked.idRecord;
         clone.querySelector("#ip").textContent = picked.ip;
         clone.querySelector("#timestamp").textContent = picked.timestamp;
         clone.querySelector("#details").textContent = picked.details;

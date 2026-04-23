@@ -26,6 +26,8 @@ const path = require('path')
 const fs = require('fs');
 const { config } = require('process')
 
+const appName="PassHolder";
+
 let loginWindow;
 let mainWindow;
 let currentWindow;
@@ -60,6 +62,8 @@ if(!getInstanceLock){
             loginWindow.focus();
         }
     });
+    //Ustawienie nazwy
+    app.setName(appName);
     // Kolejność ładowania  
     app.whenReady().then(() => {
     //disableDevTools();            //Wyłącz DevTools w aplikacji

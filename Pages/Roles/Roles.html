@@ -1,13 +1,17 @@
 <!-- Szablon -->
 <template id="role-row-template"> 
   <div class="role-row"> 
+    <span class=single-role-data id="number"> </span>
     <span class=single-role-data id="user"> </span>
     <span class=single-role-data id="roles"> </span>
   </div> 
 </template>
 
 <!-- Nagłówki tabeli -->
-<div class="single-data" id="titlesClass">
+<div class="single-role-data-headers" id="role-titlesClass">
   <span class="title" id="titleUser">User</span>
   <span class="title" id="titleRoles">Roles</span>
 </div>
+
+<!-- Główna zawartość listy -->
+<div id="role-list"></div>
