@@ -1,30 +1,28 @@
 <!-- Szablon -->
 <template id="log-row-template"> 
-  <div class="log-row"> 
-    <span class=single-log-data id="number"> </span>
-    <span class=single-log-data id="event"> </span>
-    <span class=single-log-data id="user"> </span>
-    <span class=single-log-data id="setted-by"> </span>
-    <span class=single-log-data id="record"> </span>
-    <span class=single-log-data id="ip"> </span>
-    <span class=single-log-data id="timestamp"> </span>
-    <span class=single-log-data id="details"> </span>
+  <div class="log-row log-column-size"> 
+    <span class=single-log-data id="number-log"> </span>
+    <span class=single-log-data id="event-log"> </span>
+    <span class=single-log-data id="user-log"> </span>
+    <span class=single-log-data id="setted-by-log"> </span>
+    <span class=single-log-data id="record-log"> </span>
+    <span class=single-log-data id="ip-log"> </span>
+    <span class=single-log-data id="timestamp-log"> </span>
+    <span class=single-log-data id="details-log"> </span>
   </div>
 </template>
 
-<div class="icon-settings"></div>
-
 <!-- Nagłówki tabeli -->
-<div class="single-log-data-headers" id="log-titlesClass">
-  <span class="title" id="titleNumber">No.</span>
-  <span class="title" id="titleEvent">Event</span>
-  <span class="title" id="titleUser">User</span>
-  <span class="title" id="titleSettedBy">Setted by</span>
-  <span class="title" id="titleRecord">Record</span>
-  <span class="title" id="titleIp">IP</span>
-  <span class="title" id="titleTimestamp">Timestamp</span>
-  <span class="title" id="titleDetails">details</span>
+<div class="single-log-data-headers log-column-size" id="log-titles">
+  <span class="title-log" id="titleNumber-log">No.</span>
+  <span class="title-log" id="titleEvent-log">Event</span>
+  <span class="title-log" id="titleUser-log">User</span>
+  <span class="title-log" id="titleSettedBy-log">Setted by</span>
+  <span class="title-log" id="titleRecord-log">Record</span>
+  <span class="title-log" id="titleIp-log">IP</span>
+  <span class="title-log" id="titleTimestamp-log">Timestamp</span>
+  <span class="title-log" id="titleDetails-log">details</span>
 </div>
 
 <!-- Główna zawartość listy -->
-<div id="log-list"></div>
+<div id="log-list" class="log-list-elements"></div>

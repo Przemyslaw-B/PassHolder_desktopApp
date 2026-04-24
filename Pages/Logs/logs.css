@@ -1,42 +1,50 @@
-:root{
-    --log-columns: 5% 10% 15% 15% 7% 16% 12% auto; /* proporcje */
+.log-column-size{
+    grid-template-columns: 5% 10% 10% 10% 10% 15% 15% auto;
 }
 
-
-#log-titlesClass{
-    display: grid; 
-    min-height: 2rem;
-    grid-template-columns: var(--log-columns);
-    align-items: center; 
-    text-align: center; /* wyśrodkowanie tekstu w każdej kolumnie */ 
-    font-size: 1rem;
-    font-weight: bold; 
-    padding: 0.25rem 0.6rem; 
-    border-bottom: 2px solid #aaa;
+.title-log{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 4px;
+    user-select: none;
 }
 
 .single-log-data-headers{
-    margin-top: 0.5rem;
+    display: grid; 
+    min-height: 1.5rem;
+    align-items: center; 
+    text-align: center; 
+    font-size: 0.8rem;
+    font-weight: bold; 
+    border-bottom: 2px solid #aaa;
+    user-select: none;
 }
 
 .log-row{
     display: grid;
-    grid-template-columns: var(--log-columns);
-    position: relative;
     border-bottom: 1px solid #ddd;
     min-height: 1.5rem;;
     align-items: center;
+    text-align: center; 
+}
+
+.log-list-elements{
+    display: grid;
+    min-height: 1.5rem;
+    align-items: center;
+    text-align: center; 
 }
 
 .single-log-data{
     overflow: hidden;
-    justify-content: center;
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: center;
+    min-width: 0;
 }
 
-#number{
+#number-log{
     font-weight: bold;
     color: #555;
 }

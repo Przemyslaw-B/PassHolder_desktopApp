@@ -6,7 +6,6 @@
       .then(html => {
         logsContainer.innerHTML = html;
         loadLogs();
-
       });
   });
 
@@ -73,15 +72,15 @@
         console.log("data:", data[i]);
         counter++;
         const clone = template.content.cloneNode(true);
-        clone.querySelector("#number").textContent = counter;
-        clone.querySelector("#number").dataset.id = picked.id;
-        clone.querySelector("#event").textContent = picked.idEvent;
-        clone.querySelector("#user").textContent = picked.userId;
-        clone.querySelector("#setted-by").textContent = picked.settedBy;
-        clone.querySelector("#record").textContent = picked.idRecord;
-        clone.querySelector("#ip").textContent = picked.ip;
-        clone.querySelector("#timestamp").textContent = picked.timestamp;
-        clone.querySelector("#details").textContent = picked.details;
+        clone.querySelector("#number-log").textContent = counter;
+        clone.querySelector("#number-log").dataset.id = picked.id;
+        clone.querySelector("#event-log").textContent = picked.idEvent;
+        clone.querySelector("#user-log").textContent = picked.userId;
+        clone.querySelector("#setted-by-log").textContent = picked.settedBy;
+        clone.querySelector("#record-log").textContent = picked.idRecord;
+        clone.querySelector("#ip-log").textContent = picked.ip;
+        clone.querySelector("#timestamp-log").textContent = picked.timestamp;
+        clone.querySelector("#details-log").textContent = picked.details;
 
         container.appendChild(clone);
       }

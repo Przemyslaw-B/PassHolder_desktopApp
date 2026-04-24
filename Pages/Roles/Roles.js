@@ -1,19 +1,19 @@
   document.addEventListener("DOMContentLoaded", ()=>{
-    const logsContainer = document.getElementById("logs-content");
+    const rolesContainer = document.getElementById("role-content");
     fetch("../Roles/roles.html")
       .then(res => res.text())
       .then(html => {
-        logsContainer.innerHTML = html;
-        loadLogs();
-
+        rolesContainer.innerHTML = html;
+        loadRoles();
       });
   });
 
 async function loadRoles(){
   try{
-    //const data = await downloadData();
     console.log("Ładowanie strony ról..");
-    //await setStorageGUI(data);
+    const data = await getRolesData();
+    console.log("data:", data);
+    await setRolesGUI(data);
   }catch(err){
     console.error("[loadRoles] błąd:", err);
     //await window.api.logout();
@@ -36,17 +36,12 @@ async function loadRoles(){
       const url = config.getRoles;
       const token = await getToken();
       const response = await fetch(url,{
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          ammountOnPage: 0,
-          pageNumber: 0,
-          type
-        })
+        }
       });
       if(!response.ok){
         throw new Error(`Błąd API: ${response.status}`);
@@ -60,8 +55,9 @@ async function loadRoles(){
   }
 
   async function setRolesGUI(data){
+    console.log("Data length: " + data.length)
     if(data != null && data.length > 0){
-      const container = document.getElementById("log-list");
+      const container = document.getElementById("role-list");
       container.innerHTML = ""; //Wyczyszczenie wierszy jeśli były
       const template = document.getElementById("role-row-template");
       let counter = 0;
@@ -70,10 +66,10 @@ async function loadRoles(){
         console.log("data:", data[i]);
         counter++;
         const clone = template.content.cloneNode(true);
-        clone.querySelector("#number").textContent = counter;
-        clone.querySelector("#number").dataset.id = picked.id;
-        clone.querySelector("#user").textContent = picked.userId;
-        clone.querySelector("#role").textContent = picked.role;
+        clone.querySelector("#number-role").textContent = counter;
+        clone.querySelector("#number-role").dataset.id = picked.id;
+        clone.querySelector("#user-role").textContent = picked.userId;
+        clone.querySelector("#roles-role").textContent = picked.role;
 
         container.appendChild(clone);
       }

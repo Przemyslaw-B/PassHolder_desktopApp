@@ -23,12 +23,21 @@ contextBridge.exposeInMainWorld('api', {
   setUser: (username) => ipcRenderer.send('set-user', username),
   //Przełączanie zakładek
   switchCard: (pageName) => ipcRenderer.send('switch-card', pageName),
+  
   //Zapis tokenu użytkownika
   saveToken: (token) => ipcRenderer.invoke('save-token', token),
   //Odczytaj token użytkownika
   loadToken: () => ipcRenderer.invoke('load-token'),
   //Wyczyść zapisany token
   clearToken:() => ipcRenderer.invoke('clear-token'),
+
+  //Zapisz lokalnie hasło bezpieczeństwa
+  saveSecurityPassword: (securityPassword) => ipcRenderer.invoke('save-security-password'),
+  //Odczytaj hasło bezpieczeństwa użytkownika
+  getSecurityPassword: () => ipcRenderer.invoke('get-security-password'),
+  //Wyczyść zapisane hasło bezpieczeństwa
+  clearSecurityPassword: () => ipcRenderer.invoke('clear-security-password'),
+
   //Pobierz rekordy z lokalnej bazy danych
   getStorage:() => ipcRenderer.invoke('get-storage'),
   //Aktualizacja danych haseł

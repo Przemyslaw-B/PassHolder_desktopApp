@@ -75,14 +75,20 @@ async function loginValidation(){
     // Szyfrowanie wpisanego hasła
     const password = await window.api.hashPassword(passwordTemp);
     //Wysyłanie danych do API
-    const loginData = await loginRequest(email, password, url);
-    console.log(loginData);
-    if(loginData != null){
+    const responseData = await loginRequest(email, password, url);
+    //console.log("login data:", responseData);
+    if(responseData === null){
+      showMessage("Connection error");
+    }
+    //console.log(ResponseData);
+    if(responseData != null){
+      let loginData = responseData.data;
       if(loginData.status === "Validated" && loginData.username != null){
         const rep = await window.api.setUser(loginData.username);
         const tokenRes = await window.api.saveToken(loginData.token);
         if (loginData.status=="Validated") {
           const isAuthenticated = loginData.auth;
+          await saveSecurityPassword(loginData.securityPassword); 
           if(isAuthenticated === "true"){ // Jeśli 2FA nie jest wymagane
             const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
           }
@@ -93,7 +99,6 @@ async function loginValidation(){
         const labels = await getLanguagePack();
         const message = labels.wrongPassword;
         showMessage(message);
-        
       }
     }
   } else {
@@ -102,6 +107,14 @@ async function loginValidation(){
     const message = labels.lackOfLoginDetails;
     showMessage(message);
   }
+}
+
+async function saveSecurityPassword(securityPassword){
+  let response = {success: false};
+  if(securityPassword !== null){
+    let response = await window.api.saveSecurityPassword(securityPassword);
+  }
+  return response;
 }
 
 // Wysłanie danych logowania
@@ -120,11 +133,13 @@ async function loginRequest(email, password, url){
       body: JSON.stringify(payload)
     });
     if(!response.ok){
+      showMessage("Connection error");
       throw new Error(`Błąd API: ${response.status}`);
     }
     const data = await response.json();
     return data;
   } catch(error){
+    showMessage("Connection error");
     console.error("Błąd pobierania klucza.", error);
     return null;
   }

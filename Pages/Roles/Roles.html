@@ -1,17 +1,18 @@
 <!-- Szablon -->
 <template id="role-row-template"> 
-  <div class="role-row"> 
-    <span class=single-role-data id="number"> </span>
-    <span class=single-role-data id="user"> </span>
-    <span class=single-role-data id="roles"> </span>
+  <div class="role-row role-column-size"> 
+    <span class=single-role-data id="number-role"> </span>
+    <span class=single-role-data id="user-role"> </span>
+    <span class=single-role-data id="roles-role"> </span>
   </div> 
 </template>
 
 <!-- Nagłówki tabeli -->
-<div class="single-role-data-headers" id="role-titlesClass">
-  <span class="title" id="titleUser">User</span>
-  <span class="title" id="titleRoles">Roles</span>
+<div class="single-role-data-headers role-column-size" id="role-titlesClass">
+  <span class="title-role" id="titleNumber-role">No.</span>
+  <span class="title-role" id="titleUser-role">User</span>
+  <span class="title-role" id="titleRoles-role">Roles</span>
 </div>
 
 <!-- Główna zawartość listy -->
-<div id="role-list"></div>
+<div id="role-list" class="role-list-elements"></div>

@@ -1,13 +1,13 @@
   <!-- Szablon -->
 <template id="storage-row-template"> 
-  <div class="storage-row"> 
+  <div class="storage-row storage-column-size"> 
     <span class="single-data" id="number"></span> 
     <span class="single-data" id="idPass" style="display:none;"></span>
     <span class="single-data" id="idCloudPass" style="display:none;"></span> 
     <span class="single-data" id="url"></span> 
     <span class="single-data" id="login"></span> 
     <span class="single-data" id="password"></span> 
-    <span class="toggle-eye" id="toggle-eye"></span>
+    <div class="toggle-eye" id="toggle-eye"></div>
     <div class="single-data" id="exp-date"></div>
     <div class="options-dots" data-id="" id="dots-menu">
       <div class="dots-icon">⋮</div>
@@ -28,11 +28,12 @@
 </div>
 
 <!-- Nagłówki tabeli -->
-<div class="single-data" id="titlesClass">
+<div class="single-data storage-column-size" id="titlesClass">
   <span class="title" id="titleNumber">No.</span>
   <span class="title" id="titleUrl">url</span>
   <span class="title" id="titleLogin">Login</span>
   <span class="title" id="titlePassword">Password</span>
+  <span class="title" id="showPassEmote"></span>
   <span class="title" id="titleExpDate">Expiration Date</span>
   <span class="title" id="titleEdit"></span> 
 </div>
@@ -89,3 +90,24 @@
   <button class="edit-btn default-button-text-hoover">Edit</button>
   <button class="delete-btn default-button-text-hoover" id="remove-button">Delete</button>
 </div>
+
+<!-- Okno bezpieczeństwa -->
+ <div id="security-modal" class="hidden">
+  <span id="security-modal-info">Showing password require a security password.</span>
+  <input type="password" id="security-modal-password" placeholder="Security password">
+  <div id="security-modal-buttons-place">
+    <button class="edit-btn default-button-text-hoover">Cancel</button>
+    <button class="delete-btn default-button-text-hoover" id="remove-button">Confirm</button>
+  </div>
+ </div>
+
+ <!-- Okno ustawienia hasła bezpieczeństwa -->
+ <div id="security-password-set-modal" class="hidden">
+  <span id="setting-security-password-modal-info">Sett a security password</span>
+  <input type="password" id="set-security-password-modal" placeholder="Set a security password">
+  <input type="password" id="repeat-security-password-modal" placeholder="Repeat a security password">
+  <div id="set-security-password--modal-buttons-place">
+    <button class="edit-btn default-button-text-hoover">Cancel</button>
+    <button class="delete-btn default-button-text-hoover" id="remove-button">Confirm</button>
+  </div>
+ </div>

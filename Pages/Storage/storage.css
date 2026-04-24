@@ -1,7 +1,13 @@
 /*Dla każdego wiersza*/
+
+
+.storage-column-size{
+    grid-template-columns: 5% 25% 23% auto 6% 15% 7%;
+}
+
+
 .storage-row{
     display: grid;
-    grid-template-columns: 5% 25% 23% auto 6% 15% 7%;
     /* grid-template-columns: 5% auto 23% 20% 6% 7%; */
     /* number, , url, login, password, exp-date/options */
     align-items: center;
@@ -116,7 +122,6 @@
 #titlesClass{
     display: grid; 
     min-height: 2rem;
-    grid-template-columns: 5% 25% 25% auto 15% 5%; /* proporcje takie same jak w .storage-row */
     /* grid-template-columns: 5% auto 23% 20% 6% 7%; */
     align-items: center; 
     text-align: center; /* wyśrodkowanie tekstu w każdej kolumnie */ 
@@ -146,20 +151,33 @@
     text-align: end;
 }
 
+#toggle-eye{
+    -webkit-mask-image: url("../../Fonts/Storage/notVisiblePasswordIcon.svg");
+    mask-image: url("../../Fonts/Storage/notVisiblePasswordIcon.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+}
+
+#toggle-eye.toggle-eye-visible{
+    -webkit-mask-image: url("../../Fonts/Storage/visiblePasswordIcon.svg");
+    mask-image: url("../../Fonts/Storage/visiblePasswordIcon.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+}
+
 .toggle-eye{
-    cursor: pointer;
+    cursor: pointer;    
     user-select: none;
     display: inline-block;
     align-items: center;
     justify-content: center;
-    width: 20px; /* Zwiększony obszar ikony*/
-    height: 20px;
-    font-size: 16;
-    color: #666;
+    width: 1.2rem; /* Zwiększony obszar ikony*/
+    height: 1.2rem;
+    background-color: #2c3e50;
 }
 
 .toggle-eye:hover{
-    color: #000;
+    background-color: #2c3e50;
 }
 
 /* nagłówek storage - miejsce na dodawanie nowego rekordu */

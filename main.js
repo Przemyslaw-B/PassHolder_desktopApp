@@ -1,15 +1,16 @@
-const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron')
-const {selectLanguage} = require('./Language/LanguageSelector.js')
-const {getConfigData} = require('./API/GetConfigData.js')
-const {encrypt,decrypt} = require('./Encryption/Encrypt.js')
-const {hash} = require('./Encryption/Hash.js')
-const {defaultLanguage} = require('./Language/DefaultLanguage.js')
-const {runTray} = require('./Tray/RunTray.js')
-const {loadTrayLanguage, setCurrentWindowForTray, trayOpenFunction} = require('./Tray/LoadTrayLanguage.js')
-const {makeLoginWindow} = require('./WindowsMakers/Login/MakeLoginWindow.js')
-const {makeMainWindow} = require('./WindowsMakers/Main/MakeMainWindow.js')
-const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js')
-const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js')
+const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron');
+const {selectLanguage} = require('./Language/LanguageSelector.js');
+const {getConfigData} = require('./API/GetConfigData.js');
+const {encrypt,decrypt} = require('./Encryption/Encrypt.js');
+const {hash} = require('./Encryption/Hash.js');
+const {defaultLanguage} = require('./Language/DefaultLanguage.js');
+const {runTray} = require('./Tray/RunTray.js');
+const {loadTrayLanguage, setCurrentWindowForTray, trayOpenFunction} = require('./Tray/LoadTrayLanguage.js');
+const {makeLoginWindow} = require('./WindowsMakers/Login/MakeLoginWindow.js');
+const {makeMainWindow} = require('./WindowsMakers/Main/MakeMainWindow.js');
+const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js');
+const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js');
+const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
 const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
 const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
 const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
@@ -69,6 +70,7 @@ if(!getInstanceLock){
     //disableDevTools();            //Wyłącz DevTools w aplikacji
     initDB();                       //Inicjalizacja lokalnej Bazy Danych
     selectDefaultLanguage();        //Domyślny język
+    //clearSecurityPassword();        //Usuń zapisane Security Password
     createLoginWindow();            //Otwarcie okna Logowania
     startInTray();                  //Uruchomienie Aplikacji w Tray
     trayOpenFunction();             //Otwieranie okien z paska ukrytych ikon
@@ -305,6 +307,36 @@ ipcMain.handle('clear-token', async ()=>{
         await clearToken();
         return {success: true};
     }catch(err){
+        console.error("Błąd kasowania tokenu:", err);
+        return {success: false};
+    }
+});
+
+ipcMain.handle('get-security-passwor', async ()=>{
+    try{
+        let securityPassword = await getSecurityPassword();
+        return {success: true, response: securityPassword};
+    } catch(err){
+        console.error("Błąd kasowania tokenu:", err);
+        return {success: false};
+    }
+});
+
+ipcMain.handle('save-security-passwor', async (event, securityPassword)=>{
+    try{
+        await saveSecurityPassword(securityPassword);
+        return {success: true};
+    } catch(err){
+        console.error("Błąd kasowania tokenu:", err);
+        return {success: false};
+    }
+});
+
+ipcMain.handle('clear-security-passwor', async ()=>{
+    try{
+        await clearSecurityPassword();
+        return {success: true};
+    } catch(err){
         console.error("Błąd kasowania tokenu:", err);
         return {success: false};
     }

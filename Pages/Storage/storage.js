@@ -185,15 +185,19 @@ async function setStorageGUI(data){
       const eye = clone.querySelector("#toggle-eye");
       const passField=clone.querySelector("#password");
       //passField.classList.add("show-password");
-      eye.textContent = "👁️";
+      //eye.textContent = "👁️";
+      eye.classList.toggle("toggle-eye-visible");
+      
       eye.addEventListener("click", async ()=>{
       if(passField.classList.contains("show-password")){
         passField.classList.remove("show-password");
-        eye.textContent="👁️";
+        //eye.textContent="👁️";
+        eye.classList.toggle("toggle-eye-visible");
         passField.textContent = "••••••";
       } else{
         passField.classList.add("show-password");
-        eye.textContent="🙈";
+        //eye.textContent="🙈";
+        eye.classList.toggle("toggle-eye-visible");
         passField.textContent = await decryptPassword(picked.password);
       }
       });

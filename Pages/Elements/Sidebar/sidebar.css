@@ -53,6 +53,9 @@
   justify-content: flex-start;
 }
 
+.sidebar:not(.active) .label {
+  pointer-events: none;
+}
 
 .sidebar a:hover {
   color: var(--hover-color);
