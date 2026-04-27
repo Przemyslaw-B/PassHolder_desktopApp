@@ -12,6 +12,44 @@
   </div>
 </template>
 
+<!-- miejsce na filtry -->
+<div id="filters-place">
+  <!-- nagłówek -->
+  <div id="logs-filter-title">
+    <span id="logs-filter-title-text">Filters:</span>
+  </div>
+  <!-- Filtry -->
+  <div id="filters">
+
+    <div id="type-filter" class="log-single-filter">
+      <span id="type-filter-title" class="log-filter-name">Type:</span>
+      <select id="logs-type-selector" class="log-filter-selector active-filter-placeholder">
+        <option value="" disabled selected hidden>Select type</option>
+      </select>
+      <div id="type-logs-reset-icon" class="log-reset-icon"></div>
+    </div>  
+
+    <div id="user-filter" class="log-single-filter">
+      <span id="userfilter-title" class="log-filter-name">User:</span>
+      <select id="logs-user-selector" class="log-filter-selector active-filter-placeholder">
+        <option value="" disabled selected hidden>Select user</option>
+        <option value="user1">user 1</option>
+        <option value="user2">user 2</option> 
+      </select>
+      <div id="user-logs-reset-icon" class="log-reset-icon"></div>
+    </div>  
+
+    <div id="settedBy-filter" class="log-single-filter">
+      <span id="settedBy-title" class="log-filter-name">Responsible administrator:</span>
+      <select id="logs-settedBy-selector" class="log-filter-selector active-filter-placeholder">
+        <option value="" disabled selected hidden>Select administrator</option>
+      </select>
+      <div id="settedBy-logs-reset-icon" class="log-reset-icon"></div>
+    </div>  
+
+  </div>  
+</div>
+
 <!-- Nagłówki tabeli -->
 <div class="single-log-data-headers log-column-size" id="log-titles">
   <span class="title-log" id="titleNumber-log">No.</span>

@@ -11,5 +11,6 @@
     "creatingAccount": "http://localhost:8081/api/CreateNewAccount",
     "getPassword": "http://localhost:8081/api/getPassword",
     "getLogs": "http://localhost:8081/api/recieveLogs",
-    "getRoles": "http://localhost:8081/api/recieveRoles"
+    "getRoles": "http://localhost:8081/api/recieveRoles",
+    "getFiltersData": "http://localhost:8081/api/getFiltersData"
 }

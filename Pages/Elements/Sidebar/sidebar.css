@@ -96,32 +96,6 @@ body.sidebar-open .content-global{
   transition: opacity 0.2s ease;
 }
 
-
-/* Po rozwinięciu menu odsuń głowną treść w prawo 
-body.sidebar-open {
-  --content-margin: 13rem; 
-}
-*/
-
-/*Odsunięcie treści w prawo + animacja
-.content-global{ 
-  margin-left: var(--sidebar-size-active);
-  transition: margin-left 0.3s ease;   płynne przesuwanie 
-}
-*/
-
-/*
-.sidebar.active .content-global{
-  margin-left: var(--sidebar-size-active);
-  transition: margin-left 0.3s ease;  /* płynne przesuwanie 
-}
-
-.sidebar:not(.active) .content-global{
-  margin-left: var(--sidebar-size-not-active);
-  transition: margin-left 0.3s ease;  /* płynne przesuwanie 
-}
-  */
-
 .icon-menu{
   width: var(--sidebar-icon-size);
   height: var(--sidebar-icon-size);
