@@ -16,6 +16,30 @@
     gap: 0.4rem;
 }
 
+.log-date-filter{
+    min-height: 1rem;
+    width: 6.5rem;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    border: 1px solid #ccc;
+    padding: 0,4rem, 0.5rem;
+    border-radius: 0.5rem;
+    color: #000;
+}
+
+.log-filter-input{
+    min-height: 1rem;
+    width: 10rem;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    border: 1px solid #ccc;
+    padding: 0,4rem, 0.5rem;
+    border-radius: 0.5rem;
+    color: #000;
+}
+
 .log-filter-selector{
     min-height: 1rem;
     width: 10rem;
@@ -45,7 +69,16 @@
     margin-left: 0.5rem;
 }
 
+#filters-upper{
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+}
+
 #filters{
+    margin-top: 0.5rem;
     display: flex;
     gap: 1.5rem;
     justify-content: flex-start;

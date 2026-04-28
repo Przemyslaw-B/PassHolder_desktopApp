@@ -19,24 +19,25 @@
     <span id="logs-filter-title-text">Filters:</span>
   </div>
   <!-- Filtry -->
-  <div id="filters">
+  <div id="filters-upper" >
+    <div id="user-filter" class="log-single-filter">
+      <span id="userfilter-title" class="log-filter-name">User:</span>
+      <input type="text" id="logs-user-input" class="log-filter-input" placeholder="User"></input>
+    </div> 
 
+    <div id="ip-filter" class="log-single-filter">
+      <span id="ipfilter-title" class="log-filter-name">ip:</span>
+      <input type="text" id="logs-ip-input" class="log-filter-input" placeholder="255.255.255.255"></input>
+    </div> 
+  </div>
+
+  <div id="filters">
     <div id="type-filter" class="log-single-filter">
       <span id="type-filter-title" class="log-filter-name">Type:</span>
       <select id="logs-type-selector" class="log-filter-selector active-filter-placeholder">
         <option value="" disabled selected hidden>Select type</option>
       </select>
       <div id="type-logs-reset-icon" class="log-reset-icon"></div>
-    </div>  
-
-    <div id="user-filter" class="log-single-filter">
-      <span id="userfilter-title" class="log-filter-name">User:</span>
-      <select id="logs-user-selector" class="log-filter-selector active-filter-placeholder">
-        <option value="" disabled selected hidden>Select user</option>
-        <option value="user1">user 1</option>
-        <option value="user2">user 2</option> 
-      </select>
-      <div id="user-logs-reset-icon" class="log-reset-icon"></div>
     </div>  
 
     <div id="settedBy-filter" class="log-single-filter">
@@ -46,6 +47,15 @@
       </select>
       <div id="settedBy-logs-reset-icon" class="log-reset-icon"></div>
     </div>  
+
+    <div id="dateFrom-log-filter" class="log-single-filter">
+      <span id="from-log-title" class="log-filter-name">Od:</label>
+      <input type="date" id="dateFrom-log" class="log-date-filter">
+    </div>
+    <div id="dateTo-log-filter" class="log-single-filter">
+      <span id="to-log-title" class="log-filter-name">Do:</label>
+      <input type="date" id="dateTo-log" class="log-date-filter"> 
+    </div>
 
   </div>  
 </div>
