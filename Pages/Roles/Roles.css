@@ -1,6 +1,37 @@
 
 .role-column-size{
-    grid-template-columns: 5% 10% auto;
+    grid-template-columns: 5% 25% 20% 25% auto 5% 5%;
+}
+
+.role-icons-format{
+    height: 1.2rem;
+    background-color: #2c3e50;
+    cursor: pointer;
+    user-select: none;
+}
+
+.role-icons-format:hover{
+    background-color: #1abc9c;
+}
+
+.role-icon-container-format{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#delete-role-data-icon{
+    -webkit-mask-image: url("../../Fonts/Delete/deleteIcon.svg");
+    mask-image: url("../../Fonts/Delete/deleteIcon.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+}
+
+#edit-role-data-icon{
+    -webkit-mask-image: url("../../Fonts/Edit/editIcon.svg");
+    mask-image: url("../../Fonts/Edit/editIcon.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
 }
 
 .single-role-data-headers{

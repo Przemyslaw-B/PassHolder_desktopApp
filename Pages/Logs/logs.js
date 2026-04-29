@@ -11,6 +11,8 @@
 
   let loglterData;
 
+  //let apiUrlConfig;
+
 
   document.addEventListener("DOMContentLoaded", ()=>{
     const logsContainer = document.getElementById("logs-content");
@@ -18,20 +20,29 @@
       .then(res => res.text())
       .then(html => {
         logsContainer.innerHTML = html;
+        //loadUrls();
         initFiltersSelector();
         initFilterResetButtons();
         resetFilters();
+        //userMailSugetion();
         loadLogs();
       });
   });
+
+  /*
+  async function loadUrls(){
+      const responseConfig = await window.api.loadApiConfig();
+      apiUrlConfig = responseConfig.config;
+  }
+      */
 
 
   function initFiltersSelector(){
     const selectType = document.getElementById("logs-type-selector");
     const typeResetWrapper = document.getElementById("type-logs-reset-icon");
 
-    const selectUser = document.getElementById("logs-user-selector");
-    const userResetWrapper = document.getElementById("user-logs-reset-icon");
+    //const selectUser = document.getElementById("logs-user-selector");
+    //const userResetWrapper = document.getElementById("user-logs-reset-icon");
 
     const selectSettedBy = document.getElementById("logs-settedBy-selector");
     const settedByResetWrapper = document.getElementById("settedBy-logs-reset-icon");
@@ -91,7 +102,7 @@
 
   function initFilterResetButtons(){
     const typeLogFilterResetButton = document.getElementById("type-logs-reset-icon");
-    const userLogFilterResetButton = document.getElementById("user-logs-reset-icon");
+    //const userLogFilterResetButton = document.getElementById("user-logs-reset-icon");
     const settedByFilterResetButton = document.getElementById("settedBy-logs-reset-icon");
   
     typeLogFilterResetButton.addEventListener('click', ()=>{
@@ -126,7 +137,7 @@
     });
   }
 
-  async function loadLogs(){
+  async function loadLogs(){  
     try{
       //console.log("Ładowanie strony logów..");
       logFilterData = await getFiltersData();
@@ -181,7 +192,7 @@
   async function downloadLogsData(){
     try{
       let typeFilter = document.getElementById("logs-type-selector").value || undefined;
-      let userFilter = document.getElementById("logs-user-input").value || undefined;
+      //let userFilter = document.getElementById("logs-user-select").value || undefined;
       let ipFilter = document.getElementById("logs-ip-input").value || undefined;
       let settedByFilter = document.getElementById("logs-settedBy-selector").value || undefined;
       let fromDateFilter = document.getElementById("dateFrom-log").value || undefined;
@@ -202,7 +213,7 @@
           pageNumber: 0,
           pageSize: 0,
           typeName: typeFilter,
-          userMail: userFilter,
+          //userMail: userFilter,
           adminMail: settedByFilter,
           fromDate: fromDateFilter,
           toDate: toDateFilter
@@ -295,6 +306,38 @@
     dateFromValue = "";
     dateToValue = "";
   }
+
+  /*
+  function userMailSugetion(){
+  //wyszukiwanie usera - sugestie
+  new TomSelect("#logs-user-select", {
+      valueField: "email",
+      labelField: "email",
+      searchField: "email",
+      maxOptions: 10,
+      load: async function(query, callback) {
+          console.log("sugestia!");
+          if (query.length < 3) return callback();
+          const token = await getToken()
+          console.log("sugestia dla tokenu", token);
+          fetch(`${apiUrlConfig.getUsersMailFilterContent}?search=${query}`,{
+            method: "GET",
+            headers: {
+                  "Authorization": `Bearer ${token}`,
+                  "Content-Type": "application/json"
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+            callback(data.emails); // [{email: "..."}]
+          })
+          .catch(() => callback());
+      }
+  });
+  }
+  */
+
+ 
 
   async function reloadLogList(){
     //console.log("resetuję listę logów..");

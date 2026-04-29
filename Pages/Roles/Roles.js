@@ -61,6 +61,7 @@ async function loadRoles(){
       container.innerHTML = ""; //Wyczyszczenie wierszy jeśli były
       const template = document.getElementById("role-row-template");
       let counter = 0;
+      console.log("Role Data", data);
       for(let i=0; i<data.length; i++){
         const picked = data[i];
         console.log("data:", data[i]);
@@ -68,8 +69,9 @@ async function loadRoles(){
         const clone = template.content.cloneNode(true);
         clone.querySelector("#number-role").textContent = counter;
         clone.querySelector("#number-role").dataset.id = picked.id;
-        clone.querySelector("#user-role").textContent = picked.userId;
-        clone.querySelector("#roles-role").textContent = picked.role;
+        clone.querySelector("#user-role").textContent = picked.userMail;
+        clone.querySelector("#roles-role").textContent = picked.roleName;
+        clone.querySelector("#admin-role").textContent = picked.adminMail;
 
         container.appendChild(clone);
       }
