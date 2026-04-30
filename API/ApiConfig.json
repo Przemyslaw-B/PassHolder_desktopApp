@@ -12,5 +12,7 @@
     "getPassword": "http://localhost:8081/api/getPassword",
     "getLogs": "http://localhost:8081/api/recieveLogs",
     "getRoles": "http://localhost:8081/api/recieveRoles",
-    "getFiltersData": "http://localhost:8081/api/getFiltersData"
+    "getFiltersData": "http://localhost:8081/api/getFiltersData",
+    "getSecurityPassword": "",
+    "setSecurityPassword": ""
 }
