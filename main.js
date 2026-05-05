@@ -10,7 +10,9 @@ const {makeLoginWindow} = require('./WindowsMakers/Login/MakeLoginWindow.js');
 const {makeMainWindow} = require('./WindowsMakers/Main/MakeMainWindow.js');
 const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js');
 const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js');
-const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
+const {encryptUserPassword, decryptUserPassword} = require('./Encryption/EncryptUserPassword.js');
+//const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
+const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
 const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
 const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
 const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
@@ -36,7 +38,7 @@ let currentWindow;
 let tray;
 //const trayIconPath = path.join(__dirname, 'Icons', './tray.png');
 //let main_icon = { width: 1200, height: 800, icon: path.join(__dirname, 'Icons', './ikona.ico')};
-
+let securityPassword;
 let isLoggedIn = false; //flaga zalogowania
 let isQuitting = false; // Flaga zamknięcia aplikacji
 
@@ -102,6 +104,22 @@ app.on('window-all-closed', (event) => {
   event.preventDefault(); // zatrzymuje domyślne zamknięcie
 });
 
+//zapisz securityPassword
+async function securityPasswordLocalSave(){
+    //console.log("Zapisuje z serwera do lokalnej zmiennej security password..");
+    const temp = await getSecurityPasswordIfExist();
+    if(temp.success){
+        if(temp.securityPassword !== null){
+            securityPassword = temp.data;
+            //console.log("Security Password", securityPassword);
+        } else {
+            console.log("Security Password nie ma w bazie danych");
+        }
+    } else{
+        console.log("Nie udalo się pobrac hasla bezpieczentwa, success: ", temp.success);
+    }
+}
+
 // Utworzenie okna logowania programu.
 function createLoginWindow(){
     loginWindow = makeLoginWindow(isLoggedIn, isQuitting);
@@ -119,8 +137,8 @@ function createLoginWindow(){
 function createMainWindow(){
     mainWindow = makeMainWindow();
     currentWindow = mainWindow;
-    setCurrentWindowForTray(currentWindow)
-    // Jeśli aplikacja nie jest zamykana z Tray, to zamiast zamknąć aplikację schowa się na dole do tray
+    setCurrentWindowForTray(currentWindow);  // Jeśli aplikacja nie jest zamykana z Tray, to zamiast zamknąć aplikację schowa się na dole do tray
+    securityPasswordLocalSave(); //Załaduj hasło bezpieczeństwa z serwera
     mainWindow.on('close', (event) =>{
         if(!isQuitting && isLoggedIn){
             event.preventDefault();
@@ -190,6 +208,39 @@ ipcMain.handle('hash', async (event, password)=>{
     }catch(error){
         console.error('Błąd:', error);
     }
+});
+
+//szyfrowanie hasła użytkownika
+ipcMain.handle('encrypt-user-password', async (event,password)=>{
+    let message = "";
+    if(password && password !== null){
+        let encryptedPass = encryptUserPassword(password);
+        return {success: true, password: encryptedPass};
+    }
+    message = "Błąd odczytu hasła.";
+    return {success: false, message: message}
+});
+
+//odszyfrowanie hasła użytkownika
+ipcMain.handle('decrypt-user-password', async (event, password, inputSecurityPassword)=>{
+    let message = "";
+    if(password && password !== null && inputSecurityPassword && inputSecurityPassword !== null){
+        let userSecurityPassword = await getSecurityPasswordIfExist();
+        if(userSecurityPassword && userSecurityPassword !== null){
+            if(userSecurityPassword === inputSecurityPassword){
+                let decryptedPass = decryptUserPassword(password, inputSecurityPassword);
+                return {success: true, password: decryptedPass};
+            } else{
+                message = "Podane hasło jest nieprawidłowe.";
+                return {success: false, message: message}
+            }
+        } else {
+            message = "Błąd odczytu hasła bezpieczeństwa";
+            return {success: false, message: message}
+        }
+    }
+    message = "Błąd odczytu danych";
+    return {success: false, message: message}
 });
 
 // Zmień okno z logowania na główne
@@ -312,19 +363,23 @@ ipcMain.handle('clear-token', async ()=>{
     }
 });
 
-ipcMain.handle('get-security-passwor', async ()=>{
+ipcMain.handle('get-security-password', async ()=>{
     try{
-        let securityPassword = await getSecurityPassword();
-        return {success: true, response: securityPassword};
+        let response = await getSecurityPasswordIfExist();
+        if(response && response.success && response.securityPassword){
+            securityPassword = response.securityPassword;
+            return {success: true, securityPassword: response.securityPassword};
+        }
+        return {success: false};
     } catch(err){
         console.error("Błąd kasowania tokenu:", err);
         return {success: false};
     }
 });
 
-ipcMain.handle('save-security-passwor', async (event, securityPassword)=>{
+ipcMain.handle('save-security-password', async (event, securityPassword)=>{
     try{
-        await saveSecurityPassword(securityPassword);
+        //await saveSecurityPassword(securityPassword);
         return {success: true};
     } catch(err){
         console.error("Błąd kasowania tokenu:", err);
@@ -332,12 +387,56 @@ ipcMain.handle('save-security-passwor', async (event, securityPassword)=>{
     }
 });
 
-ipcMain.handle('clear-security-passwor', async ()=>{
+ipcMain.handle('validateNewSecurityPassword', (event, newSecurityPassword)=>{
+    const response = validateNewSecurityPassword(newSecurityPassword);
+    return response;
+});
+
+ipcMain.handle('setNewSecurityPassword', async (event, newSecurityPassword)=>{
+    console.log('setNewSecurityPassword:', newSecurityPassword);
+    const response = await getSecurityPasswordIfExist();
+    console.log('response:', response);
+    console.log('?setNewSecurityPassword, old password:', response.securityPassword);
+    if(response.success === true && (!response.securityPassword || response.securityPassword === null)){
+        const response2 = await saveNewSecurityPassword(newSecurityPassword);
+        console.log('response2:', response2);
+        if(response2.success){
+            let response3 = await getSecurityPasswordIfExist();
+            console.log('response3:', response3);
+            if(response3.success && response3.securityPassword){
+                securityPassword = response3.securityPassword;
+                return true;
+            }
+        }
+    }
+    return false;
+});
+
+/*
+ipcMain.handle('clear-security-password', async ()=>{
     try{
         await clearSecurityPassword();
         return {success: true};
     } catch(err){
         console.error("Błąd kasowania tokenu:", err);
+        return {success: false};
+    }
+});
+*/
+
+ipcMain.handle('isSecurityPasswordSet', async()=>{
+    try{
+        let response = await getSecurityPasswordIfExist();
+        //console.log('response:', response);
+        if(response){
+            securityPassword = response.securityPassword;
+            if(securityPassword && securityPassword !== null){
+                return true;
+            }
+        }
+        return false;
+    }catch(err){
+        console.error("Błąd weryfikacji zapisu securityPassword:", err);
         return {success: false};
     }
 });

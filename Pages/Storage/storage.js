@@ -1,3 +1,4 @@
+//const { getSecurityPassword } = require("../../SecureStorage/securityPasswordStorage");
 let formInitialized = false;
 let pickedId;
 let pickedRecordData = null;
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(html => {
       storageContainer.innerHTML = html;
       initAddRecordFormOnce();
+      securityPasswordModal();
       loadStorage();
 
       //closingMenuByClick();
@@ -36,11 +38,78 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+async function isSecurityPasswordSet(){
+  const response = await window.api.isSecurityPasswordSet();
+  if(response && response === true){
+    return response;
+  }
+  return false;
+}
+
+async function setSecurityPassword(newSecurityPassword){
+  const isPasswordAlreadySet = await isSecurityPasswordSet();
+  if(isPasswordAlreadySet === false && newSecurityPassword){
+    const response = await window.api.setNewSecurityPassword(newSecurityPassword);
+  }
+}
+
+function securityPasswordModal(){
+  let message = "";
+  const securityPasswordModalConfirmButton = document.getElementById("confirm-security-password-button");
+  document.getElementById("add-security-password-modal-password-input").value="";
+  document.getElementById("add-security-password-modal-password-input-repeat").value="";
+  securityPasswordModalConfirmButton.addEventListener("click", async (e) => {
+    const securityPassword = document.getElementById("add-security-password-modal-password-input").value;
+    const securityPasswordRepeat = document.getElementById("add-security-password-modal-password-input-repeat").value;
+    console.log('securityPassword.value', securityPassword);
+    console.log('securityPasswordRepeat.value', securityPasswordRepeat);
+    if((securityPassword === null || securityPassword === "")&& (securityPasswordRepeat === null || securityPasswordRepeat === "")){
+      message = "Oba pola muszą zostać wypełnione."
+    }
+    if(securityPassword === securityPasswordRepeat){
+      const result = await window.api.validateNewSecurityPassword(securityPassword);
+      console.log('validateNewSecurityPassword:', result);
+      if(result.success === true){
+        const res = await window.api.setNewSecurityPassword(securityPassword);
+        console.log('saveSecurityPassword:', res);
+        loadStorage();
+      } else{
+        message = result.message;
+      }
+    } else{
+      message = "Podane hasła muszą być identyczne."
+    }
+    console.log('securityModalMessage:', message);
+    //TODO wyśietlenie komunikatu
+  });
+}
+
+function showSecurityPasswordModal(){
+  const securityPasswordModal = document.getElementById("security-password-modal");
+  securityPasswordModal.classList.remove("hidden");
+  const addNewRecordButton = document.getElementById("storage-header");
+  addNewRecordButton.classList.add("hidden");
+}
+
+function hideSecurityPasswordModal(){
+  const securityPasswordModal = document.getElementById("security-password-modal");
+  securityPasswordModal.classList.add("hidden");
+  const addNewRecordButton = document.getElementById("storage-header");
+  addNewRecordButton.classList.remove("hidden");
+}
+
 async function loadStorage(){
   try{
-    const data = await downloadData();
-    console.log(data);
-    await setStorageGUI(data);
+    const isSecurityPassword = await isSecurityPasswordSet();
+    console.log('loadStorage - isSecurityPassword:', isSecurityPassword);
+    if(!isSecurityPassword){  //brak ustawionego hasła bezpieczeństwa
+      showSecurityPasswordModal();
+    } else{
+      hideSecurityPasswordModal();
+      const data = await downloadData();
+      console.log(data);
+      await setStorageGUI(data);
+    }
   }catch(err){
     console.error("[loadStorage] błąd:", err);
     //await window.api.logout();

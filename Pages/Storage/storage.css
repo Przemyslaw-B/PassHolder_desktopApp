@@ -3,6 +3,10 @@
     grid-template-columns: 5% 25% 23% auto 6% 15% 7%;
 }
 
+#storage-header.hidden{
+    display: none;
+}
+
 #security-password-modal {
     position: fixed;
     top: 50%;

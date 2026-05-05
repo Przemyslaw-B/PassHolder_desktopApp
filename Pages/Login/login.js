@@ -88,7 +88,7 @@ async function loginValidation(){
         const tokenRes = await window.api.saveToken(loginData.token);
         if (loginData.status=="Validated") {
           const isAuthenticated = loginData.auth;
-          await saveSecurityPassword(loginData.securityPassword); 
+          await saveSecurityPassword(); 
           if(isAuthenticated === "true"){ // Jeśli 2FA nie jest wymagane
             const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
           }
@@ -109,11 +109,8 @@ async function loginValidation(){
   }
 }
 
-async function saveSecurityPassword(securityPassword){
-  let response = {success: false};
-  if(securityPassword !== null){
-    let response = await window.api.saveSecurityPassword(securityPassword);
-  }
+async function saveSecurityPassword(){
+  let response = await window.api.getSecurityPassword();
   return response;
 }
 
