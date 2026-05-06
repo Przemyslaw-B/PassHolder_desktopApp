@@ -25,6 +25,8 @@ const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js
 const {isRotationOn} = require("./Rotation/isRotationOn.js");
 const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
 
+const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
+
 const path = require('path')
 const fs = require('fs');
 const { config } = require('process')
@@ -240,6 +242,26 @@ ipcMain.handle('decrypt-user-password', async (event, password, inputSecurityPas
         }
     }
     message = "Błąd odczytu danych";
+    return {success: false, message: message}
+});
+
+//zmień rolę użytkownika z wyższej na usera
+ipcMain.on('set-user-role-to-default', async (event, userModMail)=>{
+    let message;
+    if(userModMail && userModMail !== null){
+        return await setUserRoleToDefault(userModMail);
+    }
+    message = "nie podano użytkownika";
+    return {success: false, message: message}
+});
+
+//Zmień rolę użytkownika
+ipcMain.on('set-user-role', async (event, userModMail, roleName)=>{
+    let message;
+    if(userModMail && userModMail !== null && roleName && roleName !== null){
+
+    }
+    message = "nie podano użytkownika lub roli";
     return {success: false, message: message}
 });
 

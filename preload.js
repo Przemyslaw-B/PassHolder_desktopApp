@@ -17,6 +17,12 @@ contextBridge.exposeInMainWorld('api', {
   encryptUSerPassword:(password) => ipcRenderer.invoke('encrypt-user-password', password),
   //odszyfruj hasło użytkownika
   decryptUserPassword: (password,securityPassword) => ipcRenderer.invoke('decrypt-user-password', password, securityPassword),
+
+  //modyfikuj rolę wybranego użytkownika do domyślnego username
+  setUserRoleToDefault: (userModMail) => ipcRenderer.invoke("set-user-role-to-default", userModMail),
+  //modyfikuj rolę wybranego użytkownika na inną.
+  setUserRole: (userModMail, roleName) => ipcRenderer.invoke("set-user-role", userModMail, roleName),
+
   
   //Wykonaj Zapytanie do API z danymi logowania.
   sendLoginRequest: (credentials) => ipcRenderer.invoke("send-login-request", credentials),

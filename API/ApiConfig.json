@@ -14,5 +14,7 @@
     "getRoles": "http://localhost:8081/api/recieveRoles",
     "getFiltersData": "http://localhost:8081/api/getFiltersData",
     "getSecurityPassword": "http://localhost:8081/api/getSecurityPassword",
-    "setSecurityPassword": "http://localhost:8081/api/setSecurityPassword"
+    "setSecurityPassword": "http://localhost:8081/api/setSecurityPassword",
+    "setUserRoleToDefault": "http://localhost:8081/api/removeUserRole",
+    "setUserRole": "http://localhost:8081/api/modifytUserRole"
 }

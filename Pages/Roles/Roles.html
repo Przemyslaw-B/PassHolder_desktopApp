@@ -24,3 +24,31 @@
 
 <!-- Główna zawartość listy -->
 <div id="role-list" class="role-list-elements"></div>
+
+<!-- okno zatwierdzenia -->
+<div id="role-confirmation-modal" class="hidden">
+   <input type="text" id="role-confirmation-modal-security-code" class="" placeholder="podaj kod">
+   <div class="role-confirmation-modal-button-row">
+    <button type="button" id="role-modal-account-cancel-button" class="default-button">Cancel</button>
+    <button type="button" id="role-modal-confirm-button" class="default-button">Confirm</button>
+  </div>
+  <div id="role-confirmation-modal-message-space">
+    <span id="role-confirmation-modal-message"></span>
+  </div>
+</div>
+
+<!-- okno edycji -->
+<div id="role-confirmation-modal" class="hidden">
+  <div>
+    <span id="role-confirmation-modal-select-title">Rola:</span>
+    <select id="user-role-change-modal" name="rola"></select>
+  </div>
+
+  <div class="role-edit-modal-button-row">
+    <button type="button" id="role-edit-modal-cancel-button" class="default-button">Cancel</button>
+    <button type="button" id="role-edit-modal-confirm-button" class="default-button">Confirm</button>
+  </div>
+  <div id="role-edit-modal-message-space">
+    <span id="role-edit-modal-message"></span>
+  </div>
+</div>

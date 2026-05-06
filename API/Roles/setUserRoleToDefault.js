@@ -2,10 +2,11 @@ const axios = require('axios');
 const {getToken} = require('./../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('./GetConfigData.js');
 
-async function getSecurityPasswordFromApi() {
+
+async function setUserRoleToDefault(userModMail) { 
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.getSecurityPassword;
+    const url = tempUrls.setUserRoleToDefault;
     //console.log('Weryfikacja url:', url);
     const token = await getToken();
     //console.log("Sprawdzenie tokenu?", token);
@@ -16,11 +17,7 @@ async function getSecurityPasswordFromApi() {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.post(
-      url, {
-        "userModMail": userModMail
-      },
-      {
+    const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -32,4 +29,4 @@ async function getSecurityPasswordFromApi() {
   }
 }
 
-module.exports = { getSecurityPasswordFromApi };
+module.exports = { setUserRoleToDefault };
