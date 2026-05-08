@@ -13,6 +13,7 @@ const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.
 const {encryptUserPassword, decryptUserPassword} = require('./Encryption/EncryptUserPassword.js');
 //const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
 const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
+const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
 const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
 const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
 const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
@@ -206,6 +207,7 @@ ipcMain.handle('decrypt-password', async(event, password)=>{
 //Hashowanie hasła
 ipcMain.handle('hash', async (event, password)=>{
     try{
+        await setUserEncryptionKey(password);
         return hash(password);
     }catch(error){
         console.error('Błąd:', error);
@@ -216,21 +218,23 @@ ipcMain.handle('hash', async (event, password)=>{
 ipcMain.handle('encrypt-user-password', async (event,password)=>{
     let message = "";
     if(password && password !== null){
-        let encryptedPass = encryptUserPassword(password);
+        let encryptedPass = await encryptUserPassword(password);
         return {success: true, password: encryptedPass};
     }
     message = "Błąd odczytu hasła.";
-    return {success: false, message: message}
+    return {success: false, message: message}   ``
 });
 
 //odszyfrowanie hasła użytkownika
 ipcMain.handle('decrypt-user-password', async (event, password, inputSecurityPassword)=>{
     let message = "";
     if(password && password !== null && inputSecurityPassword && inputSecurityPassword !== null){
-        let userSecurityPassword = await getSecurityPasswordIfExist();
+        let result = await getSecurityPasswordIfExist();
+        let userSecurityPassword = result.securityPassword;
         if(userSecurityPassword && userSecurityPassword !== null){
-            if(userSecurityPassword === inputSecurityPassword){
-                let decryptedPass = decryptUserPassword(password, inputSecurityPassword);
+            let hashSecPass = await hash(inputSecurityPassword);
+            if(userSecurityPassword === hashSecPass){
+                let decryptedPass = await decryptUserPassword(password);
                 return {success: true, password: decryptedPass};
             } else{
                 message = "Podane hasło jest nieprawidłowe.";
@@ -409,12 +413,43 @@ ipcMain.handle('save-security-password', async (event, securityPassword)=>{
     }
 });
 
+ipcMain.handle('validate-security-password', async (event, recivedSecurityPassword) => {
+    try{
+        let response = await getSecurityPasswordIfExist();
+        if(response && response.success && response.securityPassword && recivedSecurityPassword){
+            let recivedPass = await hash(recivedSecurityPassword);
+            if(recivedPass === securityPassword){
+                return true;
+            }
+        }
+        return false;
+    } catch(err){
+        console.error("Błąd weryfikacji hasła:", err);
+        return false;
+    }
+});
+
+ipcMain.handle('user-password-encryption-key', async (event, userPassword)=>{
+    try{
+        console.log("user-password-encryption-key userPassword:", userPassword);
+        if(userPassword){
+            let result = await setUserEncryptionKey(userPassword);  
+        }else{
+            console.log('Brak podanego hasła użytkownika.');
+            //return {success: false};
+        }
+    }catch(err){
+        console.error("Błąd ustawiania hasła szyfrowania użytkownika:", err);
+        //return {success: false};
+    }
+});
+
 ipcMain.handle('validateNewSecurityPassword', (event, newSecurityPassword)=>{
     const response = validateNewSecurityPassword(newSecurityPassword);
     return response;
 });
 
-ipcMain.handle('setNewSecurityPassword', async (event, newSecurityPassword)=>{
+ipcMain.handle('set-new-security-password', async (event, newSecurityPassword)=>{
     console.log('setNewSecurityPassword:', newSecurityPassword);
     const response = await getSecurityPasswordIfExist();
     console.log('response:', response);

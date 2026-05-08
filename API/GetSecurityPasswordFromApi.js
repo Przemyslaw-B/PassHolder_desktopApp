@@ -6,9 +6,7 @@ async function getSecurityPasswordFromApi() {
   try {
     const tempUrls = await getConfigData();
     const url = tempUrls.getSecurityPassword;
-    //console.log('Weryfikacja url:', url);
     const token = await getToken();
-    //console.log("Sprawdzenie tokenu?", token);
     if(token === null){
       console.log("Brak tokenu?", token);
       return { success: false, error: "brak zapisanego tokenu"};
@@ -16,10 +14,8 @@ async function getSecurityPasswordFromApi() {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.post(
-      url, {
-        "userModMail": userModMail
-      },
+    const response = await axios.get(
+      url,
       {
       headers: {
         Authorization: `Bearer ${token}`

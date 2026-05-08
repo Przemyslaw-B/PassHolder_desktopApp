@@ -1,3 +1,5 @@
+let password = null;
+
 //Pobierz język
 async function getLanguagePack(){
   return await window.api.getLanguagePack();
@@ -86,10 +88,10 @@ async function loginValidation(){
       if(loginData.status === "Validated" && loginData.username != null){
         const rep = await window.api.setUser(loginData.username);
         const tokenRes = await window.api.saveToken(loginData.token);
-        if (loginData.status=="Validated") {
+        if (loginData.status ==="Validated") {
           const isAuthenticated = loginData.auth;
-          await saveSecurityPassword(); 
-          if(isAuthenticated === "true"){ // Jeśli 2FA nie jest wymagane
+          await saveSecurityPassword();
+          if(isAuthenticated === true){ // Jeśli 2FA nie jest wymagane
             const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
           }
           setAuthenticationContent();

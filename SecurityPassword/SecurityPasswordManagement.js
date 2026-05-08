@@ -3,6 +3,7 @@ const {getSecurityPasswordFromApi} = require('./../API/GetSecurityPasswordFromAp
 const {saveSecurityPasswordToApi} = require('./../API/SaveSecurityPasswordToApi.js');
 const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword.js');
 const {encrypt, decrypt} = require('./../Encryption/Encrypt.js');
+const {hash} = require('./../Encryption/Hash.js');
 //const {saveSecurityPassword, getSecurityPassword} = require('./../SecureStorage/securityPasswordStorage.js');
 
 async function getSecurityPasswordIfExist(){
@@ -14,8 +15,8 @@ async function getSecurityPasswordIfExist(){
     if(result.success){
         if(result.data && result.data.map.securityPassword !== null){
             const recievedPassword = result.data.map.securityPassword;
-            let decryptedPass = await decrypt(recievedPassword);
-            await setSecurityPassword(decryptedPass);
+            //let decryptedPass = await decrypt(recievedPassword);
+            await setSecurityPassword(recievedPassword);
             return {success: true, securityPassword: recievedPassword};
         } else{
             return {success: true, securityPassword: null};
@@ -27,9 +28,10 @@ async function getSecurityPasswordIfExist(){
 async function saveNewSecurityPassword(newSecurityPassword){
     let result = await getSecurityPasswordFromApi();
     if(result && result.success && result.data && (!result.data.map.securityPassword || result.data.map.securityPassword === null)){
-        let encryptedPass = await encrypt(newSecurityPassword);
-        await saveSecurityPasswordToApi(encryptedPass);
-        await setSecurityPassword(newSecurityPassword);
+        //let encryptedPass = await encrypt(newSecurityPassword);
+        let hashPass = await hash(newSecurityPassword);
+        await saveSecurityPasswordToApi(hashPass);
+        await setSecurityPassword(hashPass);
         return {success: true};
     }
     return {success: false, error: "hasło już istnieje"};
@@ -38,9 +40,11 @@ async function saveNewSecurityPassword(newSecurityPassword){
 async function updateSecurityPasswordToNewOne(oldSecurityPassword, newSecurityPassword){
     let result = await getSecurityPasswordFromApi();
     if(result && result.success && result.data && result.data.map.securityPassword){
-        let passwordInStorage = await decrypt(result.data.map.securityPassword);
+        let passwordInStorage = result.data.map.securityPassword; //await decrypt(result.data.map.securityPassword);
+        oldSecurityPassword = await hash(oldSecurityPassword);
         if(oldSecurityPassword && newSecurityPassword){
             if(oldSecurityPassword === passwordInStorage){
+                newSecurityPassword = await hash(newSecurityPassword);
                 const reult = await saveSecurityPasswordToApi(newSecurityPassword);
                 if(result.success){
                     await setSecurityPassword(newSecurityPassword);

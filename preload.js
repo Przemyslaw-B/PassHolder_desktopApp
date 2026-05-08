@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('api', {
   //Hashuj hasło
   hashPassword: (password) => ipcRenderer.invoke("hash", password),
   //szyfruj hasło użytkownika
-  encryptUSerPassword:(password) => ipcRenderer.invoke('encrypt-user-password', password),
+  encryptUserPassword:(password) => ipcRenderer.invoke('encrypt-user-password', password),
   //odszyfruj hasło użytkownika
   decryptUserPassword: (password,securityPassword) => ipcRenderer.invoke('decrypt-user-password', password, securityPassword),
 
@@ -42,20 +42,25 @@ contextBridge.exposeInMainWorld('api', {
   //Wyczyść zapisany token
   clearToken:() => ipcRenderer.invoke('clear-token'),
 
+  //Generuj klucz szyfrowania
+  setUserPasswordsEncryptionKey: (password) => ipcRenderer.send('user-password-encryption-key', password),
+
   //Zapisz lokalnie hasło bezpieczeństwa
   saveSecurityPasswordToLocal: (securityPassword) => ipcRenderer.invoke('save-security-password', securityPassword),
   //zapis nowego hasła bezpieczeństwa jeśli nie istnieje
-  setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('setNewSecurityPassword', newSecurityPassword),
+  setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('set-new-security-password', newSecurityPassword),
   //Odczytaj hasło bezpieczeństwa użytkownika
   getSecurityPassword: () => ipcRenderer.invoke('get-security-password'),
+
+
   //Wyczyść zapisane hasło bezpieczeństwa
   //clearSecurityPassword: () => ipcRenderer.invoke('clear-security-password'),
   //Czy hasło bezpieczenstwa jest ustawione
   isSecurityPasswordSet: ()=> ipcRenderer.invoke('isSecurityPasswordSet'),
-  // WEryfikacja spełnienia wymogów przez nowe hasło bezpieczeństwa
+  //Weryfikacja spełnienia wymogów przez nowe hasło bezpieczeństwa
   validateNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('validateNewSecurityPassword', newSecurityPassword),
-  //Weryfikacja czy podane hasło jest prawidłowe
-  validateSecurityPassword: (securityPassword)=> ipcRenderer.invoke('validateSecurityPassword', securityPassword),
+  //Weryfikuj poprawność hasła bezpieczeństwa
+  validateSecurityPassword: (securityPassword) => ipcRenderer.invoke('validate-security-password', securityPassword),
 
   //Pobierz rekordy z lokalnej bazy danych
   getStorage:() => ipcRenderer.invoke('get-storage'),

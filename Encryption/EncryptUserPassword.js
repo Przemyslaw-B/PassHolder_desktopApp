@@ -1,20 +1,23 @@
 const crypto = require("crypto");
-const {setSecurityPassword,getSecurityPassword} = require('./Encrypt.js');
+//const {setSecurityPassword,getSecurityPassword} = require('./Encrypt.js');
+//const {setSecurityPassword,getSecurityPassword} = require('./../SecurityPassword/SecurityPassword.js');
+const {setUserEncryptionKey,getUserEncryptionKey} = require('./../Encryption/UserPasswordEncryptionKey.js');
 
 async function encryptUserPassword(userPassword){
-    let securityPassword = await getSecurityPassword();
-    if(userPassword && userPassword !== null && securityPassword && securityPassword !== null){
-        const SECRET_KEY = crypto.createHash("sha256") .update(securityPassword).digest();
-        return encrypt(userPassword, SECRET_KEY);
-    }
+  let key = await getUserEncryptionKey();
+  console.log("klucz szyfrowania:", key);
+  if(key && key !== null){
+    return encrypt(userPassword, key);
+  }
+  return null;
 }
 
 async function decryptUserPassword(userPassword){
-    let securityPassword = await getSecurityPassword();
-    if(userPassword && userPassword !== null && securityPassword && securityPassword !== null){
-        const SECRET_KEY = crypto.createHash("sha256") .update(securityPassword).digest();
-        return decrypt(userPassword, SECRET_KEY);
-    }
+  let key = await getUserEncryptionKey();
+  if(key && key !== null){
+    return decrypt(userPassword, key);
+  }
+  return null;
 }
 
 function decrypt(input, SECRET_KEY){

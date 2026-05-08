@@ -7,6 +7,9 @@ let recordToDelete = null
 let recordToModify = null;
 let menuOpen = false;
 
+let pickedPass=null;
+let pickedPassVal=null;
+
 function initAddRecordFormOnce() { 
   if (formInitialized) {
     return; 
@@ -35,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelDeleting();
       confirmModify();
       cancelModifyModal();
+
+      userPasswordSecurityModalButtons();
     });
 });
 
@@ -177,7 +182,8 @@ async function setStorageGUI(data){
       const pwdListener = clone.querySelector("#password");
       pwdListener.addEventListener("click", async ()=>{
         if(passField.classList.contains("show-password")){
-          navigator.clipboard.writeText(await decryptPassword(picked.password));
+          let tempPass = clone.querySelector("#password").value;
+          navigator.clipboard.writeText(tempPass);//await decryptPassword(picked.password)
         }
       });
       //clone.querySelector("#remove-record").textContent="✕";
@@ -258,17 +264,26 @@ async function setStorageGUI(data){
       eye.classList.toggle("toggle-eye-visible");
       
       eye.addEventListener("click", async ()=>{
+        if(passField.classList.contains("show-password")){
+          passField.classList.remove("show-password");
+          eye.classList.toggle("toggle-eye-visible");
+          passField.textContent = "••••••";
+        } else{
+          pickedPass = passField;
+          pickedPassVal = picked.password;
+          showUserPasswordSecurityModal();
+        }
+        /*
       if(passField.classList.contains("show-password")){
         passField.classList.remove("show-password");
-        //eye.textContent="👁️";
         eye.classList.toggle("toggle-eye-visible");
         passField.textContent = "••••••";
       } else{
         passField.classList.add("show-password");
-        //eye.textContent="🙈";
         eye.classList.toggle("toggle-eye-visible");
         passField.textContent = await decryptPassword(picked.password);
       }
+        */
       });
       //ExpirationDate
       const isRotation = await isRotationEnabled(picked.rotation);
@@ -354,7 +369,7 @@ async function initAddRecordForm(){
   newSaveButton.addEventListener("click", async ()=>{
     valUrl=newUrl.value;
     valLogin=newLogin.value;
-    valPassword=await encryptPassword(newPassword.value);
+    valPassword=await encryptUserPassword(newPassword.value);
     const data = {
       url: valUrl,
       login: valLogin,
@@ -434,6 +449,24 @@ async function removeRecord(){
   }
 }
 
+function showUserPasswordSecurityModal(){
+    let showPassSecurityModal = document.getElementById("security-modal");
+    showPassSecurityModal.classList.remove("hidden");
+}
+
+function hideUserPasswordSecurityModal(){
+  let showPassSecurityModal = document.getElementById("security-modal");
+  showPassSecurityModal.classList.add("hidden");
+  document.getElementById("security-modal-password").value = "";
+  pickedPass = null;
+  pickedPassVal = null;
+}
+
+async function getDecryptedPassword(password, securityPassword){
+  let decryptedPassword = await window.api.decryptUserPassword(password, securityPassword);
+  return decryptedPassword 
+}
+
 //Pokaż okno edycji rekordu
 function showModifyModal(url, login, rotation){
   //console.log("Rotacja wybranego rekordu: ", rotation);
@@ -470,7 +503,7 @@ function confirmModify(){
 //Zatwierdź zmiany rekordu i wyślij do api
 async function sendModifyToApi(){
   let newLogin = document.getElementById("modify-login").value;
-  let newPassowrd = await encryptPassword(document.getElementById("modify-password").value);
+  let newPassowrd = await encryptUserPassword(document.getElementById("modify-password").value);
   let newUrl = document.getElementById("modify-url").value;
   let newRotation = document.getElementById("modify-rotation").value;
   try{
@@ -533,6 +566,21 @@ function cancelDeleting(){
 async function encryptPassword(password){
   const safePass = await window.api.encryptPassword(password);
   return safePass;
+}
+
+//Zaszyfruj hasło użytkownika
+async function encryptUserPassword(password){
+  //console.log("password:", password);
+  let result = await window.api.encryptUserPassword(password);
+  //console.log("result:", result);
+  return result.password;
+}
+
+//Odszyfruj hasło użytkownika
+async function decryptUserPassword(password, securityPassword){
+  const safePass = await window.api.decryptUserPassword(password, securityPassword);
+  //console.log("safePass", safePass);
+  return safePass.password;
 }
 
 //Odszyfruj
@@ -630,6 +678,35 @@ function clearSelectedData(){
   recordToDelete = null
   recordToModify = null;
   menuOpen = false;
+}
+
+function userPasswordSecurityModalButtons(){
+  let userPasswordSecurityModalCancelButton = document.getElementById("user-password-security-modal-cancel-button");
+  let userPasswordSecurityModalConfirmButton = document.getElementById("user-password-security-modal-confirm-button");
+
+  userPasswordSecurityModalCancelButton.addEventListener("click", (e) => {
+    hideUserPasswordSecurityModal();
+  });
+
+  userPasswordSecurityModalConfirmButton.addEventListener("click", async (e) => {
+    let userSecurityPassInput = document.getElementById("security-modal-password").value;
+    if(userSecurityPassInput && pickedPass){
+      let result = await validateSecurityPassword(userSecurityPassInput);
+      if(result){
+        let decryptedPass = await decryptUserPassword(pickedPassVal, userSecurityPassInput);
+        if(decryptedPass){
+          console.log(decryptedPass);
+        pickedPass.textContent = decryptedPass;
+        hideUserPasswordSecurityModal();
+      }
+      }
+    }
+  });
+}
+
+async function validateSecurityPassword(securityPass){
+  let result = await window.api.validateSecurityPassword(securityPass);
+  return result;
 }
 
 // Odebranie klucza publicznego
