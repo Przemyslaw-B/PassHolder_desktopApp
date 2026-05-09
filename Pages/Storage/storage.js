@@ -1,4 +1,3 @@
-//const { getSecurityPassword } = require("../../SecureStorage/securityPasswordStorage");
 let formInitialized = false;
 let pickedId;
 let pickedRecordData = null;
@@ -9,6 +8,7 @@ let menuOpen = false;
 
 let pickedPass=null;
 let pickedPassVal=null;
+let pickedPassEye=null;
 
 function initAddRecordFormOnce() { 
   if (formInitialized) {
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
       storageContainer.innerHTML = html;
       initAddRecordFormOnce();
       securityPasswordModal();
-      loadStorage();
+      userPasswordSecurityModalButtons();
 
       //closingMenuByClick();
       initMenuActions(); 
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmModify();
       cancelModifyModal();
 
-      userPasswordSecurityModalButtons();
+      loadStorage();
     });
 });
 
@@ -110,6 +110,9 @@ async function loadStorage(){
     if(!isSecurityPassword){  //brak ustawionego hasła bezpieczeństwa
       showSecurityPasswordModal();
     } else{
+      if(isSecurityPasswordRequired){
+        showUserPasswordSecurityModal();
+      }
       hideSecurityPasswordModal();
       const data = await downloadData();
       console.log(data);
@@ -262,16 +265,18 @@ async function setStorageGUI(data){
       //passField.classList.add("show-password");
       //eye.textContent = "👁️";
       eye.classList.toggle("toggle-eye-visible");
-      
       eye.addEventListener("click", async ()=>{
+        pickedPassEye = eye;
         if(passField.classList.contains("show-password")){
           passField.classList.remove("show-password");
           eye.classList.toggle("toggle-eye-visible");
           passField.textContent = "••••••";
         } else{
+          let isSecPassRequired = await isSecurityPasswordRequired();
           pickedPass = passField;
           pickedPassVal = picked.password;
-          showUserPasswordSecurityModal();
+          await showPassword();
+          //showUserPasswordSecurityModal();
         }
         /*
       if(passField.classList.contains("show-password")){
@@ -349,9 +354,21 @@ async function initAddRecordForm(){
   const newPassword = document.getElementById("new-password");
 
   //Rozwinięcie formularza
-  addRecordButton.addEventListener("click", ()=>{
-    addRecordButton.style.display="none"  //Ukryj ten przycisk
-    form.classList.remove("hidden");  //Pokaż formularz
+  addRecordButton.addEventListener("click", async ()=>{
+    let result = await isSecurityPasswordRequired();
+    if(result){
+      showUserPasswordSecurityModal();
+    } else {
+      addRecordButton.style.display="none"  //Ukryj ten przycisk
+      form.classList.remove("hidden");  //Pokaż formularz
+      setTimeout(() => {
+        newUrl.value="";
+        newLogin.value="";
+        newPassword.value="";
+        form.classList.add("hidden"); //ukryj formularz
+        addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
+      }, 30 * 1000);
+    }
   });
 
   //Odrzucenie formularze
@@ -449,6 +466,14 @@ async function removeRecord(){
   }
 }
 
+async function isSecurityPasswordRequired(){
+  let result = await window.api.isSecurityPasswordRequired();
+  if(result){
+    return true;
+  }
+  return false;
+}
+
 function showUserPasswordSecurityModal(){
     let showPassSecurityModal = document.getElementById("security-modal");
     showPassSecurityModal.classList.remove("hidden");
@@ -462,8 +487,8 @@ function hideUserPasswordSecurityModal(){
   pickedPassVal = null;
 }
 
-async function getDecryptedPassword(password, securityPassword){
-  let decryptedPassword = await window.api.decryptUserPassword(password, securityPassword);
+async function getDecryptedPassword(password){
+  let decryptedPassword = await window.api.decryptUserPassword(password);
   return decryptedPassword 
 }
 
@@ -577,8 +602,8 @@ async function encryptUserPassword(password){
 }
 
 //Odszyfruj hasło użytkownika
-async function decryptUserPassword(password, securityPassword){
-  const safePass = await window.api.decryptUserPassword(password, securityPassword);
+async function decryptUserPassword(password){
+  const safePass = await window.api.decryptUserPassword(password);
   //console.log("safePass", safePass);
   return safePass.password;
 }
@@ -683,25 +708,60 @@ function clearSelectedData(){
 function userPasswordSecurityModalButtons(){
   let userPasswordSecurityModalCancelButton = document.getElementById("user-password-security-modal-cancel-button");
   let userPasswordSecurityModalConfirmButton = document.getElementById("user-password-security-modal-confirm-button");
-
   userPasswordSecurityModalCancelButton.addEventListener("click", (e) => {
     hideUserPasswordSecurityModal();
   });
-
   userPasswordSecurityModalConfirmButton.addEventListener("click", async (e) => {
     let userSecurityPassInput = document.getElementById("security-modal-password").value;
-    if(userSecurityPassInput && pickedPass){
+    if(userSecurityPassInput){
       let result = await validateSecurityPassword(userSecurityPassInput);
       if(result){
-        let decryptedPass = await decryptUserPassword(pickedPassVal, userSecurityPassInput);
-        if(decryptedPass){
-          console.log(decryptedPass);
-        pickedPass.textContent = decryptedPass;
+        await window.api.setSecurityPassword(userSecurityPassInput);
+        //let decryptedPass = await decryptUserPassword(pickedPassVal);
         hideUserPasswordSecurityModal();
-      }
+        if(pickedPass && pickedPassEye && pickedPassVal){
+          await showPassword();
+        }
+        /*
+        if(decryptedPass){
+          //console.log(decryptedPass);
+          pickedPass.textContent = decryptedPass;
+          hideUserPasswordSecurityModal();
+        }
+          */
       }
     }
   });
+}
+
+function hidePassword(passField, pickedPassEye){
+  if(passField.classList.contains("show-password")){
+    passField.classList.remove("show-password");
+    pickedPassEye.classList.toggle("toggle-eye-visible");
+    passField.textContent = "••••••";
+  }
+  pickedPass = null;
+  pickedPassEye = null;
+  pickedPassVal = null;
+}
+
+async function showPassword(){
+  let isSecurityPasswordRequired = await window.api.isSecurityPasswordRequired();
+  if(isSecurityPasswordRequired){
+    showUserPasswordSecurityModal();
+  } else {
+    if(!pickedPass.classList.contains("show-password")){
+      pickedPass.classList.add("show-password");
+      pickedPassEye.classList.toggle("toggle-eye-visible");
+      let decryptedPass = await decryptUserPassword(pickedPassVal);
+      pickedPass.textContent = decryptedPass;
+      tempPass = pickedPass;
+      tempEye = pickedPassEye;
+      setTimeout(() => {
+      hidePassword(tempPass, tempEye);
+      }, 15 * 1000);  //ukryj hasło po 15s
+    }
+  }
 }
 
 async function validateSecurityPassword(securityPass){

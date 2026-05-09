@@ -1,6 +1,5 @@
-let password = null;
-
 //Pobierz język
+/*
 async function getLanguagePack(){
   return await window.api.getLanguagePack();
 }
@@ -44,9 +43,11 @@ async function setLanguage(lang) {
  
 }
 
+*/
+
 window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('lang-PL').addEventListener('click', () => setLanguage('pl'));
-  document.getElementById('lang-EN').addEventListener('click', () => setLanguage('en'));
+  //document.getElementById('lang-PL').addEventListener('click', () => setLanguage('pl'));
+  //document.getElementById('lang-EN').addEventListener('click', () => setLanguage('en'));
 });
 
 window.addEventListener('DOMContentLoaded', ()=>{
@@ -90,7 +91,7 @@ async function loginValidation(){
         const tokenRes = await window.api.saveToken(loginData.token);
         if (loginData.status ==="Validated") {
           const isAuthenticated = loginData.auth;
-          await saveSecurityPassword();
+          await saveSecurityPasswordHash();
           if(isAuthenticated === true){ // Jeśli 2FA nie jest wymagane
             const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
           }
@@ -98,21 +99,23 @@ async function loginValidation(){
         }
       } else{
         //Błędne dane logowania
-        const labels = await getLanguagePack();
-        const message = labels.wrongPassword;
+        //const labels = await getLanguagePack();
+        //const message = labels.wrongPassword;
+        const message = "Podano niewłaściwe dane logowania";
         showMessage(message);
       }
     }
   } else {
     //Nie podano danych logowania
-    const labels = await getLanguagePack();
-    const message = labels.lackOfLoginDetails;
+    //const labels = await getLanguagePack();
+    //const message = labels.lackOfLoginDetails;
+    const message = "Dane logowania nie zostały podane";
     showMessage(message);
   }
 }
 
-async function saveSecurityPassword(){
-  let response = await window.api.getSecurityPassword();
+async function saveSecurityPasswordHash(){
+  let response = await window.api.getSecurityPasswordHash();
   return response;
 }
 
@@ -166,8 +169,9 @@ async function setUser(username){
   document.getElementById("auth-confirm-button").addEventListener("click", async () => {
     const authCode = document.getElementById("auth-input").value.trim();
     if(authCode==="" || authCode.length != 6){
-      const labels = await getLanguagePack();
-      const message = labels.wrongAuthKey;
+      //const labels = await getLanguagePack();
+      //const message = labels.wrongAuthKey;
+      const message = "Podany kod jest nieprawidłowy";
       showMessage(message);
     } else{
       const response = await authentication(authCode);
@@ -177,8 +181,9 @@ async function setUser(username){
         const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
       } else{
         //Podano zły klucz autoryzacji
-        const labels = await getLanguagePack();
-        const message = labels.wrongAuthKey;
+        //const labels = await getLanguagePack();
+        //const message = labels.wrongAuthKey;
+        const message = "Podany kod jest nieprawidłowy";
         showMessage(message);
       }
     }
@@ -235,32 +240,37 @@ async function setUser(username){
     const data = await response.json();
     if(data.status==="emptyForm"){
       //Nie wypełniono całego formularza
-      const labels = await getLanguagePack();
-      const message = labels.creatingAccountEmptyForm;
+      //const labels = await getLanguagePack();
+      //const message = labels.creatingAccountEmptyForm;
+      const message = "Nie podano wszystkich danych";
       showMessage(message);
   } else if(data.status==="alreadyExist"){
     //Email jest już zajęty
-    const labels = await getLanguagePack();
-    const message = labels.creatingAccountAlreadyExist;
+    //const labels = await getLanguagePack();
+    //const message = labels.creatingAccountAlreadyExist;
+    const message = "Email jest już użyty";
     console.log(labels);
     showMessage(message);
   } else if(data.status==="accountCreated"){
     //Konto zostało utworzone
-    const labels = await getLanguagePack();
-    const message = labels.creatingAccountAccountCreated;
+    //const labels = await getLanguagePack();
+    //const message = labels.creatingAccountAccountCreated;
+    const message = "Konto zostało utowrzone";
     showMessage(message);
     setLoginContent();
   }
     } else{
       //Nie wypełniono całego formularza
-      const labels = await getLanguagePack();
-      const message = labels.creatingAccountEmptyForm;
+      //const labels = await getLanguagePack();
+      //const message = labels.creatingAccountEmptyForm;
+      const message = "Nie podano wszystkich danych";
       showMessage(message);
     }
   } else{
     //Hasło jest zbyt krótkie
-    const labels = await getLanguagePack();
-    const message = labels.toShortPassword;
+    //const labels = await getLanguagePack();
+    //const message = labels.toShortPassword;
+    const message = "Hasło jest zbyt krótkie. (Minimum 6 znaków)";
     showMessage(message);
   }
     

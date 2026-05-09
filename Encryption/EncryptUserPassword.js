@@ -1,6 +1,6 @@
 const crypto = require("crypto");
-//const {setSecurityPassword,getSecurityPassword} = require('./Encrypt.js');
-//const {setSecurityPassword,getSecurityPassword} = require('./../SecurityPassword/SecurityPassword.js');
+//const {setSecurityPassword,getSecurityPassword} = require('./../');
+const {setSecurityPassword,getSecurityPassword} = require('./../SecurityPassword/SecurityPassword.js');
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./../Encryption/UserPasswordEncryptionKey.js');
 
 async function encryptUserPassword(userPassword){

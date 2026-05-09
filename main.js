@@ -1,11 +1,11 @@
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron');
-const {selectLanguage} = require('./Language/LanguageSelector.js');
+//const {selectLanguage} = require('./Language/LanguageSelector.js');
 const {getConfigData} = require('./API/GetConfigData.js');
 const {encrypt,decrypt} = require('./Encryption/Encrypt.js');
 const {hash} = require('./Encryption/Hash.js');
 const {defaultLanguage} = require('./Language/DefaultLanguage.js');
 const {runTray} = require('./Tray/RunTray.js');
-const {loadTrayLanguage, setCurrentWindowForTray, trayOpenFunction} = require('./Tray/LoadTrayLanguage.js');
+const {loadTray, setCurrentWindowForTray, trayOpenFunction} = require('./Tray/LoadTrayLanguage.js');
 const {makeLoginWindow} = require('./WindowsMakers/Login/MakeLoginWindow.js');
 const {makeMainWindow} = require('./WindowsMakers/Main/MakeMainWindow.js');
 const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js');
@@ -13,6 +13,7 @@ const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.
 const {encryptUserPassword, decryptUserPassword} = require('./Encryption/EncryptUserPassword.js');
 //const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
 const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
+const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword/SecurityPassword.js');
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
 const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
 const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
@@ -30,7 +31,8 @@ const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
 
 const path = require('path')
 const fs = require('fs');
-const { config } = require('process')
+const { config } = require('process');
+const { ServerResponse } = require('http');
 
 const appName="PassHolder";
 
@@ -45,8 +47,8 @@ let securityPassword;
 let isLoggedIn = false; //flaga zalogowania
 let isQuitting = false; // Flaga zamknięcia aplikacji
 
-let selectedLanguage;
-let languageData; 
+//let selectedLanguage;
+//let languageData; 
 let user;
 let userId;
 let db;
@@ -74,7 +76,7 @@ if(!getInstanceLock){
     app.whenReady().then(() => {
     //disableDevTools();            //Wyłącz DevTools w aplikacji
     initDB();                       //Inicjalizacja lokalnej Bazy Danych
-    selectDefaultLanguage();        //Domyślny język
+    //selectDefaultLanguage();        //Domyślny język
     //clearSecurityPassword();        //Usuń zapisane Security Password
     createLoginWindow();            //Otwarcie okna Logowania
     startInTray();                  //Uruchomienie Aplikacji w Tray
@@ -97,10 +99,12 @@ app.on('browser-window-created', (_, window) => {
 });
 }
 
+/*
 // Ustawienie języka domyślnego.
 function selectDefaultLanguage(){
    selectedLanguage, languageData = defaultLanguage();
 }
+   */
 
 // Wyłącz wyłączanie aplikacji, gdy wszystkie okna są wyłączone
 app.on('window-all-closed', (event) => {
@@ -150,12 +154,13 @@ function createMainWindow(){
     });
 }
 
+/*
 //  Załadowanie wersji językowej. (Domyślnie język systemowy (pl) lub en)
 ipcMain.handle('load-language', async (event, lang) => {    
     try{
         selectedLanguage = lang;
-        languageData = selectLanguage(lang);
-        trayLanguageReload(); // Załaduj język do menu Tray
+        //languageData = selectLanguage(lang);
+        trayReload(); // Załaduj język do menu Tray
         return { success: true, data: languageData };
     }catch (error) {
     console.error('Błąd:', error);
@@ -172,6 +177,7 @@ ipcMain.handle('get-language-pack', async(event)=>{
     return { success: false, error: error.message };
   }
 });
+*/
 
 // Załaduj plik konfiguracji endpointów api
 ipcMain.handle('load-apiConfig', async (event) => {
@@ -226,8 +232,13 @@ ipcMain.handle('encrypt-user-password', async (event,password)=>{
 });
 
 //odszyfrowanie hasła użytkownika
-ipcMain.handle('decrypt-user-password', async (event, password, inputSecurityPassword)=>{
+ipcMain.handle('decrypt-user-password', async (event, password)=>{
     let message = "";
+    let inputSecurityPassword = getSecurityPassword();
+    if(!inputSecurityPassword){
+        message = "Wymagane hasło bezpieczeństwa";
+        return {success: false, message: message}
+    }
     if(password && password !== null && inputSecurityPassword && inputSecurityPassword !== null){
         let result = await getSecurityPasswordIfExist();
         let userSecurityPassword = result.securityPassword;
@@ -389,7 +400,7 @@ ipcMain.handle('clear-token', async ()=>{
     }
 });
 
-ipcMain.handle('get-security-password', async ()=>{
+ipcMain.handle('get-security-password-hash', async ()=>{
     try{
         let response = await getSecurityPasswordIfExist();
         if(response && response.success && response.securityPassword){
@@ -400,6 +411,29 @@ ipcMain.handle('get-security-password', async ()=>{
     } catch(err){
         console.error("Błąd kasowania tokenu:", err);
         return {success: false};
+    }
+});
+
+ipcMain.handle('get-security-password', ()=>{
+    try{
+        let response = getSecurityPassword();
+        if(response){
+            return response;
+        }
+        return null;
+    } catch(err){
+        console.error("Błąd kasowania tokenu:", err);
+        return null;
+    }
+});
+
+ipcMain.handle('set-security-password', (event, input)=>{
+    try{
+        if(input){
+            setSecurityPassword(input);
+        }
+    } catch(err){
+        console.error("Błąd kasowania tokenu:", err);
     }
 });
 
@@ -414,18 +448,35 @@ ipcMain.handle('save-security-password', async (event, securityPassword)=>{
 });
 
 ipcMain.handle('validate-security-password', async (event, recivedSecurityPassword) => {
+    //console.log("validate-security-password'...");
     try{
         let response = await getSecurityPasswordIfExist();
         if(response && response.success && response.securityPassword && recivedSecurityPassword){
             let recivedPass = await hash(recivedSecurityPassword);
             if(recivedPass === securityPassword){
+               // console.log("validate-security-password TRUE");
                 return true;
             }
         }
+        //console.log("validate-security-password FALSE");
         return false;
     } catch(err){
         console.error("Błąd weryfikacji hasła:", err);
         return false;
+    }
+});
+
+ipcMain.handle('is-security-password-required', () =>{
+    try{
+        let response = getSecurityPassword();
+            //console.log("is-security-password-required response:", response);
+        if(response && response !== null){
+            return false;
+        }
+        return true;
+    } catch(err){
+        console.error("Błąd weryfikacji hasła:", err);
+        return true;
     }
 });
 
@@ -481,7 +532,7 @@ ipcMain.handle('clear-security-password', async ()=>{
 });
 */
 
-ipcMain.handle('isSecurityPasswordSet', async()=>{
+ipcMain.handle('is-security-password-set', async()=>{
     try{
         let response = await getSecurityPasswordIfExist();
         //console.log('response:', response);
@@ -536,13 +587,13 @@ function initDB(){
 function startInTray(){
     if(tray==null){
         tray = runTray();  
-        trayLanguageReload();
+        trayReload();
     }
 }
 
 // Ładowanie języka Tray
-function trayLanguageReload(){
-    tray = loadTrayLanguage(tray, languageData);
+function trayReload(){
+    tray = loadTray(tray);
 }
 
 // Zamknięcie aplikacji

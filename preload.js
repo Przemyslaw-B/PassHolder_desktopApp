@@ -2,10 +2,11 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
   //Załaduj wybrany pakiet językowy
-  loadLanguage: (lang) => ipcRenderer.invoke('load-language', lang),
+  //loadLanguage: (lang) => ipcRenderer.invoke('load-language', lang),
   //Zwróć używaną paczkę językową
-  getLanguagePack: () => ipcRenderer.invoke('get-language-pack'),
+  //getLanguagePack: () => ipcRenderer.invoke('get-language-pack'),
   //Załaduj konfigurację endpointów.
+  
   loadApiConfig: () => ipcRenderer.invoke("load-apiConfig"),
   //Szyfruj Hasło
   encryptPassword: (password) => ipcRenderer.invoke("encrypt-password", password),
@@ -16,7 +17,7 @@ contextBridge.exposeInMainWorld('api', {
   //szyfruj hasło użytkownika
   encryptUserPassword:(password) => ipcRenderer.invoke('encrypt-user-password', password),
   //odszyfruj hasło użytkownika
-  decryptUserPassword: (password,securityPassword) => ipcRenderer.invoke('decrypt-user-password', password, securityPassword),
+  decryptUserPassword: (password) => ipcRenderer.invoke('decrypt-user-password', password),
 
   //modyfikuj rolę wybranego użytkownika do domyślnego username
   setUserRoleToDefault: (userModMail) => ipcRenderer.invoke("set-user-role-to-default", userModMail),
@@ -48,15 +49,23 @@ contextBridge.exposeInMainWorld('api', {
   //Zapisz lokalnie hasło bezpieczeństwa
   saveSecurityPasswordToLocal: (securityPassword) => ipcRenderer.invoke('save-security-password', securityPassword),
   //zapis nowego hasła bezpieczeństwa jeśli nie istnieje
-  setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('set-new-security-password', newSecurityPassword),
+  setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.handle('set-new-security-password', newSecurityPassword),
+
+
+  //Odczytaj hash hasła bezpieczeństwa użytkownika
+  getSecurityPasswordHash: () => ipcRenderer.invoke('get-security-password-hash'),
   //Odczytaj hasło bezpieczeństwa użytkownika
   getSecurityPassword: () => ipcRenderer.invoke('get-security-password'),
+  //Ustaw lokalnie hasło bezpieczeństwa
+  setSecurityPassword: (securityPassword) => ipcRenderer.invoke('set-security-password', securityPassword),
+  //Czy należy podać hasło bezpieczeństwa
+  isSecurityPasswordRequired:() => ipcRenderer.invoke('is-security-password-required'),
 
 
   //Wyczyść zapisane hasło bezpieczeństwa
   //clearSecurityPassword: () => ipcRenderer.invoke('clear-security-password'),
   //Czy hasło bezpieczenstwa jest ustawione
-  isSecurityPasswordSet: ()=> ipcRenderer.invoke('isSecurityPasswordSet'),
+  isSecurityPasswordSet: ()=> ipcRenderer.invoke('is-security-password-set'),
   //Weryfikacja spełnienia wymogów przez nowe hasło bezpieczeństwa
   validateNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('validateNewSecurityPassword', newSecurityPassword),
   //Weryfikuj poprawność hasła bezpieczeństwa

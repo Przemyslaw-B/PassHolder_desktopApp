@@ -2,13 +2,13 @@ const {app, Menu} = require('electron')
 
 let currentWindow;
 
-function loadTrayLanguage(tray, languageData){
-    if(tray != null && languageData != null){
+function loadTray(tray){
+    if(tray != null){
             const contextMenu = Menu.buildFromTemplate([
-            { label: languageData.openApp, click: () => trayOpenFunction() },   // Otwarcie ukrytego okna
-            { label: languageData.exit, click: () => app.quit() },              // Zamknięcie całkowite aplikacji
+            { label: "Otwórz", click: () => trayOpenFunction() },   // Otwarcie ukrytego okna
+            { label: "Wyjście", click: () => app.quit() },              // Zamknięcie całkowite aplikacji
             ]);
-            tray.setToolTip(languageData.appName);
+            tray.setToolTip("PassHolder");
             tray.setContextMenu(contextMenu);
             // Obsługa podwójnego kliknięcia
             tray.on('double-click', () => {
@@ -29,4 +29,4 @@ function setCurrentWindowForTray(newWindow){
     currentWindow = newWindow;
 }
 
-module.exports = {loadTrayLanguage, setCurrentWindowForTray, trayOpenFunction};
+module.exports = {loadTray, setCurrentWindowForTray, trayOpenFunction};

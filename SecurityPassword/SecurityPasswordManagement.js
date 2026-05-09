@@ -2,12 +2,13 @@ const { read } = require('original-fs');
 const {getSecurityPasswordFromApi} = require('./../API/GetSecurityPasswordFromApi.js');
 const {saveSecurityPasswordToApi} = require('./../API/SaveSecurityPasswordToApi.js');
 const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword.js');
+const {setSecurityPasswordHash, getSecurityPasswordHash} = require('./SecurityPasswordHash.js');
 const {encrypt, decrypt} = require('./../Encryption/Encrypt.js');
 const {hash} = require('./../Encryption/Hash.js');
 //const {saveSecurityPassword, getSecurityPassword} = require('./../SecureStorage/securityPasswordStorage.js');
 
 async function getSecurityPasswordIfExist(){
-    let pass = await getSecurityPassword();
+    let pass = await getSecurityPasswordHash();
     if(pass && pass !== null){
         return {success: true, securityPassword: pass};
     }
@@ -16,7 +17,7 @@ async function getSecurityPasswordIfExist(){
         if(result.data && result.data.map.securityPassword !== null){
             const recievedPassword = result.data.map.securityPassword;
             //let decryptedPass = await decrypt(recievedPassword);
-            await setSecurityPassword(recievedPassword);
+            await setSecurityPasswordHash(recievedPassword);
             return {success: true, securityPassword: recievedPassword};
         } else{
             return {success: true, securityPassword: null};

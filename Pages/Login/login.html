@@ -14,43 +14,46 @@
   <link rel="stylesheet" href="login.css">
   <script src="login.js" defer></script>
 </head>
+
 <body>
+  <!-- 
   <div class="language-switch">
     <button id="lang-PL">PL</button>
     <button id="lang-EN">EN</button>
   </div>
+  -->
 
   <div class="login-container">
-    <h1 id="loginTitle" class="title-class">Log in</h1>
+    <h1 id="loginTitle" class="title-class">Logowanie</h1>
     <input type="text" id="email" class="formular-row" placeholder="Email" />
-    <input type="password" id="password" class="formular-row" placeholder="Password" />
-    <button id="loginButton">Log in</button>
+    <input type="password" id="password" class="formular-row" placeholder="Hasło" />
+    <button id="loginButton">Zaloguj</button>
     <div class="links">
-      <a href="#" id="createAccount">Create new account</a>
+      <a href="#" id="createAccount">Utwórz nowe konto</a>
       <!-- <a href="#" id="forgotPassword">Forgot password?</a> -->
     </div>
   </div>
 
   <div class="auth-container">
-    <h1 id="authorization-title" class="title-class">Authorization</h1>
-    <h2 id="auth-explain">Use the code that was sent to you..</h2>
+    <h1 id="authorization-title" class="title-class">Autoryzacja</h1>
+    <h2 id="auth-explain">Kod weryfikacyjny został wysłany.</h2>
     <input type="text" id="auth-input" class="formular-row" name="code" maxlength="6"> 
     <div class="button-row">
-      <button type="button" id="auth-cancel-button" class="default-button">Cancel</button>
-      <button type="button" id="auth-confirm-button" class="default-button">Confirm</button>
+      <button type="button" id="auth-cancel-button" class="default-button">Anuluj</button>
+      <button type="button" id="auth-confirm-button" class="default-button">Potwierdź</button>
     </div>
   </div>
 
 <div class="new-account-container">
-  <h1 id="create-account-title" class="title-class">Create account</h1>
+  <h1 id="create-account-title" class="title-class">Utwórz konto</h1>
   <div class="formular-box">
     <input type="text" id="creatingAcc-email-input" class="formular-row" placeholder="Email">
-    <input type="text" id="creatingAcc-name-input" class="formular-row" placeholder="Name">
-    <input type="password" id="creatingAcc-passwordinput" class="formular-row" placeholder="Password">
+    <input type="text" id="creatingAcc-name-input" class="formular-row" placeholder="Imie">
+    <input type="password" id="creatingAcc-passwordinput" class="formular-row" placeholder="Hasło">
   </div>
   <div class="button-row">
-    <button type="button" id="new-account-cancel-button" class="default-button">Cancel</button>
-    <button type="button" id="new-account-confirm-button" class="default-button">Confirm</button>
+    <button type="button" id="new-account-cancel-button" class="default-button">Anuluj</button>
+    <button type="button" id="new-account-confirm-button" class="default-button">Potwierdź</button>
   </div>
 </div>
 
