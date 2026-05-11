@@ -1,0 +1,52 @@
+.hidden{
+    display: none;
+}
+
+#settings-container{
+    gap: 2rem;
+}
+
+#phone-number-space{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    user-select: none;
+}
+
+#settings-phone-input{
+    height: 1.5rem;
+    width: 10rem;
+    border-radius: 0.5rem;
+}
+
+.settings-button{
+    user-select: none;
+    min-width: 5rem;
+    min-height: 2rem;
+    background-color: #3c4d5f;
+    color: white;
+    border-radius: 0.5rem;
+}
+
+#settings-add-number:hover{ 
+    background-color: #3c4d5f;
+    color: #1abc9c;
+    cursor: pointer;
+}
+
+#settings-edit-number:hover{
+    background-color: #3c4d5f;
+    color: #1abc9c;
+    cursor: pointer;
+}
+
+.standby{
+    background-color: #ccc;
+    color: #6e6e6e;
+}
+
+#auth-methode{
+    min-height: 2rem;
+    min-width: 7rem;
+    border-radius: 0.5rem;
+}

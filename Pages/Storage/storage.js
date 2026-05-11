@@ -115,7 +115,7 @@ async function loadStorage(){
       }
       hideSecurityPasswordModal();
       const data = await downloadData();
-      console.log(data);
+      //console.log(data);
       await setStorageGUI(data);
     }
   }catch(err){
@@ -134,7 +134,7 @@ async function downloadData(){
     const tokenRes = await window.api.loadToken();
     const token = tokenRes.token;
     if(!tokenRes.success || token==null){
-      console.log("Brak tokenu użytkownik nie jest zalogowany");
+      //console.log("Brak tokenu użytkownik nie jest zalogowany");
       console.error("Brak tokenu użytkownik nie jest zalogowany");
       return null;
     }
@@ -291,6 +291,8 @@ async function setStorageGUI(data){
         */
       });
       //ExpirationDate
+      
+      /*
       const isRotation = await isRotationEnabled(picked.rotation);
       const expDateField = clone.querySelector("#exp-date");
       if(isRotation){ //jeśli rotacja włączona
@@ -311,6 +313,8 @@ async function setStorageGUI(data){
         expDateField.classList.remove("expired");
         expDateField.classList.add("not-expired");
       }
+      */
+
       container.appendChild(clone);
    }
   } else {
@@ -493,7 +497,7 @@ async function getDecryptedPassword(password){
 }
 
 //Pokaż okno edycji rekordu
-function showModifyModal(url, login, rotation){
+function showModifyModal(url, login){
   //console.log("Rotacja wybranego rekordu: ", rotation);
   document.getElementById("modify-modal").classList.remove("hidden");
   //Placeholders
@@ -505,7 +509,7 @@ function showModifyModal(url, login, rotation){
   document.getElementById("modify-url").value = url;
   document.getElementById("modify-login").value = login;
   document.getElementById("modify-password").value="";
-  document.getElementById("modify-rotation").value=rotation;
+  //document.getElementById("modify-rotation").value=rotation;
 }
 
 //Anuluj i zamknij okno edycji rekordu
@@ -660,8 +664,8 @@ function initMenuActions() {
     e.stopPropagation();
     recordToModify = selectedRecord;
     //showModifyModalById(recordToModify);
-    console.log(pickedRecordData);
-    showModifyModal(pickedRecordData.url, pickedRecordData.login, pickedRecordData.rotation);
+    //console.log(pickedRecordData);
+    showModifyModal(pickedRecordData.url, pickedRecordData.login);
     menu.classList.add("hidden");
   });
 

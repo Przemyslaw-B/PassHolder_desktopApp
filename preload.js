@@ -88,5 +88,10 @@ contextBridge.exposeInMainWorld('api', {
   //Zmiana ilości dni wygaśnięcia hasła
   rotationTimeUpdate:(time) => ipcRenderer.invoke('update-rotation-time', time),
   // Sprawdź czy hasło wygasło
-  isPasswordExpired:(idPass) => ipcRenderer.invoke('is-password-expired', idPass)
+  isPasswordExpired:(idPass) => ipcRenderer.invoke('is-password-expired', idPass),
+
+  //Pobierz metodę autoryzacji użytkownika
+  getUserAuthMethode: () => ipcRenderer.invoke('get-user-auth-methode'),
+  //pobierz wszystkie dostępne metody autoryzacji
+  getAllAuthMethodes: () => ipcRenderer.invoke('get-all-auth-methodes'),
 });

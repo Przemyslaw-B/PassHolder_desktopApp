@@ -1,6 +1,6 @@
 /*Dla każdego wiersza*/
 .storage-column-size{
-    grid-template-columns: 5% 25% 23% auto 6% 15% 7%;
+    grid-template-columns: 5% 30% 30% auto 6% 7%;
 }
 
 #storage-header.hidden{

@@ -1,5 +1,16 @@
 <!-- Główna zawartość -->
   <div class="settings-container">
+    <div id="phone-number-space">
+      <span id="settings-phone-number-title">Numer telefonu:</span>
+      <span id="settings-phone-number">123456789</span>
+      <input type="tel" id="settings-phone-input" placeholder="numer telefonu" pattern="[0-9]{9}">
+      <button id="settings-add-number" class="settings-button">Zapisz numer</button>
+      <button id="settings-edit-number" class="settings-button">Edytuj numer</button>
+    </div>  
+
+    <label for="auth-methode-label">Metoda uwierzytelniania</label>
+    <select id="auth-methode" name="rotation"></select>
+    <!--
    <label for="rotation">Password rotation (days):</label>
    <select id="rotation" name="rotation">
     <option value="0">off</option>
@@ -9,4 +20,5 @@
     <option value="180">180</option>
     <option value="365">365</option>
    </select>
+   -->
   </div>

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const axios = require('axios');
 
+
 async function sendLoginRequest(credentials) {
   try {
     const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));

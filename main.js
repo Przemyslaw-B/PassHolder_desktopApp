@@ -26,6 +26,8 @@ const {checkIfExpired} = require("./Rotation/checkIfExpired.js");
 const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js");
 const {isRotationOn} = require("./Rotation/isRotationOn.js");
 const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
+const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
+const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
 
 const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
 
@@ -531,6 +533,26 @@ ipcMain.handle('clear-security-password', async ()=>{
     }
 });
 */
+
+ipcMain.handle('get-user-auth-methode', async ()=>{
+    try{
+        let result = await getUserAuthMethode();
+        return result;
+    } catch(err){
+        console.error("Błąd weryfikacji zapisu securityPassword:", err);
+        return {success: false, error: err};
+    }
+});
+
+ipcMain.handle('get-all-auth-methodes', async ()=>{
+    try{
+        let result = await getAllAuthMethodes();
+        return result;
+    } catch(err){
+        console.error("Błąd weryfikacji zapisu securityPassword:", err);
+        return {success: false, error: err};
+    }
+});
 
 ipcMain.handle('is-security-password-set', async()=>{
     try{

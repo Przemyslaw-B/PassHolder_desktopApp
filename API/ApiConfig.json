@@ -16,5 +16,8 @@
     "getSecurityPassword": "http://localhost:8081/api/getSecurityPassword",
     "setSecurityPassword": "http://localhost:8081/api/setSecurityPassword",
     "setUserRoleToDefault": "http://localhost:8081/api/removeUserRole",
-    "setUserRole": "http://localhost:8081/api/modifytUserRole"
+    "setUserRole": "http://localhost:8081/api/modifytUserRole",
+    "getAllAuthenticationMethodes": "http://localhost:8081/api/getAllAuthenticationMethodes",
+    "getUserAuthenticationMethode": "http://localhost:8081/api/getUserAuthenticationMethode",
+    "getUserPhoneNumber": ""
 }
