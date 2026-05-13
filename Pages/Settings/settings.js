@@ -1,4 +1,3 @@
-
 let userAuthMethode = null;
 let allAuthMethodes = null;
 
@@ -12,6 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
       settingsContainer.innerHTML = html;
       getAllMethodeList();
       getUserAuthMethode();
+      settingsInit();
+      confirmPhoneModalButtonsInit();
+      logoutButtonInit();
 
       /*
       //Obsługa suwaka od rotacji
@@ -26,6 +28,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+async function settingsInit(){
+  if(!userAuthMethode){
+    await getUserAuthMethode();
+  }
+  if(!allAuthMethodes){
+    await getAllMethodeList();
+  }
+  const authMethodeSelect = document.getElementById("auth-methode");
+
+  authMethodeSelect.replaceChildren();
+  const placeholder = new Option("Metoda autoryzacji", "", true, true);
+  placeholder.disabled = true;
+  placeholder.hidden = true;
+  authMethodeSelect.appendChild(placeholder);
+  if(allAuthMethodes && allAuthMethodes.length>0){
+    for(let methode of allAuthMethodes){
+      console.log("metoda:", methode);
+      const option = document.createElement("option");
+      option.value = methode;
+      option.textContent = methode;
+      authMethodeSelect.appendChild(option);
+    }
+  }
+  //przypisanie wartości usera
+  authMethodeSelect.value = userAuthMethode;
+}
+
 async function getAllMethodeList(){
   let result = await window.api.getAllAuthMethodes();
   allAuthMethodes = result.data;
@@ -35,7 +64,7 @@ async function getAllMethodeList(){
 async function getUserAuthMethode(){
   let result = await window.api.getUserAuthMethode();
   userAuthMethode = result.data;
-  //console.log("user auth methode:", userAuthMethode);
+  console.log("user auth methode:", userAuthMethode);
 }
 
 async function getUserNumber(){
@@ -49,6 +78,29 @@ async function setPhoneNumberButton(){
 
 async function editPhoneNumberButton(){
   const button = document.getElementById("settings-edit-number");
+}
+
+function confirmPhoneModalButtonsInit(){
+  let cancelButton = document.getElementById("phone-confirm-modal-cancel-button");
+  let confirmButton = document.getElementById("phone-confirm-modal-confirm-button");
+
+  cancelButton.addEventListener("click", ()=>{
+    const modal = document.getElementById("phone-confirm-modal");
+    modal.classList.add("hidden");
+    let input = document.getElementById("phone-confirm-modal-secure-code");
+    input.value = "";
+  });
+
+  confirmButton.addEventListener("click", async ()=>{
+    //TODO wysyłanie kodu weryfikacyjnego
+  });
+} 
+
+function logoutButtonInit(){
+  let logoutButton = document.getElementById("logout-button");
+  logoutButton.addEventListener("click", ()=>{
+    window.api.logout();
+  });
 }
 
 

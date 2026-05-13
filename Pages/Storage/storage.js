@@ -10,6 +10,8 @@ let pickedPass=null;
 let pickedPassVal=null;
 let pickedPassEye=null;
 
+let tempSecPass=null;
+
 function initAddRecordFormOnce() { 
   if (formInitialized) {
     return; 
@@ -106,7 +108,7 @@ function hideSecurityPasswordModal(){
 async function loadStorage(){
   try{
     const isSecurityPassword = await isSecurityPasswordSet();
-    console.log('loadStorage - isSecurityPassword:', isSecurityPassword);
+    //console.log('loadStorage - isSecurityPassword:', isSecurityPassword);
     if(!isSecurityPassword){  //brak ustawionego hasła bezpieczeństwa
       showSecurityPasswordModal();
     } else{
@@ -125,6 +127,14 @@ async function loadStorage(){
   }
 
 async function downloadData(){
+  let result = await window.api.getStorage();
+  if(result.success){
+    return result.data;
+  } else{
+    console.log("error: ", result.error);
+  }
+  
+  /*
    try{
     // Odczytanie endpointów
     const responseConfig = await window.api.loadApiConfig();
@@ -156,6 +166,7 @@ async function downloadData(){
     console.error("[loadStorage] błąd:", err);
     await window.api.logout();
   }
+    */
 }
 
 async function setStorageGUI(data){
@@ -327,6 +338,7 @@ async function isRotationEnabled(rotation){
   return false;
 }
 
+/*
 //Expiration date
 async function isPassExpired(date, rotation){
   const baseDate = new Date(date);
@@ -345,6 +357,7 @@ async function getExpirationDate(date, rotation){
   rotatedDate.setDate(rotatedDate.getDate()+rotation);
   return rotatedDate.toLocaleDateString();
 }
+*/
 
 //Obsługa formularza
 async function initAddRecordForm(){
@@ -721,6 +734,7 @@ function userPasswordSecurityModalButtons(){
       let result = await validateSecurityPassword(userSecurityPassInput);
       if(result){
         await window.api.setSecurityPassword(userSecurityPassInput);
+        tempSecPass = userSecurityPassInput;
         //let decryptedPass = await decryptUserPassword(pickedPassVal);
         hideUserPasswordSecurityModal();
         if(pickedPass && pickedPassEye && pickedPassVal){

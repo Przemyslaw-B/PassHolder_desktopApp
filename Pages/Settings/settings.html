@@ -1,5 +1,21 @@
 <!-- Główna zawartość -->
   <div class="settings-container">
+
+    <!-- okno potwierdzenia numeru telefonu -->
+    <div id="phone-confirm-modal" class="">
+      <div id="phone-confirm-modal-content">
+        <span id="phone-confirm-modal-info">Podaj kod przesłany na podany numer.</span>
+        <div id="phone-confirm-modal-input-space">
+          <input type="text" id="phone-confirm-modal-secure-code" placeholder="kod weryfikacyjny">
+        </div>
+        <div id="phone-confirm-modal-buttons-space">
+          <button id = "phone-confirm-modal-cancel-button" class="settings-button">Anuluj</button>
+          <button id = "phone-confirm-modal-confirm-button" class="settings-button">Potwierdź</button>
+        </div>  
+        <span id="phone-confirm-modal-message" class="hidden"></span>
+      </div>
+    </div>
+
     <div id="phone-number-space">
       <span id="settings-phone-number-title">Numer telefonu:</span>
       <span id="settings-phone-number">123456789</span>
@@ -9,7 +25,12 @@
     </div>  
 
     <label for="auth-methode-label">Metoda uwierzytelniania</label>
-    <select id="auth-methode" name="rotation"></select>
+    <select id="auth-methode" name="Metoda autoryzacji"></select>
+
+    <div id="logout-space">
+      <button id="logout-button" class="settings-button">Wyloguj</button>
+    </div>
+
     <!--
    <label for="rotation">Password rotation (days):</label>
    <select id="rotation" name="rotation">

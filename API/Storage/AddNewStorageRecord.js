@@ -1,11 +1,12 @@
 const axios = require('axios');
-const {getToken} = require('./../SecureStorage/tokenStorage.js');
-const {getConfigData} = require('./GetConfigData.js');
+const {getToken} = require('./../../SecureStorage/tokenStorage.js');
+const {getConfigData} = require('./../GetConfigData.js');
 
-async function getSecurityPasswordFromApi() {
+
+async function addNewStorageRecord(url, accessLogin, accessPassword) { 
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.getSecurityPassword;
+    const url = tempUrls.uploadNewRecord;
     const token = await getToken();
     if(token === null){
       console.log("Brak tokenu?", token);
@@ -14,9 +15,13 @@ async function getSecurityPasswordFromApi() {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.get(
-      url,
-      {
+
+    const response = await axios.post(url, {
+      'url': newUrl,
+      'access_login': newLogin,
+      'access_pwd': newPassword
+    },
+    {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -28,4 +33,4 @@ async function getSecurityPasswordFromApi() {
   }
 }
 
-module.exports = { getSecurityPasswordFromApi };
+module.exports = { addNewStorageRecord };

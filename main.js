@@ -1,40 +1,58 @@
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron');
+const { config } = require('process');
+const { ServerResponse } = require('http');
+//const path = require('path')
+//const fs = require('fs');
+
 //const {selectLanguage} = require('./Language/LanguageSelector.js');
 const {getConfigData} = require('./API/GetConfigData.js');
+
+const {createNewAccount} = require('./API/Account/CreateNewAccount.js');
+
+const {sendLoginRequest} = require('./API/Login/LoginRequest/SendLoginRequest.js');
+const {authenticateUser} = require('./API/Login/Authentication/AuthenticateUser.js');
+
 const {encrypt,decrypt} = require('./Encryption/Encrypt.js');
 const {hash} = require('./Encryption/Hash.js');
-const {defaultLanguage} = require('./Language/DefaultLanguage.js');
+
+const {getStorage} = require('./API/Storage/GetStorage.js');
+const {modifyStorageRecord} = require('./API/Storage/ModifyRecord.js');
+const {addNewStorageRecord} = require('./API/Storage/AddNewStorageRecord.js');
+
+//const {defaultLanguage} = require('./Language/DefaultLanguage.js');
 const {runTray} = require('./Tray/RunTray.js');
+
 const {loadTray, setCurrentWindowForTray, trayOpenFunction} = require('./Tray/LoadTrayLanguage.js');
 const {makeLoginWindow} = require('./WindowsMakers/Login/MakeLoginWindow.js');
 const {makeMainWindow} = require('./WindowsMakers/Main/MakeMainWindow.js');
+
 const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js');
+
 const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js');
+
 const {encryptUserPassword, decryptUserPassword} = require('./Encryption/EncryptUserPassword.js');
 //const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
+
 const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
 const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword/SecurityPassword.js');
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
-const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
-const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
-const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
-const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
-const {getAllCredentialsDetails} = require("./LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
-const {removeCredential} = require("./LocalDB/StoredCredentials/Delete/RemoveCredential.js");
-const {changeRotationTime} = require("./Rotation/changeRotationTime.js");
-const {checkIfExpired} = require("./Rotation/checkIfExpired.js");
-const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js");
-const {isRotationOn} = require("./Rotation/isRotationOn.js");
-const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
+
+//const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
+//const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
+//const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
+//const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
+//const {getAllCredentialsDetails} = require("./LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
+//const {removeCredential} = require("./LocalDB/StoredCredentials/Delete/RemoveCredential.js");
+//const {changeRotationTime} = require("./Rotation/changeRotationTime.js");
+//const {checkIfExpired} = require("./Rotation/checkIfExpired.js");
+//const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js");
+//const {isRotationOn} = require("./Rotation/isRotationOn.js");
+//const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
+
 const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
 
 const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
-
-const path = require('path')
-const fs = require('fs');
-const { config } = require('process');
-const { ServerResponse } = require('http');
 
 const appName="PassHolder";
 
@@ -53,7 +71,7 @@ let isQuitting = false; // Flaga zamknięcia aplikacji
 //let languageData; 
 let user;
 let userId;
-let db;
+//let db;
 
 const getInstanceLock = app.requestSingleInstanceLock();
 
@@ -77,7 +95,7 @@ if(!getInstanceLock){
     // Kolejność ładowania  
     app.whenReady().then(() => {
     //disableDevTools();            //Wyłącz DevTools w aplikacji
-    initDB();                       //Inicjalizacja lokalnej Bazy Danych
+    //initDB();                       //Inicjalizacja lokalnej Bazy Danych
     //selectDefaultLanguage();        //Domyślny język
     //clearSecurityPassword();        //Usuń zapisane Security Password
     createLoginWindow();            //Otwarcie okna Logowania
@@ -180,6 +198,46 @@ ipcMain.handle('get-language-pack', async(event)=>{
   }
 });
 */
+
+//Zakładanie nowego konta użytkownika
+ipcMain.handle('create-user-account', async (event, email, name, password) =>{
+    try{
+        if(email && name && password){
+            let result = await createNewAccount(email, name, password);
+            return {success: true, data: result};
+        }
+        return {success: false, error: "data not complete"};
+    }catch(error){
+        console.error('Błąd zakladania konta:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+//Wyślij request logowania
+ipcMain.handle('send-login-request', async (event, email, password)=>{
+    try{
+        let result = await sendLoginRequest(email, password);
+        return {success: true, data: result.data}
+    }catch(error){
+        console.error('Błąd logowania:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+//Wyślij otrzymany kod autoryzacyjny
+ipcMain.handle('send-authentication-code', async (event, authCode) =>{
+    try{
+        if(authCode){
+            let result = await authenticateUser(authCode);
+            return {success: true, data: result.data};
+        } else{
+            return {success: false, error: "no code recieverd"};
+        }
+    }catch(error){
+        console.error('Błąd autoryzacji:', error);
+        return { success: false, error: error.message };
+    }
+});
 
 // Załaduj plik konfiguracji endpointów api
 ipcMain.handle('load-apiConfig', async (event) => {
@@ -304,7 +362,7 @@ ipcMain.on('logout', ()=>{
 ipcMain.on('set-user', (event, username)=>{
     if(loginWindow){
         user=username;
-        userId = createNewUserIfNotExist(db, user);
+        //userId = createNewUserIfNotExist(db, user);
     }
 });
 
@@ -331,9 +389,27 @@ ipcMain.on('switch-card', (event, pageName)=>{
 
 ipcMain.handle('get-storage', async (event)=>{
     try {
-       const storageList = await getAllCredentialsDetails(db, userId);
-       return storageList;
+       let result = await getStorage();
+       if(result){
+        return {success: true, data: result.data};
+       }
+       return {success: false, error: "data not found"};
     }catch(err){
+        console.error("Błąd pobierania danych z lokalnej BD.");
+        return {success: false};
+    }
+});
+
+ipcMain.handle('add-new-storage-record', async (event, url, accessLogin, accessPassword)=>{
+    try{
+        if(url && accessLogin && accessPassword){
+            let result = await addNewStorageRecord(url, accessLogin, accessPassword);
+            return {success: true, data: result};
+        }
+        else{
+            return {success: false, error: "data not found"};
+        }
+    } catch(error){
         console.error("Błąd pobierania danych z lokalnej BD.");
         return {success: false};
     }
@@ -601,9 +677,11 @@ ipcMain.handle('is-password-expired', async (event, idPass)=>{
 });
 
 // Inicjalizacja lokalnej bazy danych
+/*
 function initDB(){
     db = initDatabase();
-}   
+}  
+*/ 
 
 // Wywołanie aplikacji w Tray - menu ukrytych ikon
 function startInTray(){

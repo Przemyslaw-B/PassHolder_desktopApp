@@ -1,12 +1,12 @@
 const axios = require('axios');
-const {getToken} = require('../../SecureStorage/tokenStorage.js');
-const {getConfigData} = require('../GetConfigData.js');
+const {getToken} = require('./../../SecureStorage/tokenStorage.js');
+const {getConfigData} = require('./../GetConfigData.js');
 
 
-async function setUserRole(userModMail) { 
+async function modifyStorageRecord(recordToModify, newLogin, newPassword, newUrl) { 
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.setUserRole;
+    const url = tempUrls.modifyRecord;
     //console.log('Weryfikacja url:', url);
     const token = await getToken();
     //console.log("Sprawdzenie tokenu?", token);
@@ -17,7 +17,14 @@ async function setUserRole(userModMail) {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.get(url, {
+
+    const response = await axios.post(url, {
+      'recordId': recordToModify,
+      'login': newLogin,
+      'password': newPassword,
+      'url': newUrl
+    },
+    {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -29,4 +36,4 @@ async function setUserRole(userModMail) {
   }
 }
 
-module.exports = { setUserRole };
+module.exports = { modifyStorageRecord };

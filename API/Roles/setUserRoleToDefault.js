@@ -1,6 +1,6 @@
 const axios = require('axios');
-const {getToken} = require('./../../SecureStorage/tokenStorage.js');
-const {getConfigData} = require('./../GetConfigData.js');
+const {getToken} = require('../../SecureStorage/tokenStorage.js');
+const {getConfigData} = require('../GetConfigData.js');
 
 async function setUserRoleToDefault(userModMail) { 
   try {

@@ -5,8 +5,8 @@ contextBridge.exposeInMainWorld('api', {
   //loadLanguage: (lang) => ipcRenderer.invoke('load-language', lang),
   //Zwróć używaną paczkę językową
   //getLanguagePack: () => ipcRenderer.invoke('get-language-pack'),
+
   //Załaduj konfigurację endpointów.
-  
   loadApiConfig: () => ipcRenderer.invoke("load-apiConfig"),
   //Szyfruj Hasło
   encryptPassword: (password) => ipcRenderer.invoke("encrypt-password", password),
@@ -24,9 +24,13 @@ contextBridge.exposeInMainWorld('api', {
   //modyfikuj rolę wybranego użytkownika na inną.
   setUserRole: (userModMail, roleName) => ipcRenderer.invoke("set-user-role", userModMail, roleName),
 
+  //Zakładanie konta użytkownika
+  createUserAccount: (email, name, password) => ipcRenderer.invoke("create-user-account", email, name, password),
   
   //Wykonaj Zapytanie do API z danymi logowania.
-  sendLoginRequest: (credentials) => ipcRenderer.invoke("send-login-request", credentials),
+  sendLoginRequest: (email, password) => ipcRenderer.invoke("send-login-request", email, password),
+  //Wyślij kod autoryzacyjny
+  sendAuthenticationCode: (authCode) => ipcRenderer.invoke("send-authentication-code", authCode),
   //Zamknij okno logowania i otwórz ekran główny.
   loginSuccess: () => ipcRenderer.send('login-success'),
   //Wylogowanie
@@ -75,10 +79,13 @@ contextBridge.exposeInMainWorld('api', {
   getStorage:() => ipcRenderer.invoke('get-storage'),
   //Aktualizacja danych haseł
   storageUpdate:(data) => ipcRenderer.invoke('update-storage', data),
+  //dodawanie nowego rekordu
+  addNewStorageRecord: (url, accessLogin, accessPassword) =>ipcRenderer.invoke('add-new-storage-record', url, accessLogin, accessPassword),
+
   //Usuwanie lokalnego rekordu
-  removeLocalRecord:(data) => ipcRenderer.invoke('remove-storage', data),
+  //removeLocalRecord:(data) => ipcRenderer.invoke('remove-storage', data),
   //Zapisanie nowego rekordu w lokalnej DB
-  localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data),
+  //localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data),
   //Czy rotacja haseł jest włączona
   isRotationOn:() => ipcRenderer.invoke('is-rotation-on'),
   // Pobierz wartość rotation Time

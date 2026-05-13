@@ -2,6 +2,10 @@
     display: none;
 }
 
+#phone-confirm-modal.hidden{
+    display: none;
+}
+
 #settings-container{
     gap: 2rem;
 }
@@ -13,10 +17,38 @@
     user-select: none;
 }
 
+#phone-confirm-modal{
+    position: fixed;
+    inset: 0;
+    min-width: 10rem;
+    min-height: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1.5rem;
+    z-index: 9999;
+}
+
+#phone-confirm-modal-content{
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    min-width: 10rem;
+    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
 #settings-phone-input{
     height: 1.5rem;
     width: 10rem;
     border-radius: 0.5rem;
+    border: 1px solid #ccc;
 }
 
 .settings-button{
@@ -26,6 +58,31 @@
     background-color: #3c4d5f;
     color: white;
     border-radius: 0.5rem;
+}
+
+#phone-confirm-modal-secure-code{
+    width: 8rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+}
+
+#phone-confirm-modal-input-space{
+    display: flex;
+    justify-content: center;
+}
+
+#phone-confirm-modal-buttons-space{
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+}
+
+.settings-button:hover{
+    background-color: #3c4d5f;
+    color: #1abc9c;
+    cursor: pointer;
 }
 
 #settings-add-number:hover{ 

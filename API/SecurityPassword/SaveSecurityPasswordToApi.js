@@ -1,7 +1,7 @@
 //const fs = require('fs');
 const axios = require('axios');
-const {getToken} = require('./../SecureStorage/tokenStorage.js');
-const {getConfigData} = require('./GetConfigData.js');
+const {getToken} = require('../../SecureStorage/tokenStorage.js');
+const {getConfigData} = require('../GetConfigData.js');
 
 async function saveSecurityPasswordToApi(newSecurityPassword) {
     if(newSecurityPassword===null || newSecurityPassword === ""){

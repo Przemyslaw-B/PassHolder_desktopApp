@@ -1,6 +1,6 @@
 const { read } = require('original-fs');
-const {getSecurityPasswordFromApi} = require('./../API/GetSecurityPasswordFromApi.js');
-const {saveSecurityPasswordToApi} = require('./../API/SaveSecurityPasswordToApi.js');
+const {getSecurityPasswordFromApi} = require('../API/SecurityPassword/GetSecurityPasswordFromApi.js');
+const {saveSecurityPasswordToApi} = require('../API/SecurityPassword/SaveSecurityPasswordToApi.js');
 const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword.js');
 const {setSecurityPasswordHash, getSecurityPasswordHash} = require('./SecurityPasswordHash.js');
 const {encrypt, decrypt} = require('./../Encryption/Encrypt.js');

@@ -6,6 +6,7 @@ const credentialsTable = require('./Tables/CredentialsTable');
 const initModificationDateTrigger = require('./Triggers/modificationDateTrigger');
 let db;
 
+/*
 function initDatabase(){
     const dbPath = path.join(app.getPath('userData'), 'passholderdata.db');
     db = new Database(dbPath);
@@ -32,3 +33,4 @@ function initTriggers(){
 }
 
 module.exports = {initDatabase}
+*/

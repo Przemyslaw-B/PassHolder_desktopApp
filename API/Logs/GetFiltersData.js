@@ -2,14 +2,11 @@ const axios = require('axios');
 const {getToken} = require('../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('../GetConfigData.js');
 
-
-async function setUserRole(userModMail) { 
+async function getFiltersData() {
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.setUserRole;
-    //console.log('Weryfikacja url:', url);
+    const url = tempUrls.getFiltersData;
     const token = await getToken();
-    //console.log("Sprawdzenie tokenu?", token);
     if(token === null){
       console.log("Brak tokenu?", token);
       return { success: false, error: "brak zapisanego tokenu"};
@@ -17,7 +14,9 @@ async function setUserRole(userModMail) {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.get(url, {
+    const response = await axios.get(
+      url,
+      {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -29,4 +28,4 @@ async function setUserRole(userModMail) {
   }
 }
 
-module.exports = { setUserRole };
+module.exports = { getFiltersData };

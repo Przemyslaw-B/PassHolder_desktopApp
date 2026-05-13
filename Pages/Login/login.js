@@ -67,9 +67,9 @@ async function loginValidation(){
   }
 
   // Odczytanie endpointów
-  const config = response.config;
-  const url = config.loginValidation;
-  const keyUrl = config.publicKey;
+  //const config = response.config;
+  //const url = config.loginValidation;
+  //const keyUrl = config.publicKey;
 
   const email = document.getElementById('email').value;
   const passwordTemp = document.getElementById('password').value;
@@ -78,26 +78,23 @@ async function loginValidation(){
     // Szyfrowanie wpisanego hasła
     const password = await window.api.hashPassword(passwordTemp);
     //Wysyłanie danych do API
-    const responseData = await loginRequest(email, password, url);
+    const responseData = await loginRequest(email, password);
     //console.log("login data:", responseData);
-    if(responseData === null){
+    console.log("response data:", responseData);
+    if(!responseData || responseData === null){
       showMessage("Connection error");
-    }
-    //console.log(ResponseData);
-    if(responseData != null){
+    } else{
       let loginData = responseData.data;
-      if(loginData.status === "Validated" && loginData.username != null){
-        const rep = await window.api.setUser(loginData.username);
-        const tokenRes = await window.api.saveToken(loginData.token);
-        if (loginData.status ==="Validated") {
-          const isAuthenticated = loginData.auth;
-          await saveSecurityPasswordHash();
-          if(isAuthenticated === true){ // Jeśli 2FA nie jest wymagane
-            const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
-          }
-          setAuthenticationContent();
+      if(loginData.status === "Validated" && loginData.data.username != null){
+        const rep = await window.api.setUser(loginData.data.username);
+        const tokenRes = await window.api.saveToken(loginData.data.token);
+        const isAuthenticated = loginData.data.auth;
+        await saveSecurityPasswordHash();
+        if(isAuthenticated === true){ // Jeśli 2FA nie jest wymagane
+          const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
         }
-      } else{
+        setAuthenticationContent();
+      } if(loginData.status === "Invalid"){
         //Błędne dane logowania
         //const labels = await getLanguagePack();
         //const message = labels.wrongPassword;
@@ -105,6 +102,8 @@ async function loginValidation(){
         showMessage(message);
       }
     }
+    //console.log(ResponseData);
+    
   } else {
     //Nie podano danych logowania
     //const labels = await getLanguagePack();
@@ -121,6 +120,9 @@ async function saveSecurityPasswordHash(){
 
 // Wysłanie danych logowania
 async function loginRequest(email, password, url){
+  let result = await window.api.sendLoginRequest(email, password);
+  return result;
+  /*
   try{
     //Utworzenie json do logowania
     const payload = {
@@ -145,6 +147,7 @@ async function loginRequest(email, password, url){
     console.error("Błąd pobierania klucza.", error);
     return null;
   }
+  */
 }
 
 // Po pomyślnym logowaniu zmień okno..
@@ -191,6 +194,10 @@ async function setUser(username){
 
   // 2FA
   async function authentication(authCode){
+    let result = await window.api.sendAuthenticationCode(authCode);
+    return result.data;
+
+    /*
     const configLoader = await window.api.loadApiConfig();
     const url = configLoader.config.authentication;
     const tokenObj = await window.api.loadToken();  //Pobierz token użytkownika
@@ -213,11 +220,12 @@ async function setUser(username){
     } catch(error){
       console.error("Błąd podczas wysyłania żądania autoryzacji 2FA.", error);
     }
+    */
   }
 
   async function creatingAccount(){
-    const responseUrl = await window.api.loadApiConfig();
-    const url = responseUrl.config.creatingAccount;
+    //const responseUrl = await window.api.loadApiConfig();
+    //const url = responseUrl.config.creatingAccount;
     
     const email = document.getElementById("creatingAcc-email-input").value.trim();
     const name = document.getElementById("creatingAcc-name-input").value.trim();
@@ -226,6 +234,9 @@ async function setUser(username){
     if(passSize > 6){
       if(email !== "" && name !== "" && passwordTemp !== ""){
       const password = await window.api.hashPassword(passwordTemp);
+      let result = await window.api.createUserAccount(email, name, password);
+      let data = result.data;
+      /*
       const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -238,6 +249,7 @@ async function setUser(username){
         })
       });
     const data = await response.json();
+    */
     if(data.status==="emptyForm"){
       //Nie wypełniono całego formularza
       //const labels = await getLanguagePack();
@@ -249,7 +261,7 @@ async function setUser(username){
     //const labels = await getLanguagePack();
     //const message = labels.creatingAccountAlreadyExist;
     const message = "Email jest już użyty";
-    console.log(labels);
+    //console.log(labels);
     showMessage(message);
   } else if(data.status==="accountCreated"){
     //Konto zostało utworzone

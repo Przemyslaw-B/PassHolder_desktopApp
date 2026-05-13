@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs');
 
-// Wczytaj Configurację endpointów API z pliku
+// Wczytaj konfigurację endpointów API z pliku
 function getConfigData(){
     try {
         const filePath = path.join(__dirname, '', 'ApiConfig.json');
@@ -9,7 +9,7 @@ function getConfigData(){
         const parsed = JSON.parse(rawData);
         return JSON.parse(JSON.stringify(parsed));
       } catch (err) {
-        console.error('Błąd ładowania configuracji:', err);
+        console.error('Błąd ładowania konfiguracji endpointow:', err);
         return {};
       }
 }
