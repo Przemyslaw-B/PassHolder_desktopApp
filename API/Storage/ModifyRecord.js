@@ -3,8 +3,9 @@ const {getToken} = require('./../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('./../GetConfigData.js');
 
 
-async function modifyStorageRecord(recordToModify, newLogin, newPassword, newUrl) { 
-  try {
+async function modifyStorageRecord(recordToModify, data) {
+  if(data && data.recordId && data.url && data.login && data.password){
+    try {
     const tempUrls = await getConfigData();
     const url = tempUrls.modifyRecord;
     //console.log('Weryfikacja url:', url);
@@ -19,10 +20,10 @@ async function modifyStorageRecord(recordToModify, newLogin, newPassword, newUrl
     }
 
     const response = await axios.post(url, {
-      'recordId': recordToModify,
-      'login': newLogin,
-      'password': newPassword,
-      'url': newUrl
+      'recordId': data.recordId,
+      'url': data.url,
+      'login': data.login,
+      'password': data.password
     },
     {
       headers: {
@@ -34,6 +35,8 @@ async function modifyStorageRecord(recordToModify, newLogin, newPassword, newUrl
     console.error("AXIOS ERROR:", error);
     return { success: false, error: error.message };
   }
+  } 
+  return { success: false, error: "dane niekompletne"};
 }
 
 module.exports = { modifyStorageRecord };

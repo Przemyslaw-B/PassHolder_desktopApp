@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       initAddRecordFormOnce();
       securityPasswordModal();
       userPasswordSecurityModalButtons();
+      randomPasswordGenerateButtonInit();
 
       //closingMenuByClick();
       initMenuActions(); 
@@ -333,10 +334,12 @@ async function setStorageGUI(data){
   }
 }
 
+/*
 async function isRotationEnabled(rotation){
   if(rotation>0){return true;}
   return false;
 }
+  */
 
 /*
 //Expiration date
@@ -373,7 +376,7 @@ async function initAddRecordForm(){
   //Rozwinięcie formularza
   addRecordButton.addEventListener("click", async ()=>{
     let result = await isSecurityPasswordRequired();
-    if(result){
+    if(!tempSecPass && result){
       showUserPasswordSecurityModal();
     } else {
       addRecordButton.style.display="none"  //Ukryj ten przycisk
@@ -383,8 +386,13 @@ async function initAddRecordForm(){
         newLogin.value="";
         newPassword.value="";
         form.classList.add("hidden"); //ukryj formularz
+        let randomPassContent = document.getElementById("random-pass-content");
+        let randomPassContentSpace = document.getElementById("random-pass-content-space");
+        randomPassContent.value="";
+        randomPassContent.textContent="Losowe hasło";
+        randomPassContentSpace.classList.add("hidden");
         addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
-      }, 30 * 1000);
+      }, 60 * 1000);
     }
   });
 
@@ -395,6 +403,11 @@ async function initAddRecordForm(){
     newPassword.value="";
     form.classList.add("hidden"); //ukryj formularz
     addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
+    let randomPassContent = document.getElementById("random-pass-content");
+    let randomPassContentSpace = document.getElementById("random-pass-content-space");
+    randomPassContent.value="";
+    randomPassContent.textContent="Losowe hasło";
+    randomPassContentSpace.classList.add("hidden");
   });
 
   //Zapisanie zmian formularza
@@ -403,7 +416,7 @@ async function initAddRecordForm(){
   newSaveButton.addEventListener("click", async ()=>{
     valUrl=newUrl.value;
     valLogin=newLogin.value;
-    valPassword=await encryptUserPassword(newPassword.value);
+    valPassword=await encryptUserPassword(newPassword.value, tempSecPass);
     const data = {
       url: valUrl,
       login: valLogin,
@@ -413,6 +426,8 @@ async function initAddRecordForm(){
       const result = await addCredentialRecordToDataBase(data)
       if(result){
         await loadStorage();  //załaduj nową listę
+      } else{
+        //TODO błąd dodawania rekordu
       }
     } else{
       //TODO Powiadomienie o nie wypełnieniu całego formularza
@@ -427,6 +442,17 @@ async function initAddRecordForm(){
 
 //Dodaj nowy record do bazy danych
 async function addCredentialRecordToDataBase(data){
+  let result = await window.api.addNewStorageRecord(data);
+  if(result){
+    if(result.success){
+      return result.data;
+    } else{
+      console.log("error:", result.error)
+    }
+    return;
+  }
+  
+  /*
   try{
     const responseConfig = await window.api.loadApiConfig();
     const config = responseConfig.config;
@@ -452,9 +478,26 @@ async function addCredentialRecordToDataBase(data){
   }catch(err){
     await window.api.logout();
   }
+  */
 }
 
 async function removeRecord(){
+  if(recordToDelete){
+    let result = await window.api.removeStorageRecord(recordToDelete);
+    if(result){
+      if(result.success && result.data){
+        recordToDelete = null;
+        return result.data;
+      } else{
+        console.log("error", result.error);
+      }
+    }
+  } else {
+    console.log("error:", "Brak pozycji do usunięcia.")
+  }
+  return;
+  
+  /*
   try{
     const responseConfig = await window.api.loadApiConfig();
     const config = responseConfig.config;
@@ -481,6 +524,7 @@ async function removeRecord(){
   } catch(err){
     await window.api.logout();
   }
+    */
 }
 
 async function isSecurityPasswordRequired(){
@@ -504,10 +548,12 @@ function hideUserPasswordSecurityModal(){
   pickedPassVal = null;
 }
 
+/*
 async function getDecryptedPassword(password){
   let decryptedPassword = await window.api.decryptUserPassword(password);
   return decryptedPassword 
 }
+  */
 
 //Pokaż okno edycji rekordu
 function showModifyModal(url, login){
@@ -544,6 +590,27 @@ function confirmModify(){
 
 //Zatwierdź zmiany rekordu i wyślij do api
 async function sendModifyToApi(){
+  let data = {
+    'recordId': recordToModify,
+    'url': newUrl,
+    'login': newLogin,
+    'password': newPassword
+  }
+  let result = await window.api.modifyRecord(data);
+  if(result){
+    if(result.success && result.data){
+      return result.data;
+    } else{
+      console.log("Błąd aktualizacji pozycji.")
+      if(result.error){
+        console.log("error:",result.error);
+      }
+    }
+  } else{
+    console.log("Błąd modyfikacji pozycji.")
+  }
+  return;
+  /*
   let newLogin = document.getElementById("modify-login").value;
   let newPassowrd = await encryptUserPassword(document.getElementById("modify-password").value);
   let newUrl = document.getElementById("modify-url").value;
@@ -577,6 +644,7 @@ async function sendModifyToApi(){
   } catch(err){
     //await window.api.logout();
   }
+    */
 }
 
 //Pokaż okno potwierdzenia usunięcia rekordu
@@ -611,9 +679,9 @@ async function encryptPassword(password){
 }
 
 //Zaszyfruj hasło użytkownika
-async function encryptUserPassword(password){
+async function encryptUserPassword(password, key){
   //console.log("password:", password);
-  let result = await window.api.encryptUserPassword(password);
+  let result = await window.api.encryptUserPassword(password, key);
   //console.log("result:", result);
   return result.password;
 }
@@ -622,13 +690,33 @@ async function encryptUserPassword(password){
 async function decryptUserPassword(password){
   const safePass = await window.api.decryptUserPassword(password);
   //console.log("safePass", safePass);
-  return safePass.password;
+  let result= await window.api.decryptUserPassword(password);
+  if(result){
+    if(result.success){
+      return result.password;
+    } else{
+      console.log("error:", result.message);
+    }
+  }else{
+    console.log("błąd odczytywania hasła");
+  }
+  return null;
 }
 
 //Odszyfruj
 async function decryptPassword(password){
-  const readedPass = await window.api.decryptPassword(password);
-  return readedPass;
+  let result= await window.api.decryptPassword(password);
+  console.log("result password", result);
+  if(result){
+    if(result.success){
+      return result.data;
+    } else{
+      console.log("error:", result.error);
+    }
+  }else{
+    console.log("błąd odczytywania hasła");
+  }
+  return null;
 }
 
 //Sprawdź czy rotacja jest włączona
@@ -637,7 +725,14 @@ async function isRotationOn(){
   return isOn;
 }
 
-function showOptionsMenu(event, recordId) {
+async function showOptionsMenu(event, recordId) {
+  const iconRect = event.currentTarget.getBoundingClientRect(); //pozycja ikony
+
+  let result = await isSecurityPasswordRequired();
+  if(result){
+    showUserPasswordSecurityModal();
+    return;
+  }
   const menu = document.querySelector("#global-options-menu");
   if(recordId === selectedRecord){
     closeGlobalMenu();
@@ -647,7 +742,6 @@ function showOptionsMenu(event, recordId) {
   selectedRecord = recordId;
   menuOpenRecordId = recordId;
   menu.classList.remove("hidden");
-  const iconRect = event.currentTarget.getBoundingClientRect(); //pozycja ikony
   const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
   let padding = 1.2 * rem;
   let x = iconRect.right + padding;
@@ -772,6 +866,10 @@ async function showPassword(){
       pickedPass.classList.add("show-password");
       pickedPassEye.classList.toggle("toggle-eye-visible");
       let decryptedPass = await decryptUserPassword(pickedPassVal);
+      console.log("decryptedPass:", decryptedPass);
+      if(!decryptedPass){
+        decryptedPass = "[złe hasło]";
+      }
       pickedPass.textContent = decryptedPass;
       tempPass = pickedPass;
       tempEye = pickedPassEye;
@@ -785,6 +883,28 @@ async function showPassword(){
 async function validateSecurityPassword(securityPass){
   let result = await window.api.validateSecurityPassword(securityPass);
   return result;
+}
+
+function randomPasswordGenerateButtonInit(){
+  let randomPassButton = document.getElementById("generate-password-icon");
+  randomPassButton.addEventListener("click", async ()=>{
+    let randomPassContent = document.getElementById("random-pass-content");
+    let randomPassContentSpace = document.getElementById("random-pass-content-space");
+    let result = await window.api.generateRandomPassword();
+    if(result && result.success && result.data){
+      randomPassContent.value = result.data;
+      randomPassContent.textContent = result.data;
+      randomPassContentSpace.classList.remove("hidden");
+    }
+  });
+
+  let randomPasswordContent = document.getElementById("random-pass-content");
+  randomPasswordContent.addEventListener("click", ()=>{
+    const randomPass = randomPasswordContent.value;
+    if(randomPass && randomPass.length>0){
+      navigator.clipboard.writeText(randomPass);
+    }
+  });
 }
 
 // Odebranie klucza publicznego

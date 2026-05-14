@@ -1,11 +1,28 @@
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron');
 const { config } = require('process');
 const { ServerResponse } = require('http');
+
 //const path = require('path')
 //const fs = require('fs');
-
 //const {selectLanguage} = require('./Language/LanguageSelector.js');
+//const {defaultLanguage} = require('./Language/DefaultLanguage.js');
+//const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js');
+//const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
+//const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
+//const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
+//const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
+//const {getAllCredentialsDetails} = require("./LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
+//const {removeCredential} = require("./LocalDB/StoredCredentials/Delete/RemoveCredential.js");
+//const {changeRotationTime} = require("./Rotation/changeRotationTime.js");
+//const {checkIfExpired} = require("./Rotation/checkIfExpired.js");
+//const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js");
+//const {isRotationOn} = require("./Rotation/isRotationOn.js");
+//const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
+//const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
+
 const {getConfigData} = require('./API/GetConfigData.js');
+
+const {generateRandomPassword} = require('./PasswordGenerator/GenerateRandomPassword.js');
 
 const {createNewAccount} = require('./API/Account/CreateNewAccount.js');
 
@@ -18,36 +35,22 @@ const {hash} = require('./Encryption/Hash.js');
 const {getStorage} = require('./API/Storage/GetStorage.js');
 const {modifyStorageRecord} = require('./API/Storage/ModifyRecord.js');
 const {addNewStorageRecord} = require('./API/Storage/AddNewStorageRecord.js');
+const {removeStorageRecord} = require('./API/Storage/RemoveStorageRecord.js');
 
-//const {defaultLanguage} = require('./Language/DefaultLanguage.js');
 const {runTray} = require('./Tray/RunTray.js');
 
 const {loadTray, setCurrentWindowForTray, trayOpenFunction} = require('./Tray/LoadTrayLanguage.js');
 const {makeLoginWindow} = require('./WindowsMakers/Login/MakeLoginWindow.js');
 const {makeMainWindow} = require('./WindowsMakers/Main/MakeMainWindow.js');
 
-const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js');
 
 const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.js');
 
 const {encryptUserPassword, decryptUserPassword} = require('./Encryption/EncryptUserPassword.js');
-//const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
 
 const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
 const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword/SecurityPassword.js');
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
-
-//const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
-//const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
-//const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
-//const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
-//const {getAllCredentialsDetails} = require("./LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
-//const {removeCredential} = require("./LocalDB/StoredCredentials/Delete/RemoveCredential.js");
-//const {changeRotationTime} = require("./Rotation/changeRotationTime.js");
-//const {checkIfExpired} = require("./Rotation/checkIfExpired.js");
-//const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js");
-//const {isRotationOn} = require("./Rotation/isRotationOn.js");
-//const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
 
 const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
@@ -250,6 +253,15 @@ ipcMain.handle('load-apiConfig', async (event) => {
     }
 });
 
+//Generowanie losowego hasła
+ipcMain.handle('generate-random-password', ()=>{
+    let result = generateRandomPassword();
+    if(result && result.success && result.data){
+        return {success: true, data: result.data};
+    }
+    return {success: false, error: "błąd generowania hasła"};
+});
+
 // Szyfrowanie Hasła
 ipcMain.handle('encrypt-password', async (event, password)=>{
     try{
@@ -263,11 +275,19 @@ ipcMain.handle('encrypt-password', async (event, password)=>{
 // Odszyfrowanie Hasła
 ipcMain.handle('decrypt-password', async(event, password)=>{
     try{
-        return decrypt(password);
+        let result = decrypt(password);
+        if(result){
+            if(result.success){
+                return {success: true, data: result.data};
+            } else{
+                return {success: false, error: result.error};
+            }
+        }
     }catch(error){
         console.error('Bład:', error);
         return { success: false, error: error.message };
     }
+    return {success: false, error: "nie można odszyfrować hasła"};
 });
 
 //Hashowanie hasła
@@ -281,14 +301,17 @@ ipcMain.handle('hash', async (event, password)=>{
 });
 
 //szyfrowanie hasła użytkownika
-ipcMain.handle('encrypt-user-password', async (event,password)=>{
+ipcMain.handle('encrypt-user-password', async (event,password, key)=>{
     let message = "";
-    if(password && password !== null){
+    if(!key){
+        key = getSecurityPassword();
+    }
+    if(password && key &&  password !== null){
         let encryptedPass = await encryptUserPassword(password);
         return {success: true, password: encryptedPass};
     }
-    message = "Błąd odczytu hasła.";
-    return {success: false, message: message}   ``
+    message = "Błąd zapisu hasła.";
+    return {success: false, message: message};
 });
 
 //odszyfrowanie hasła użytkownika
@@ -305,8 +328,12 @@ ipcMain.handle('decrypt-user-password', async (event, password)=>{
         if(userSecurityPassword && userSecurityPassword !== null){
             let hashSecPass = await hash(inputSecurityPassword);
             if(userSecurityPassword === hashSecPass){
-                let decryptedPass = await decryptUserPassword(password);
-                return {success: true, password: decryptedPass};
+                let result = await decryptUserPassword(password);
+                if(result && result.success){
+                    return {success: true, password: result.data};
+                } else{
+                    return {success: false, message: "błąd odczytu hasła"};
+                }
             } else{
                 message = "Podane hasło jest nieprawidłowe.";
                 return {success: false, message: message}
@@ -395,46 +422,85 @@ ipcMain.handle('get-storage', async (event)=>{
        }
        return {success: false, error: "data not found"};
     }catch(err){
-        console.error("Błąd pobierania danych z lokalnej BD.");
+        console.error("Błąd pobierania danych storage.");
         return {success: false};
     }
 });
 
-ipcMain.handle('add-new-storage-record', async (event, url, accessLogin, accessPassword)=>{
+ipcMain.handle('add-new-storage-record', async (event, data)=>{
     try{
-        if(url && accessLogin && accessPassword){
-            let result = await addNewStorageRecord(url, accessLogin, accessPassword);
+        if(data && data.url && data.login && data.password){
+            let result = await addNewStorageRecord(data.url, data.login, data.password);
             return {success: true, data: result};
         }
         else{
             return {success: false, error: "data not found"};
         }
     } catch(error){
-        console.error("Błąd pobierania danych z lokalnej BD.");
+        console.error("Błąd dodawania nowego rekordu storage");
         return {success: false};
     }
 });
 
+ipcMain.handle('remove-storage-record', async (event, record)=>{
+    try{
+        if(record){
+            const result = await removeStorageRecord(record);
+            if(result){
+                return {success: true, data: result};
+            } else{
+                return {success: false, error: "błąd usuwania rekordu."};
+            }
+        } else{
+            return {success: false, error: "nie otrzymano danych rekordu do usunięcia"};
+
+        }
+    }catch(error){
+        console.error("Błąd usuwania pozycji.", error);
+        return {success: false};
+    }
+
+});
+
+ipcMain.handle('modify-storage-record', async (event, data)=>{
+    try{
+        if(data){
+            let result = await modifyStorageRecord(data);
+            return {success: true, data: result};
+        } else{
+            return {success: false, error: "brak otrzymanych danych"};
+        }
+    } catch(err){
+        console.error("Błąd aktualizacji danych haseł storage.", err);
+        return {success: false};
+    }
+});
+
+/*
 ipcMain.handle('update-storage', async (event, cloudData)=>{
     try{
         const configData = getConfigData();
         const token = await getToken();
         checkChangesAndUpdate(db, cloudData, userId, configData, token);
     } catch(err){
-        console.error("Błąd aktualizacji danych haseł.", err);
+        console.error("Błąd aktualizacji danych haseł storage.", err);
         return {success: false};
     }
 });
+*/
 
+/*
 ipcMain.handle('remove-storage', async (event, data)=>{
     try{
         removeCredential(db, data);
     }catch(err){
-        console.err("Błąd usuwania rekordu z lokalnej BD.");
+        console.err("Błąd usuwania rekordu ze storage.");
         return {success: false}
     }
 });
+*/
 
+/*
 ipcMain.handle('save-local-storage', async (event, data)=>{
     try{
         const configData = getConfigData();     
@@ -447,6 +513,7 @@ ipcMain.handle('save-local-storage', async (event, data)=>{
         return {success: false};
     }
 });
+*/
 
 ipcMain.handle('save-token', async (event, token)=>{
     try{
@@ -579,16 +646,16 @@ ipcMain.handle('validateNewSecurityPassword', (event, newSecurityPassword)=>{
 });
 
 ipcMain.handle('set-new-security-password', async (event, newSecurityPassword)=>{
-    console.log('setNewSecurityPassword:', newSecurityPassword);
+    //console.log('setNewSecurityPassword:', newSecurityPassword);
     const response = await getSecurityPasswordIfExist();
-    console.log('response:', response);
-    console.log('?setNewSecurityPassword, old password:', response.securityPassword);
+    //console.log('response:', response);
+    //console.log('?setNewSecurityPassword, old password:', response.securityPassword);
     if(response.success === true && (!response.securityPassword || response.securityPassword === null)){
         const response2 = await saveNewSecurityPassword(newSecurityPassword);
-        console.log('response2:', response2);
+        //console.log('response2:', response2);
         if(response2.success){
             let response3 = await getSecurityPasswordIfExist();
-            console.log('response3:', response3);
+            //console.log('response3:', response3);
             if(response3.success && response3.securityPassword){
                 securityPassword = response3.securityPassword;
                 return true;
@@ -615,7 +682,7 @@ ipcMain.handle('get-user-auth-methode', async ()=>{
         let result = await getUserAuthMethode();
         return result;
     } catch(err){
-        console.error("Błąd weryfikacji zapisu securityPassword:", err);
+        console.error("Błąd odczytu metody autoryzacji użytkownika", err);
         return {success: false, error: err};
     }
 });
@@ -625,7 +692,7 @@ ipcMain.handle('get-all-auth-methodes', async ()=>{
         let result = await getAllAuthMethodes();
         return result;
     } catch(err){
-        console.error("Błąd weryfikacji zapisu securityPassword:", err);
+        console.error("Błąd odczytu dostępnych metod autoryzacji.", err);
         return {success: false, error: err};
     }
 });
@@ -647,34 +714,44 @@ ipcMain.handle('is-security-password-set', async()=>{
     }
 });
 
+/*
 // czy rotacja jest włączona
 ipcMain.handle('is-rotation-on', async ()=>{
     const isOn = await isRotationOn(db, userId);
     return isOn;
 });
+*/
 
+/*
 // Pobierz aktualną wartość rotation time
 ipcMain.handle('get-rotation-time', async ()=>{
     const val = await getUserRotationTime(db, userId);
     return val;
 });
+*/
 
+/*
 // pobierz datę wygaśnięcia hasła
 ipcMain.handle('get-expiration-date', async (event, idPass)=>{
     const calculatedDate = await calculateExpirationDate(db, userId, idPass);
     return calculatedDate;
 });
+*/
 
+/*
 // aktualizacja ilości dni wygasania haseł
 ipcMain.handle('update-rotation-time', async (event, newTime)=>{
     changeRotationTime(db, userId, newTime);
 });
+*/
 
+/*
 // Sprawdź czy hasło wygasło
 ipcMain.handle('is-password-expired', async (event, idPass)=>{
     const isExpiretd = await checkIfExpired(db, userId, idPass);
     return isExpiretd
 });
+*/
 
 // Inicjalizacja lokalnej bazy danych
 /*

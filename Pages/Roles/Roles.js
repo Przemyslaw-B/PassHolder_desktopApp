@@ -10,9 +10,9 @@
 
 async function loadRoles(){
   try{
-    console.log("Ładowanie strony ról..");
+    //console.log("Ładowanie strony ról..");
     const data = await getRolesData();
-    console.log("data:", data);
+    //console.log("data:", data);
     await setRolesGUI(data);
   }catch(err){
     console.error("[loadRoles] błąd:", err);
@@ -55,16 +55,16 @@ async function loadRoles(){
   }
 
   async function setRolesGUI(data){
-    console.log("Data length: " + data.length)
+    //console.log("Data length: " + data.length)
     if(data != null && data.length > 0){
       const container = document.getElementById("role-list");
       container.innerHTML = ""; //Wyczyszczenie wierszy jeśli były
       const template = document.getElementById("role-row-template");
       let counter = 0;
-      console.log("Role Data", data);
+      //console.log("Role Data", data);
       for(let i=0; i<data.length; i++){
         const picked = data[i];
-        console.log("data:", data[i]);
+        //console.log("data:", data[i]);
         counter++;
         const clone = template.content.cloneNode(true);
         clone.querySelector("#number-role").textContent = counter;

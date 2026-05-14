@@ -13,11 +13,18 @@ async function encryptUserPassword(userPassword){
 }
 
 async function decryptUserPassword(userPassword){
-  let key = await getUserEncryptionKey();
-  if(key && key !== null){
-    return decrypt(userPassword, key);
+  try{
+    let key = await getUserEncryptionKey();
+    if(key && key !== null){
+      let result = decrypt(userPassword, key);
+      if(result && result.success){
+      return {success: true, data: result.data};
+      }
+    }
+    return {success: false, error: "nie udało się odczytać hasła"};
+  }catch(err){
+    return {success: false, error: err};
   }
-  return null;
 }
 
 function decrypt(input, SECRET_KEY){
@@ -34,7 +41,10 @@ function decrypt(input, SECRET_KEY){
 
   let decrypted = decipher.update(data, "base64", "utf8");
   decrypted += decipher.final("utf8");
-  return decrypted;
+  if(decrypted){
+    return {success: true, data: decrypted};
+  }
+  return {success: false, error: "nie można odszyfrować"};
 }
 
 function encrypt(input, SECRET_KEY) {

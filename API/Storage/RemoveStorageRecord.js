@@ -2,24 +2,21 @@ const axios = require('axios');
 const {getToken} = require('./../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('./../GetConfigData.js');
 
-
-async function addNewStorageRecord(accessUrl, accessLogin, accessPassword) { 
+async function removeStorageRecord(recordId) { 
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.uploadNewRecord;
+    const url = tempUrls.removeStorageRecord;
     const token = await getToken();
     if(token === null){
       console.log("Brak tokenu?", token);
       return { success: false, error: "brak zapisanego tokenu"};
     }
-    if(url===null || url === ""){
+    if(!url || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
 
     const response = await axios.post(url, {
-      'url': accessUrl,
-      'access_login': accessLogin,
-      'access_pwd': accessPassword
+      'recordId': recordId
     },
     {
       headers: {
@@ -33,4 +30,4 @@ async function addNewStorageRecord(accessUrl, accessLogin, accessPassword) {
   }
 }
 
-module.exports = { addNewStorageRecord };
+module.exports = { removeStorageRecord };

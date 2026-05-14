@@ -8,6 +8,10 @@ contextBridge.exposeInMainWorld('api', {
 
   //Załaduj konfigurację endpointów.
   loadApiConfig: () => ipcRenderer.invoke("load-apiConfig"),
+
+  //Generuj losowe hasło
+  generateRandomPassword: () => ipcRenderer.invoke("generate-random-password"),
+
   //Szyfruj Hasło
   encryptPassword: (password) => ipcRenderer.invoke("encrypt-password", password),
   //Odszyfruj Hasło
@@ -15,7 +19,7 @@ contextBridge.exposeInMainWorld('api', {
   //Hashuj hasło
   hashPassword: (password) => ipcRenderer.invoke("hash", password),
   //szyfruj hasło użytkownika
-  encryptUserPassword:(password) => ipcRenderer.invoke('encrypt-user-password', password),
+  encryptUserPassword:(password, key) => ipcRenderer.invoke('encrypt-user-password', password, key),
   //odszyfruj hasło użytkownika
   decryptUserPassword: (password) => ipcRenderer.invoke('decrypt-user-password', password),
 
@@ -78,9 +82,13 @@ contextBridge.exposeInMainWorld('api', {
   //Pobierz rekordy z lokalnej bazy danych
   getStorage:() => ipcRenderer.invoke('get-storage'),
   //Aktualizacja danych haseł
-  storageUpdate:(data) => ipcRenderer.invoke('update-storage', data),
+  //storageUpdate:(data) => ipcRenderer.invoke('update-storage', data),
+  //Aktualizacja danych haseł
+  storageUpdate:(data) => ipcRenderer.invoke('modify-storage-record', data),
   //dodawanie nowego rekordu
-  addNewStorageRecord: (url, accessLogin, accessPassword) =>ipcRenderer.invoke('add-new-storage-record', url, accessLogin, accessPassword),
+  addNewStorageRecord: (data) =>ipcRenderer.invoke('add-new-storage-record', data),
+  //Usuwanie rekordu z bazy
+  removeStorageRecord: (recordToDelete) => ipcRenderer.invoke('remove-storage-record', recordToDelete),
 
   //Usuwanie lokalnego rekordu
   //removeLocalRecord:(data) => ipcRenderer.invoke('remove-storage', data),

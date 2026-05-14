@@ -10,7 +10,7 @@
     <div class="toggle-eye" id="toggle-eye"></div>
     <!-- <div class="single-data" id="exp-date"></div> -->
     <div class="options-dots" data-id="" id="dots-menu">
-      <div class="dots-icon">⋮</div>
+      <div class="dots-icon"></div>
     </div>
   </div>
 </template>
@@ -37,13 +37,21 @@
 <!-- Dodawanie nowego rekordu -->
 <div id="storage-header" class="hidden">
   <div id="addRecord-form" class="hidden">
-    <input type="text" id="new-url" placeholder="URL">
-    <input type="text" id="new-login" placeholder="Login">
-    <input type="password" id="new-password" placeholder="Password">
-    <button id="cancelRecord-button">✕</button>
-    <button id="saveRecord-button">✓︎</button>
+    <div id="random-password-generator-space">
+      <div id="random-pass-content-space" class="hidden">
+        <!-- <span id="random-pass-content-title">Losowe hasło:</span> -->
+        <span id="random-pass-content"></span>
+      </div>
+      <div id="generate-password-icon" class="random-password-icon-format"></div>
+    </div>
+    <input type="text" id="new-url" class="pass-input-format" placeholder="URL">
+    <input type="text" id="new-login" class="pass-input-format" placeholder="Login">
+    <input type="password" id="new-password" class="pass-input-format" placeholder="Hasło">
+    <div id="cancelRecord-button"></div>
+    <div id="saveRecord-button"></div>
   </div>
-  <button id="addRecord-button">✚</button>
+  <div id="addRecord-button"></div>
+  <!-- <button id="addRecord-button">✚</button> -->
 </div>
 
 <!-- Nagłówki tabeli -->
