@@ -23,6 +23,8 @@ contextBridge.exposeInMainWorld('api', {
   //odszyfruj hasło użytkownika
   decryptUserPassword: (password) => ipcRenderer.invoke('decrypt-user-password', password),
 
+  //Pobierz listę ról
+  getAllRoles: () => ipcRenderer.invoke("get-all-roles"),
   //modyfikuj rolę wybranego użytkownika do domyślnego username
   setUserRoleToDefault: (userModMail) => ipcRenderer.invoke("set-user-role-to-default", userModMail),
   //modyfikuj rolę wybranego użytkownika na inną.
@@ -90,20 +92,25 @@ contextBridge.exposeInMainWorld('api', {
   //Usuwanie rekordu z bazy
   removeStorageRecord: (recordToDelete) => ipcRenderer.invoke('remove-storage-record', recordToDelete),
 
+  //Pobieranie danych do filtrów Logów
+  getLogFiltersData: () => ipcRenderer.invoke('get-log-filters-data'),
+  getLogsData: (filtersData) => ipcRenderer.invoke('get-logs-data', filtersData),
+
+
   //Usuwanie lokalnego rekordu
   //removeLocalRecord:(data) => ipcRenderer.invoke('remove-storage', data),
   //Zapisanie nowego rekordu w lokalnej DB
   //localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data),
   //Czy rotacja haseł jest włączona
-  isRotationOn:() => ipcRenderer.invoke('is-rotation-on'),
+  //isRotationOn:() => ipcRenderer.invoke('is-rotation-on'),
   // Pobierz wartość rotation Time
-  getRotationTime:() => ipcRenderer.invoke('get-rotation-time'),
+  //getRotationTime:() => ipcRenderer.invoke('get-rotation-time'),
   //Zwróć datę wygaśnięcia hasła
-  getExpirationDate: (idPass) => ipcRenderer.invoke('get-expiration-date', idPass),
+  //getExpirationDate: (idPass) => ipcRenderer.invoke('get-expiration-date', idPass),
   //Zmiana ilości dni wygaśnięcia hasła
-  rotationTimeUpdate:(time) => ipcRenderer.invoke('update-rotation-time', time),
+  //rotationTimeUpdate:(time) => ipcRenderer.invoke('update-rotation-time', time),
   // Sprawdź czy hasło wygasło
-  isPasswordExpired:(idPass) => ipcRenderer.invoke('is-password-expired', idPass),
+  //isPasswordExpired:(idPass) => ipcRenderer.invoke('is-password-expired', idPass),
 
   //Pobierz metodę autoryzacji użytkownika
   getUserAuthMethode: () => ipcRenderer.invoke('get-user-auth-methode'),

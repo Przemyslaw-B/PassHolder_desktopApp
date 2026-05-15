@@ -1,13 +1,17 @@
 <!-- Szablon -->
 <template id="log-row-template"> 
-  <div class="log-row log-column-size"> 
-    <span class=single-log-data id="number-log"> </span>
-    <span class=single-log-data id="event-log"> </span>
-    <span class=single-log-data id="user-log"> </span>
-    <span class=single-log-data id="setted-by-log"> </span>
-    <span class=single-log-data id="record-log"> </span>
-    <span class=single-log-data id="ip-log"> </span>
-    <span class=single-log-data id="timestamp-log"> </span>
+  <div class="log-row log-column-size logs-table-font"> 
+    <span id="number-log" class=single-log-data> </span>
+    <span id="event-log" class=single-log-data> </span>
+    <span id="user-log" class=single-log-data> </span>
+    <span id="setted-by-log" class=single-log-data> </span>
+    <!-- <span class=single-log-data id="record-log"> </span> -->
+    <span id="ip-log" class=single-log-data> </span>
+    <!-- <span class=single-log-data id="timestamp-log"> </span> -->
+    <div id="single-log-data-time">
+      <span id="day-log" class=single-log-data> </span>
+      <span id="time-log" class=single-log-data> </span>
+    </div>
     <span class=single-log-data id="details-log"> </span>
   </div>
 </template>
@@ -16,7 +20,7 @@
 <div id="filters-place">
   <!-- nagłówek -->
   <div id="logs-filter-title">
-    <span id="logs-filter-title-text">Filters:</span>
+    <span id="logs-filter-title-text">Filtry:</span>
   </div>
   <!-- Filtry -->
   <div id="filters-upper" >
@@ -30,17 +34,17 @@
 
   <div id="filters">
     <div id="type-filter" class="log-single-filter">
-      <span id="type-filter-title" class="log-filter-name">Type:</span>
+      <span id="type-filter-title" class="log-filter-name">Typ:</span>
       <select id="logs-type-selector" class="log-filter-selector active-filter-placeholder">
-        <option value="" disabled selected hidden>Select type</option>
+        <option value="" disabled selected hidden>Wybierz typ:</option>
       </select>
       <div id="type-logs-reset-icon" class="log-reset-icon"></div>
     </div>  
 
     <div id="settedBy-filter" class="log-single-filter">
-      <span id="settedBy-title" class="log-filter-name">Responsible administrator:</span>
+      <span id="settedBy-title" class="log-filter-name">Administrator:</span>
       <select id="logs-settedBy-selector" class="log-filter-selector active-filter-placeholder">
-        <option value="" disabled selected hidden>Select administrator</option>
+        <option value="" disabled selected hidden>Wybierz administratora</option>
       </select>
       <div id="settedBy-logs-reset-icon" class="log-reset-icon"></div>
     </div>  
@@ -65,13 +69,13 @@
 <!-- Nagłówki tabeli -->
 <div class="single-log-data-headers log-column-size" id="log-titles">
   <span class="title-log" id="titleNumber-log">No.</span>
-  <span class="title-log" id="titleEvent-log">Event</span>
-  <span class="title-log" id="titleUser-log">User</span>
-  <span class="title-log" id="titleSettedBy-log">Setted by</span>
-  <span class="title-log" id="titleRecord-log">Record</span>
+  <span class="title-log" id="titleEvent-log">Zdarzenie</span>
+  <span class="title-log" id="titleUser-log">Dotyczy żytkownika</span>
+  <span class="title-log" id="titleSettedBy-log">Wykonał</span>
+  <!-- <span class="title-log" id="titleRecord-log">Record</span> -->
   <span class="title-log" id="titleIp-log">IP</span>
-  <span class="title-log" id="titleTimestamp-log">Timestamp</span>
-  <span class="title-log" id="titleDetails-log">details</span>
+  <span class="title-log" id="titleTimestamp-log">data</span>
+  <span class="title-log" id="titleDetails-log"></span>
 </div>
 
 <!-- Główna zawartość listy -->

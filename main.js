@@ -56,6 +56,10 @@ const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js")
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
 
 const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
+const {getRolesData} = require('./API/Roles/GetRolesData.js');
+
+const {getLogFiltersData} = require('./API/Logs/GetLogFiltersData.js');
+const {getLogsData} = require('./API/Logs/GetLogsData.js');
 
 const appName="PassHolder";
 
@@ -136,12 +140,10 @@ app.on('window-all-closed', (event) => {
 
 //zapisz securityPassword
 async function securityPasswordLocalSave(){
-    //console.log("Zapisuje z serwera do lokalnej zmiennej security password..");
     const temp = await getSecurityPasswordIfExist();
     if(temp.success){
         if(temp.securityPassword !== null){
             securityPassword = temp.data;
-            //console.log("Security Password", securityPassword);
         } else {
             console.log("Security Password nie ma w bazie danych");
         }
@@ -347,6 +349,20 @@ ipcMain.handle('decrypt-user-password', async (event, password)=>{
     return {success: false, message: message}
 });
 
+//pobierz listę ról
+ipcMain.handle('get-all-roles', async ()=>{
+    try{
+        let result = await getRolesData();
+        if(result && result.success && result.data){
+            return {success: true, data: result.data};
+        }
+        return {success: false, error: "błąd pobierania listy ról."}
+    }catch(error){
+        console.log("Błąd pobierania listy ról.");
+        return {success: false, error: "błąd pobierania listy ról."}
+    }
+}); 
+
 //zmień rolę użytkownika z wyższej na usera
 ipcMain.on('set-user-role-to-default', async (event, userModMail)=>{
     let message;
@@ -476,6 +492,36 @@ ipcMain.handle('modify-storage-record', async (event, data)=>{
     }
 });
 
+//Pobieranie danych do wypełnienia filtrów logów 
+ipcMain.handle('get-log-filters-data', async()=>{
+    try{
+        let result = await getLogFiltersData();
+        if(result && result.success && result.data){
+            return {success: true, data: result.data};
+        }
+        return {success: false, error: "nie można pobrać danych"};
+    }catch(error){
+        console.error("błąd pobierania danych do filtrów logów", error);
+    }
+});
+
+//Pobieranie danych logów z uwzględnieniem filtrów
+ipcMain.handle('get-logs-data', async(event, filtersData)=>{
+    try{
+        if(filtersData){
+            let result = await getLogsData(filtersData);
+            console.log("get-logs-data result", result);
+            if(result && result.success && result.data){
+                return {success: true, data: result.data};
+            }
+            return {success: false, error: "nie można pobrać danych"};
+        }
+        return {success: false, error: "niekompletne dane"};
+    }catch(error){
+        console.error("błąd pobierania danych logów", error);
+    }
+});
+
 /*
 ipcMain.handle('update-storage', async (event, cloudData)=>{
     try{
@@ -593,17 +639,14 @@ ipcMain.handle('save-security-password', async (event, securityPassword)=>{
 });
 
 ipcMain.handle('validate-security-password', async (event, recivedSecurityPassword) => {
-    //console.log("validate-security-password'...");
     try{
         let response = await getSecurityPasswordIfExist();
         if(response && response.success && response.securityPassword && recivedSecurityPassword){
             let recivedPass = await hash(recivedSecurityPassword);
             if(recivedPass === securityPassword){
-               // console.log("validate-security-password TRUE");
                 return true;
             }
         }
-        //console.log("validate-security-password FALSE");
         return false;
     } catch(err){
         console.error("Błąd weryfikacji hasła:", err);
@@ -614,7 +657,6 @@ ipcMain.handle('validate-security-password', async (event, recivedSecurityPasswo
 ipcMain.handle('is-security-password-required', () =>{
     try{
         let response = getSecurityPassword();
-            //console.log("is-security-password-required response:", response);
         if(response && response !== null){
             return false;
         }
@@ -632,11 +674,11 @@ ipcMain.handle('user-password-encryption-key', async (event, userPassword)=>{
             let result = await setUserEncryptionKey(userPassword);  
         }else{
             console.log('Brak podanego hasła użytkownika.');
-            //return {success: false};
+            return {success: false, error: 'Brak podanego hasła użytkownika.'};
         }
     }catch(err){
         console.error("Błąd ustawiania hasła szyfrowania użytkownika:", err);
-        //return {success: false};
+        return {success: false, error: "Błąd ustawiania hasła szyfrowania użytkownika:"};
     }
 });
 
@@ -646,16 +688,11 @@ ipcMain.handle('validateNewSecurityPassword', (event, newSecurityPassword)=>{
 });
 
 ipcMain.handle('set-new-security-password', async (event, newSecurityPassword)=>{
-    //console.log('setNewSecurityPassword:', newSecurityPassword);
     const response = await getSecurityPasswordIfExist();
-    //console.log('response:', response);
-    //console.log('?setNewSecurityPassword, old password:', response.securityPassword);
     if(response.success === true && (!response.securityPassword || response.securityPassword === null)){
         const response2 = await saveNewSecurityPassword(newSecurityPassword);
-        //console.log('response2:', response2);
         if(response2.success){
             let response3 = await getSecurityPasswordIfExist();
-            //console.log('response3:', response3);
             if(response3.success && response3.securityPassword){
                 securityPassword = response3.securityPassword;
                 return true;
@@ -700,7 +737,6 @@ ipcMain.handle('get-all-auth-methodes', async ()=>{
 ipcMain.handle('is-security-password-set', async()=>{
     try{
         let response = await getSecurityPasswordIfExist();
-        //console.log('response:', response);
         if(response){
             securityPassword = response.securityPassword;
             if(securityPassword && securityPassword !== null){

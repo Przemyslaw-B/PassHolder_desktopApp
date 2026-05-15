@@ -2,10 +2,11 @@ const axios = require('axios');
 const {getToken} = require('../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('../GetConfigData.js');
 
-async function getLogsData(pageNumber, pageSize, typeFilter, adminMail, fromDate, toDate) {
+async function getLogsData(filtersData) {
   try {
+    console.log("GetLogsData filtry:", filtersData);
     const tempUrls = await getConfigData();
-    const url = tempUrls.getFiltersData;
+    const url = tempUrls.getLogs;
     const token = await getToken();
     if(token === null){
       console.log("Brak tokenu?", token);
@@ -14,15 +15,14 @@ async function getLogsData(pageNumber, pageSize, typeFilter, adminMail, fromDate
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.post(
-      url,
-      {
-        'pageNumber': pageNumber,
-        'pageSize': pageSize,
-        'typeName': typeFilter,
-        'adminMail': adminMail,
-        'fromDate': fromDate,
-        'toDate': toDate
+
+    const response = await axios.post(url,{
+        'pageNumber': filtersData.pageNumber,
+        'pageSize': filtersData.pageSize,
+        'typeName': filtersData.typeFilter,
+        'adminMail': filtersData.adminMail,
+        'fromDate': filtersData.fromDate,
+        'toDate': filtersData.toDate
       },
       {
       headers: {

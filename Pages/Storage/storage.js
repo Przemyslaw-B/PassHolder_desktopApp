@@ -69,17 +69,17 @@ function securityPasswordModal(){
   securityPasswordModalConfirmButton.addEventListener("click", async (e) => {
     const securityPassword = document.getElementById("add-security-password-modal-password-input").value;
     const securityPasswordRepeat = document.getElementById("add-security-password-modal-password-input-repeat").value;
-    console.log('securityPassword.value', securityPassword);
-    console.log('securityPasswordRepeat.value', securityPasswordRepeat);
+    //console.log('securityPassword.value', securityPassword);
+    //console.log('securityPasswordRepeat.value', securityPasswordRepeat);
     if((securityPassword === null || securityPassword === "")&& (securityPasswordRepeat === null || securityPasswordRepeat === "")){
       message = "Oba pola muszą zostać wypełnione."
     }
     if(securityPassword === securityPasswordRepeat){
       const result = await window.api.validateNewSecurityPassword(securityPassword);
-      console.log('validateNewSecurityPassword:', result);
+      //console.log('validateNewSecurityPassword:', result);
       if(result.success === true){
         const res = await window.api.setNewSecurityPassword(securityPassword);
-        console.log('saveSecurityPassword:', res);
+        //console.log('saveSecurityPassword:', res);
         loadStorage();
       } else{
         message = result.message;
@@ -87,7 +87,7 @@ function securityPasswordModal(){
     } else{
       message = "Podane hasła muszą być identyczne."
     }
-    console.log('securityModalMessage:', message);
+    //console.log('securityModalMessage:', message);
     //TODO wyśietlenie komunikatu
   });
 }
@@ -171,7 +171,7 @@ async function downloadData(){
 }
 
 async function setStorageGUI(data){
-  console.log("Data length: " + data.length)
+  //console.log("Data length: " + data.length)
   if (data != null || data.length > 0){
     const container = document.getElementById("storage-list");
     const template = document.getElementById("storage-row-template");
@@ -706,7 +706,7 @@ async function decryptUserPassword(password){
 //Odszyfruj
 async function decryptPassword(password){
   let result= await window.api.decryptPassword(password);
-  console.log("result password", result);
+  //console.log("result password", result);
   if(result){
     if(result.success){
       return result.data;
@@ -866,7 +866,7 @@ async function showPassword(){
       pickedPass.classList.add("show-password");
       pickedPassEye.classList.toggle("toggle-eye-visible");
       let decryptedPass = await decryptUserPassword(pickedPassVal);
-      console.log("decryptedPass:", decryptedPass);
+      //console.log("decryptedPass:", decryptedPass);
       if(!decryptedPass){
         decryptedPass = "[złe hasło]";
       }

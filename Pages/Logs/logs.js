@@ -9,7 +9,7 @@
   let dateFromValue = "";
   let dateToValue = "";
 
-  let loglterData;
+  let logFilterData;
 
   //let apiUrlConfig;
 
@@ -145,7 +145,6 @@
       setTypeFiltersOptions();
       setResponsibleAdministratorOptions();
       const data = await downloadLogsData();  //Pobierz listę logów
-      console.log("data:", data);
       await setLogsGUI(data);
     }catch(err){
       console.error("[loadLogs] błąd:", err);
@@ -163,6 +162,11 @@
   }
 
   async function getFiltersData(){
+    let result = await window.api.getLogFiltersData();
+    if(result && result.success && result.data){
+      return result.data;
+    }
+    /*
     try{
       const responseConfig = await window.api.loadApiConfig();
       const config = responseConfig.config;
@@ -187,9 +191,32 @@
     }catch(err){
       console.error("[loadFiltersData] błąd:", err);
     } 
+      */
   }
 
   async function downloadLogsData(){
+    let typeFilter = document.getElementById("logs-type-selector").value || undefined;
+    let ipFilter = document.getElementById("logs-ip-input").value || undefined;
+    let settedByFilter = document.getElementById("logs-settedBy-selector").value || undefined;
+    let fromDateFilter = document.getElementById("dateFrom-log").value || undefined;
+    let toDateFilter = document.getElementById("dateTo-log").value || undefined;
+    let pageNumberFilter = 0;
+    let pageSizeFilter = 0;
+    let filtersData = {
+      "pageNumber": pageNumberFilter,
+      "pageSize": pageSizeFilter,
+      "typeFilter": typeFilter,
+      "adminMail": settedByFilter,
+      "ip": ipFilter,
+      "fromDate": fromDateFilter,
+      "toDate": toDateFilter
+    };
+    let result = await window.api.getLogsData(filtersData);
+    if(result && result.success && result.data){
+      return result.data;
+     }
+
+    /*
     try{
       let typeFilter = document.getElementById("logs-type-selector").value || undefined;
       //let userFilter = document.getElementById("logs-user-select").value || undefined;
@@ -228,11 +255,13 @@
       console.error("[loadLogs] błąd:", err);
       //await window.api.logout();
     } 
+    */
   }
 
   async function setLogsGUI(data){
     //console.log("Data length: " + data.length)
     //Wyczyszczenie wierszy jeśli były
+    console.log("setLogsGUI data:", data);
     const container = document.getElementById("log-list");
     container.innerHTML = "";
     if(data != null && data.length > 0){
@@ -245,12 +274,13 @@
         const clone = template.content.cloneNode(true);
         clone.querySelector("#number-log").textContent = counter;
         clone.querySelector("#number-log").dataset.id = picked.id;
-        clone.querySelector("#event-log").textContent = picked.idEvent;
-        clone.querySelector("#user-log").textContent = picked.userId;
+        clone.querySelector("#event-log").textContent = picked.eventName;
+        clone.querySelector("#user-log").textContent = picked.userName;
         clone.querySelector("#setted-by-log").textContent = picked.settedBy;
-        clone.querySelector("#record-log").textContent = picked.idRecord;
+        //clone.querySelector("#record-log").textContent = picked.idRecord;
         clone.querySelector("#ip-log").textContent = picked.ip;
-        clone.querySelector("#timestamp-log").textContent = picked.timestamp;
+        clone.querySelector("#day-log").textContent = getDayFromTimestamp(picked.timestamp);
+        clone.querySelector("#time-log").textContent = getTimeFromTimestamp(picked.timestamp);
         clone.querySelector("#details-log").textContent = picked.details;
 
         container.appendChild(clone);
@@ -258,6 +288,27 @@
     } else {
       console.log("Brak danych do wyświetlenia..");
     }
+  }
+
+  function getDayFromTimestamp(stamp){
+    if(!stamp){
+      return "";
+    }
+    const date = new Date(stamp);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  function getTimeFromTimestamp(stamp){
+    if(!stamp){
+      return "";
+    }
+    const date = new Date(stamp);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
 
   function setTypeFiltersOptions(){
@@ -336,8 +387,6 @@
   });
   }
   */
-
- 
 
   async function reloadLogList(){
     //console.log("resetuję listę logów..");

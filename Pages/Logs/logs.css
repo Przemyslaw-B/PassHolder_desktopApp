@@ -1,5 +1,9 @@
 .log-column-size{
-    grid-template-columns: 5% 10% 10% 10% 10% 15% 15% auto;
+    grid-template-columns: 5% auto 20% 20% 10% 10% 5%;
+}
+
+.logs-table-font{
+    font-size: 0.8rem;
 }
 
 #logs-filter-title{
@@ -110,6 +114,15 @@
 .active-filter{
     opacity: 1;
     cursor: pointer;
+}
+
+#single-log-data-time{
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .single-log-data-headers{

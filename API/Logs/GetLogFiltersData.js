@@ -2,7 +2,7 @@ const axios = require('axios');
 const {getToken} = require('../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('../GetConfigData.js');
 
-async function getFiltersData() {
+async function getLogFiltersData() {
   try {
     const tempUrls = await getConfigData();
     const url = tempUrls.getFiltersData;
@@ -28,4 +28,4 @@ async function getFiltersData() {
   }
 }
 
-module.exports = { getFiltersData };
+module.exports = { getLogFiltersData };

@@ -11,6 +11,19 @@
   </div> 
 </template>
 
+<!-- Górna część dodawania roli do użytkownika -->
+<div id="roles-top-space">
+  <div id="add-new-user-role-button" class="top-space-role-button"></div>
+  <div id="add-new-user-role-form" class="hidden">
+    <select id="add-new-user-role-selector">
+        <option value="" disabled selected hidden>Wybierz rolę</option>
+    </select>
+    <input type="text" id="add-new-user-role-usermail" placeholder="email użytkownika">
+    <div id="add-new-user-role-cancel-button" class="top-space-role-button"></div>
+    <div id="add-new-user-role-confirm-button" class="top-space-role-button"></div>
+  </div>
+</div> 
+
 <!-- Nagłówki tabeli -->
 <div class="single-role-data-headers role-column-size" id="role-titlesClass">
   <span class="title-role" id="titleNumber-role">Num.</span>

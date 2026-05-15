@@ -1,5 +1,6 @@
 {
     "loginValidation": "http://localhost:8081/api/userValidation",
+    "logout": "http://localhost:8081/api/logout",
     "publicKey":"http://localhost:8081/api/getPublicKey",
     "register": "",
     "forgotPass": "",

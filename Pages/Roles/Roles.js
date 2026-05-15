@@ -1,9 +1,13 @@
+  let addUserRoleFormTimeout;
+  let userRoleSelected;
+
   document.addEventListener("DOMContentLoaded", ()=>{
     const rolesContainer = document.getElementById("role-content");
     fetch("../Roles/roles.html")
       .then(res => res.text())
       .then(html => {
         rolesContainer.innerHTML = html;
+        initNewRolesForm();
         loadRoles();
       });
   });
@@ -30,6 +34,12 @@ async function loadRoles(){
   }
 
   async function getRolesData(){
+    let result = await window.api.getAllRoles();
+    if(result && result.success && result.data){
+      return result.data;
+    }
+    return;
+    /*
     try{
       const responseConfig = await window.api.loadApiConfig();
       const config = responseConfig.config;
@@ -46,17 +56,18 @@ async function loadRoles(){
       if(!response.ok){
         throw new Error(`Błąd API: ${response.status}`);
       }
-      const data = await response.json();
-      return data.roles;
+      const result = await response.json();
+      return result.data.roles;
     }catch(err){
       console.error("[loadRoles] błąd:", err);
       //await window.api.logout();
     }
+      */
   }
 
   async function setRolesGUI(data){
     //console.log("Data length: " + data.length)
-    if(data != null && data.length > 0){
+    if(data && data != null && data.length > 0){
       const container = document.getElementById("role-list");
       container.innerHTML = ""; //Wyczyszczenie wierszy jeśli były
       const template = document.getElementById("role-row-template");
@@ -72,11 +83,85 @@ async function loadRoles(){
         clone.querySelector("#user-role").textContent = picked.userMail;
         clone.querySelector("#roles-role").textContent = picked.roleName;
         clone.querySelector("#admin-role").textContent = picked.adminMail;
-
+        userRoleSelected = picked;
         container.appendChild(clone);
+        let recordRoleDeleteButton = document.getElementById("delete-role-data-icon");
+        recordRoleDeleteButton.addEventListener("click", async () =>{
+          let result = await deleteRoleRow();
+        });
+        let recordEditButton = document.getElementById("edit-role-data-icon");
+        recordEditButton.addEventListener("click", async () =>{
+          let result = await editRoleRow();
+        });
       }
     } else{
       console.log("Brak danych do wyświetlenia..");
     }
+  }
 
+  async function deleteRoleRow(){
+    if(userRoleSelected){
+    }
+  }
+
+  async function editRoleRow(){
+    if(userRoleSelected){
+    }
+  }
+
+  function initNewRolesForm(){
+    addUserRoleButton();
+    addUserRoleCancelButton();
+    addUserRoleConfirmButton();
+  }
+
+  function addUserRoleButton(){
+    let addUserRoleButton = document.getElementById("add-new-user-role-button");
+    addUserRoleButton.addEventListener("click", ()=>{
+      let addUserRoleForm = document.getElementById("");
+      showAddUserRoleForm();
+      clearTimeout(addUserRoleFormTimeout);
+      addUserRoleFormTimeout = setTimeout(() => {
+        hideAddUserRoleForm();
+      }, 60 * 1000); 
+    });
+  }
+
+  function addUserRoleCancelButton(){
+    let addUserRoleCancelButton = document.getElementById("add-new-user-role-cancel-button");
+    addUserRoleCancelButton.addEventListener("click", ()=>{
+    hideAddUserRoleForm();
+    });
+
+  }
+
+  function addUserRoleConfirmButton(){
+    let addUserRoleConfirmButton = document.getElementById("add-new-user-role-confirm-button");
+    addUserRoleConfirmButton.addEventListener("click", async ()=>{
+      //TODO wysłanie do api
+
+      //TODO hideAddUserRoleForm();
+    });
+  }
+
+  function showAddUserRoleForm(){
+    let addUserForm = document.getElementById("add-new-user-role-form");
+    let addUserRoleButton = document.getElementById("add-new-user-role-button");
+    let addUserRoleSelector = document.getElementById("add-new-user-role-selector");
+    let addUserRoleUserInput = document.getElementById("add-new-user-role-usermail");
+    addUserRoleUserInput.value = "";
+    addUserRoleSelector.value="";
+    addUserRoleButton.classList.add("hidden");
+    addUserForm.classList.remove("hidden");
+  }
+
+  function hideAddUserRoleForm(){
+    let addUserForm = document.getElementById("add-new-user-role-form");
+    let addUserRoleButton = document.getElementById("add-new-user-role-button");
+    let addUserRoleSelector = document.getElementById("add-new-user-role-selector");
+    let addUserRoleUserInput = document.getElementById("add-new-user-role-usermail");
+    addUserRoleUserInput.value = "";
+    addUserRoleSelector.value="";
+    addUserForm.classList.add("hidden");
+    addUserRoleButton.classList.remove("hidden");
   }
