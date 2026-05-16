@@ -1,6 +1,33 @@
 let userAuthMethode = null;
 let allAuthMethodes = null;
 
+const prefixes = [
+    { country: "Polska", code: "+48" },
+    { country: "Niemcy", code: "+49" },
+    { country: "Francja", code: "+33" },
+    { country: "Hiszpania", code: "+34" },
+    { country: "Włochy", code: "+39" },
+    { country: "Holandia", code: "+31" },
+    { country: "Belgia", code: "+32" },
+    { country: "Czechy", code: "+420" },
+    { country: "Słowacja", code: "+421" },
+    { country: "Litwa", code: "+370" },
+    { country: "Łotwa", code: "+371" },
+    { country: "Estonia", code: "+372" },
+    { country: "Austria", code: "+43" },
+    { country: "Szwajcaria", code: "+41" },
+    { country: "Szwecja", code: "+46" },
+    { country: "Norwegia", code: "+47" },
+    { country: "Dania", code: "+45" },
+    { country: "Finlandia", code: "+358" },
+    { country: "Irlandia", code: "+353" },
+    { country: "Portugalia", code: "+351" },
+    { country: "Grecja", code: "+30" },
+    { country: "Rumunia", code: "+40" },
+    { country: "Bułgaria", code: "+359" },
+    { country: "Ukraina", code: "+380" },
+    { country: "Wielka Brytania", code: "+44" }
+];
 
 document.addEventListener("DOMContentLoaded", () => {
   const settingsContainer = document.getElementById("settings-content");
@@ -9,10 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.text())
     .then(html => {
       settingsContainer.innerHTML = html;
+      setPrefixSelectorOptions();
       getAllMethodeList();
       getUserAuthMethode();
       settingsInit();
       confirmPhoneModalButtonsInit();
+      phoneNumberInputFormat();
       logoutButtonInit();
 
       /*
@@ -96,6 +125,22 @@ function confirmPhoneModalButtonsInit(){
   });
 } 
 
+
+function phoneNumberInputFormat(){
+  const phoneInput = document.getElementById("settings-phone-input");
+  phoneInput.addEventListener("input", (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    value = value.substring(0, 9);
+    if(value.length > 6){
+        value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1 $2 $3");
+    }
+    else if(value.length > 3){
+        value = value.replace(/(\d{3})(\d{1,3})/, "$1 $2");
+    }
+    e.target.value = value;
+  });
+}
+
 function logoutButtonInit(){
   let logoutButton = document.getElementById("logout-button");
   logoutButton.addEventListener("click", ()=>{
@@ -103,6 +148,19 @@ function logoutButtonInit(){
   });
 }
 
+function setPrefixSelectorOptions(){
+  const prefixSelect = document.getElementById("phone-number-prefix");
+  prefixes.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item.code;
+    option.textContent = `${item.country} (${item.code})`;
+    // domyślnie wybrana Polska
+    if(item.code === "+48"){
+        option.selected = true;
+    }
+    prefixSelect.appendChild(option);
+});
+}
 
 /*
 async function saveNewRotationTime(newTime){

@@ -23,7 +23,9 @@ contextBridge.exposeInMainWorld('api', {
   //odszyfruj hasło użytkownika
   decryptUserPassword: (password) => ipcRenderer.invoke('decrypt-user-password', password),
 
-  //Pobierz listę ról
+  //Pobierz listę ogólną dostępnych ról
+  getAllRolesList: () => ipcRenderer.invoke("get-all-roles-list"),
+  //Pobierz listę ról użytkowników
   getAllRoles: () => ipcRenderer.invoke("get-all-roles"),
   //modyfikuj rolę wybranego użytkownika do domyślnego username
   setUserRoleToDefault: (userModMail) => ipcRenderer.invoke("set-user-role-to-default", userModMail),

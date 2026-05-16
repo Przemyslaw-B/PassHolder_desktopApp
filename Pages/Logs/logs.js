@@ -315,7 +315,7 @@
     const events = logFilterData.events;
     const select = document.getElementById("logs-type-selector");
     select.replaceChildren();
-    const placeholder = new Option("Select type", "", true, true);
+    const placeholder = new Option("Wybierz zdarzenie", "", true, true);
     placeholder.disabled = true;
     placeholder.hidden = true;
     select.appendChild(placeholder);
@@ -334,7 +334,7 @@
     console.log("admins", admins);
     const select = document.getElementById("logs-settedBy-selector");
     select.replaceChildren();
-    const placeholder = new Option("Select administrator", "", true, true);
+    const placeholder = new Option("Wybierz administratora", "", true, true);
     placeholder.disabled = true;
     placeholder.hidden = true;
     select.appendChild(placeholder);

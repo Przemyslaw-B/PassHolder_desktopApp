@@ -57,6 +57,7 @@ const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js")
 
 const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
 const {getRolesData} = require('./API/Roles/GetRolesData.js');
+const {getAllRolesList} = require('./API/Roles/GetAllRolesList.js');
 
 const {getLogFiltersData} = require('./API/Logs/GetLogFiltersData.js');
 const {getLogsData} = require('./API/Logs/GetLogsData.js');
@@ -349,6 +350,20 @@ ipcMain.handle('decrypt-user-password', async (event, password)=>{
     return {success: false, message: message}
 });
 
+//Pobierz ogólną listę dostępnych ról
+ipcMain.handle('get-all-roles-list', async ()=>{
+    try{
+        let result = await getAllRolesList();
+        if(result && result.success && result.data){
+            return {success: true, data: result.data};
+        }
+        return {success: false, error: "błąd pobierania listy dostępnych ról."}
+    }catch(error){
+        console.log("Błąd pobierania listy dostępnych ról.");
+        return {success: false, error: "błąd pobierania listy dostępnych ról."}
+    }
+});
+
 //pobierz listę ról
 ipcMain.handle('get-all-roles', async ()=>{
     try{
@@ -510,7 +525,6 @@ ipcMain.handle('get-logs-data', async(event, filtersData)=>{
     try{
         if(filtersData){
             let result = await getLogsData(filtersData);
-            console.log("get-logs-data result", result);
             if(result && result.success && result.data){
                 return {success: true, data: result.data};
             }

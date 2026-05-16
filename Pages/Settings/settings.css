@@ -46,7 +46,7 @@
 
 #settings-phone-input{
     height: 1.5rem;
-    width: 10rem;
+    width: 8rem;
     border-radius: 0.5rem;
     border: 1px solid #ccc;
 }
@@ -103,7 +103,7 @@
 }
 
 #auth-methode{
-    min-height: 2rem;
-    min-width: 7rem;
+    min-height: 1.5rem;
+    min-width: 6rem;
     border-radius: 0.5rem;
 }

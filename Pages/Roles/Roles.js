@@ -1,5 +1,6 @@
   let addUserRoleFormTimeout;
   let userRoleSelected;
+  let allRolesList;
 
   document.addEventListener("DOMContentLoaded", ()=>{
     const rolesContainer = document.getElementById("role-content");
@@ -8,6 +9,8 @@
       .then(html => {
         rolesContainer.innerHTML = html;
         initNewRolesForm();
+        getAllRolesList();
+        setAddUserRoleSelectorOptions();
         loadRoles();
       });
   });
@@ -106,6 +109,34 @@ async function loadRoles(){
 
   async function editRoleRow(){
     if(userRoleSelected){
+    }
+  }
+
+  async function getAllRolesList(){
+    let result = await window.api.getAllRolesList();
+    console.log("get-all-roles result:", result);
+    allRolesList = result.data;
+  }
+
+    async function setAddUserRoleSelectorOptions(){
+    let roles  = allRolesList;
+    if(!roles){
+      await getAllRolesList();
+      roles  = allRolesList;
+    }
+    const select = document.getElementById("add-new-user-role-selector");
+    select.replaceChildren();
+    const placeholder = new Option("Wybierz rolę", "", true, true);
+    placeholder.disabled = true;
+    placeholder.hidden = true;
+    select.appendChild(placeholder);
+    if(roles && roles.length>0){
+      for(let role of roles){
+        const option = document.createElement("option");
+        option.value = role;
+        option.textContent = role;
+        select.appendChild(option);
+      }
     }
   }
 
