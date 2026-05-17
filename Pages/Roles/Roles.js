@@ -10,6 +10,10 @@
         rolesContainer.innerHTML = html;
         initNewRolesForm();
         getAllRolesList();
+        userMailSearchInit();
+        hideUserSearchList();
+        editModalButtonsInit();
+        confirmModalButtonsInit();
         setAddUserRoleSelectorOptions();
         loadRoles();
       });
@@ -81,21 +85,22 @@ async function loadRoles(){
         //console.log("data:", data[i]);
         counter++;
         const clone = template.content.cloneNode(true);
-        clone.querySelector("#number-role").textContent = counter;
-        clone.querySelector("#number-role").dataset.id = picked.id;
-        clone.querySelector("#user-role").textContent = picked.userMail;
-        clone.querySelector("#roles-role").textContent = picked.roleName;
-        clone.querySelector("#admin-role").textContent = picked.adminMail;
-        userRoleSelected = picked;
-        container.appendChild(clone);
-        let recordRoleDeleteButton = document.getElementById("delete-role-data-icon");
+        clone.querySelector(".number-role").textContent = counter;
+        clone.querySelector(".number-role").dataset.id = picked.id;
+        clone.querySelector(".user-role").textContent = picked.userMail;
+        clone.querySelector(".roles-role").textContent = picked.roleName;
+        clone.querySelector(".admin-role").textContent = picked.adminMail;
+        let recordRoleDeleteButton = clone.querySelector(".delete-role-data-icon");
         recordRoleDeleteButton.addEventListener("click", async () =>{
+          userRoleSelected = picked;
           let result = await deleteRoleRow();
         });
-        let recordEditButton = document.getElementById("edit-role-data-icon");
+        let recordEditButton = clone.querySelector(".edit-role-data-icon");
         recordEditButton.addEventListener("click", async () =>{
+          userRoleSelected = picked;
           let result = await editRoleRow();
         });
+        container.appendChild(clone);
       }
     } else{
       console.log("Brak danych do wyświetlenia..");
@@ -105,17 +110,83 @@ async function loadRoles(){
   async function deleteRoleRow(){
     if(userRoleSelected){
     }
+    showConfirmModal();
   }
 
   async function editRoleRow(){
     if(userRoleSelected){
+      showEditModal();
     }
   }
 
   async function getAllRolesList(){
     let result = await window.api.getAllRolesList();
-    console.log("get-all-roles result:", result);
+    //console.log("get-all-roles result:", result);
     allRolesList = result.data;
+  }
+
+  async function setUsermailSearchList(){
+    const userMailInput = document.getElementById("add-new-user-role-usermail");
+    const userMailVal = userMailInput.value;
+    let result= await window.api.getUsermailSearchFilter(userMailVal);
+    if(!result || !result.success){
+      return;
+    }
+    let data = result.data.data;
+    const resultsBox = document.getElementById("role-usermail-search-results");
+    if(data && data.length>0){
+      resultsBox.classList.remove("hidden");
+      resultsBox.innerHTML = "";
+      data.forEach(mail=>{
+        const option = document.createElement("div");
+        option.className = "role-usermail-option";
+        option.textContent = mail;
+        option.addEventListener("click", () => {
+            userMailInput.value = mail;
+            resultsBox.innerHTML = "";
+            resultsBox.classList.add("hidden");
+        });
+        resultsBox.appendChild(option);
+      });
+    } else{
+      resultsBox.classList.add("hidden");
+      return;
+    }
+    return;
+  }
+
+function hideUserSearchList(){
+    document.addEventListener("click", (e) => {
+    const wrapper = document.getElementById("role-usermail-search-space");
+    if(!wrapper.contains(e.target)){
+      const resultsBox = document.getElementById("role-usermail-search-results");
+      resultsBox.classList.add("hidden");
+    }
+});
+}
+
+  function userMailSearchInit(){
+    const userMailInput = document.getElementById("add-new-user-role-usermail");
+    const resultsBox = document.getElementById("role-usermail-search-results");
+    let debounceTimer = null;
+    userMailInput.addEventListener("input", async (e) => {
+      const value = e.target.value.trim();
+      clearTimeout(debounceTimer);
+      if(value.length < 3){
+        resultsBox.innerHTML = "";
+        resultsBox.classList.add("hidden");
+        return;
+    }
+    debounceTimer = setTimeout(async () => {
+      try{
+        //let result = await window.api.GetUserMailList(value);
+        setUsermailSearchList();
+        }catch(err){
+          console.error(err);
+        }
+    }, 300);
+});
+
   }
 
     async function setAddUserRoleSelectorOptions(){
@@ -195,4 +266,52 @@ async function loadRoles(){
     addUserRoleSelector.value="";
     addUserForm.classList.add("hidden");
     addUserRoleButton.classList.remove("hidden");
+  }
+
+  function showConfirmModal(){
+    let modal = document.getElementById("role-confirmation-modal");
+    modal.classList.remove("hidden");
+  }
+
+  function hideConfirmModal(){
+    let modal = document.getElementById("role-confirmation-modal");
+    modal.classList.add("hidden");
+  }
+
+  function showEditModal(){
+    let modal = document.getElementById("role-edit-modal");
+    modal.classList.remove("hidden");
+  }
+
+  function hideEditModal(){
+    let modal = document.getElementById("role-edit-modal");
+    modal.classList.add("hidden");
+  }
+
+  function editModalButtonsInit(){
+    let cancelButton = document.getElementById("role-edit-modal-cancel-button");
+    let confirmButton = document.getElementById("role-edit-modal-confirm-button");
+
+    cancelButton.addEventListener("click", ()=>{
+      userRoleSelected=null;
+      hideEditModal();
+    });
+
+    confirmButton.addEventListener("click", async ()=>{
+
+    });
+  }
+
+  function confirmModalButtonsInit(){
+    let cancelButton = document.getElementById("role-modal-account-cancel-button");
+    let confirmButton = document.getElementById("role-modal-confirm-button");
+
+    cancelButton.addEventListener("click", ()=>{
+      userRoleSelected=null;
+      hideConfirmModal();
+    });
+
+    confirmButton.addEventListener("click", async ()=>{
+
+    });
   }

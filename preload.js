@@ -23,6 +23,8 @@ contextBridge.exposeInMainWorld('api', {
   //odszyfruj hasło użytkownika
   decryptUserPassword: (password) => ipcRenderer.invoke('decrypt-user-password', password),
 
+  //Pobierz listę wyszukiwanych użytkowników dla ról.
+  getUsermailSearchFilter: (userMail) => ipcRenderer.invoke("get-role-usermail-search-list", userMail),
   //Pobierz listę ogólną dostępnych ról
   getAllRolesList: () => ipcRenderer.invoke("get-all-roles-list"),
   //Pobierz listę ról użytkowników

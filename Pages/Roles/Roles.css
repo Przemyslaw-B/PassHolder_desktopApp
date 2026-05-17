@@ -30,6 +30,30 @@
     border: 1px solid #ccc;
 }
 
+#role-usermail-search-results{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+}
+
+.role-usermail-option{
+    font-size: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+    color: black;
+    background-color: white;
+}
+
+.role-usermail-option:hover{
+    background-color: #aaa;
+}
+
+#role-usermail-search-results.hidden{
+    display: none;
+}
+
 .top-space-role-button{
     height: 1.5rem;
     width: 1.5rem;
@@ -120,20 +144,87 @@
     background-color: #1abc9c;
 }
 
+#role-edit-modal{
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); 
+    z-index: 9999;
+}
+
+#role-edit-modal-content{
+    min-width: 20rem;
+    min-height: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.5rem 0 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+}
+
+#role-confirmation-modal{
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    flex-direction: column;
+    gap: 1rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); 
+    z-index: 9999;
+}
+
+#role-confirmation-modal-content{
+    min-width: 20rem;
+    min-height: 10rem;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.5rem 0 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+}
+
+
+#role-confirmation-modal.hidden{
+    display: none;
+}
+
+#role-edit-modal.hidden{
+    display: none;
+}
+
 .role-icon-container-format{
     display: flex;
     align-items: center;
     justify-content: flex-end;
 }
 
-#delete-role-data-icon{
+.delete-role-data-icon{
     -webkit-mask-image: url("../../Fonts/Delete/deleteIcon.svg");
     mask-image: url("../../Fonts/Delete/deleteIcon.svg");
     mask-size: contain;
     mask-repeat: no-repeat;
 }
 
-#edit-role-data-icon{
+.edit-role-data-icon{
     -webkit-mask-image: url("../../Fonts/Edit/editIcon.svg");
     mask-image: url("../../Fonts/Edit/editIcon.svg");
     mask-size: contain;
@@ -182,7 +273,35 @@
     min-width: 0;
 }
 
-#number-role{
+.number-role{
     font-weight: bold;
     color: #555;
+}
+
+.role-edit-modal-button-row{
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    margin-top: 1rem;
+}
+
+.role-confirmation-modal-button-row{
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    margin-top: 1rem;
+}
+
+.default-role-button{
+    width: 5rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    background-color: #2c3e50;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+}
+
+.default-role-button:hover{
+    color: #1abc9c;
 }

@@ -55,6 +55,7 @@ const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPa
 const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
 
+const {getUsermailFilterData} = require('./API/Roles/GetUsermailFilterData.js');
 const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
 const {getRolesData} = require('./API/Roles/GetRolesData.js');
 const {getAllRolesList} = require('./API/Roles/GetAllRolesList.js');
@@ -377,6 +378,23 @@ ipcMain.handle('get-all-roles', async ()=>{
         return {success: false, error: "błąd pobierania listy ról."}
     }
 }); 
+
+//Wyszukaj użytkowników przy dodawaniu ról
+ipcMain.handle('get-role-usermail-search-list', async(event, userMail) =>{
+    if(!userMail || userMail.length<3){
+        return {success: false, error: "zbyt mało danych."}
+    }
+    try{
+        let result = await getUsermailFilterData(userMail);
+        if(result && result.success && result.data){
+            return {success: true, data: result.data};
+        }
+        return {success: false, error: "błąd pobierania listy użytkowników."}
+    }catch(error){
+        console.log("Błąd pobierania listy ról.");
+        return {success: false, error: "błąd pobierania listy użytkowników do ról."}
+    }
+});
 
 //zmień rolę użytkownika z wyższej na usera
 ipcMain.on('set-user-role-to-default', async (event, userModMail)=>{

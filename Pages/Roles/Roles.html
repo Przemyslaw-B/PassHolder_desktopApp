@@ -1,13 +1,13 @@
 <!-- Szablon -->
 <template id="role-row-template"> 
   <div class="role-row role-column-size"> 
-    <span class=single-role-data id="number-role"> </span>
-    <span class=single-role-data id="user-role"> </span>
-    <span class=single-role-data id="roles-role"> </span>
-    <span class=single-role-data id="admin-role"> </span>
-    <div id="blank-space-role-data"></div>
-    <div id="delete-role-data-icon" class="role-icons-format"></div>
-    <div id="edit-role-data-icon" class="role-icons-format"></div>
+    <span class="number-role single-role-data"> </span>
+    <span class="user-role single-role-data"> </span>
+    <span class="roles-role single-role-data"> </span>
+    <span class="admin-role single-role-data"> </span>
+    <div class="blank-space-role-data"></div>
+    <div class="delete-role-data-icon role-icons-format"></div>
+    <div class="edit-role-data-icon role-icons-format"></div>
   </div> 
 </template>
 
@@ -18,7 +18,10 @@
     <select id="add-new-user-role-selector">
         <option value="" disabled selected hidden>Wybierz rolę</option>
     </select>
-    <input type="text" id="add-new-user-role-usermail" placeholder="email użytkownika">
+    <div id="role-usermail-search-space">
+      <input type="text" id="add-new-user-role-usermail" placeholder="email użytkownika">
+      <div id="role-usermail-search-results" class="hidden"></div>
+    </div>
     <div id="add-new-user-role-cancel-button" class="top-space-role-button"></div>
     <div id="add-new-user-role-confirm-button" class="top-space-role-button"></div>
   </div>
@@ -40,28 +43,31 @@
 
 <!-- okno zatwierdzenia -->
 <div id="role-confirmation-modal" class="hidden">
-   <input type="text" id="role-confirmation-modal-security-code" class="" placeholder="podaj kod">
+  <div id="role-confirmation-modal-content">
+    <input type="text" id="role-confirmation-modal-security-code" class="" placeholder="podaj kod">
    <div class="role-confirmation-modal-button-row">
-    <button type="button" id="role-modal-account-cancel-button" class="default-button">Cancel</button>
-    <button type="button" id="role-modal-confirm-button" class="default-button">Confirm</button>
+    <button type="button" id="role-modal-account-cancel-button" class="default-role-button">Cancel</button>
+    <button type="button" id="role-modal-confirm-button" class="default-role-button">Confirm</button>
   </div>
   <div id="role-confirmation-modal-message-space">
     <span id="role-confirmation-modal-message"></span>
   </div>
+  </div>
 </div>
 
 <!-- okno edycji -->
-<div id="role-confirmation-modal" class="hidden">
-  <div>
+<div id="role-edit-modal" class="hidden">
+  <div id="role-edit-modal-content">
+    <div>
     <span id="role-confirmation-modal-select-title">Rola:</span>
     <select id="user-role-change-modal" name="rola"></select>
   </div>
-
   <div class="role-edit-modal-button-row">
-    <button type="button" id="role-edit-modal-cancel-button" class="default-button">Cancel</button>
-    <button type="button" id="role-edit-modal-confirm-button" class="default-button">Confirm</button>
+    <button type="button" id="role-edit-modal-cancel-button" class="default-role-button">Cancel</button>
+    <button type="button" id="role-edit-modal-confirm-button" class="default-role-button">Confirm</button>
   </div>
   <div id="role-edit-modal-message-space">
     <span id="role-edit-modal-message"></span>
+  </div>
   </div>
 </div>

@@ -2,10 +2,10 @@ const axios = require('axios');
 const {getToken} = require('../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('../GetConfigData.js');
 
-async function getLogFiltersData() {
+async function getUsermailFilterData(userMail) {
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.getLogFiltersData;
+    const url = tempUrls.getUsermailFilterData;
     const token = await getToken();
     if(token === null){
       console.log("Brak tokenu?", token);
@@ -14,8 +14,10 @@ async function getLogFiltersData() {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.get(
-      url,
+    const response = await axios.post(
+      url,{
+        "userMail": userMail
+      },
       {
       headers: {
         Authorization: `Bearer ${token}`
@@ -28,4 +30,4 @@ async function getLogFiltersData() {
   }
 }
 
-module.exports = { getLogFiltersData };
+module.exports = { getUsermailFilterData };
