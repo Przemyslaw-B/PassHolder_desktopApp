@@ -11,17 +11,22 @@
     "authentication": "http://localhost:8081/api/2FA",
     "creatingAccount": "http://localhost:8081/api/CreateNewAccount",
     "getPassword": "http://localhost:8081/api/getPassword",
-    "getLogs": "http://localhost:8081/api/recieveLogs",
-    "getRoles": "http://localhost:8081/api/recieveRoles",
+    
     "getUsermailFilterData":"http://localhost:8081/api/recieveFilteredUsermailList",
+    "getRoles": "http://localhost:8081/api/recieveRoles",
     "getAllRolesList": "http://localhost:8081/api/recieveAllRoles",
+    "setUserRole": "http://localhost:8081/api/modifytUserRole",
+    "deleteRole": "http://localhost:8081/api/removeUserRole",
+
+    "getLogs": "http://localhost:8081/api/recieveLogs",
     "getLogFiltersData": "http://localhost:8081/api/getAuditFiltersData",
+
     "getSecurityPassword": "http://localhost:8081/api/getSecurityPassword",
     "setSecurityPassword": "http://localhost:8081/api/setSecurityPassword",
-    "setUserRoleToDefault": "http://localhost:8081/api/removeUserRole",
-    "setUserRole": "http://localhost:8081/api/modifytUserRole",
+    
     "getAllAuthenticationMethodes": "http://localhost:8081/api/getAllAuthenticationMethodes",
     "getUserAuthenticationMethode": "http://localhost:8081/api/getUserAuthenticationMethode",
+    
     "getUserPhoneNumber": "",
     "activatePhone": "http://localhost:8081/api/activatePhone",
     "requestPhoneActivationKey": "http://localhost:8081/api/requestPhoneActivationKey"

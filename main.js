@@ -56,9 +56,10 @@ const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js")
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
 
 const {getUsermailFilterData} = require('./API/Roles/GetUsermailFilterData.js');
-const {setUserRoleToDefault} = require('./API/Roles/setUserRoleToDefault.js');
+const {setUserRole} = require('./API/Roles/SetUserRole.js');
 const {getRolesData} = require('./API/Roles/GetRolesData.js');
 const {getAllRolesList} = require('./API/Roles/GetAllRolesList.js');
+const {removeRoleFromUser} = require('./API/Roles/RemoveRoleFromUser.js');
 
 const {getLogFiltersData} = require('./API/Logs/GetLogFiltersData.js');
 const {getLogsData} = require('./API/Logs/GetLogsData.js');
@@ -396,24 +397,41 @@ ipcMain.handle('get-role-usermail-search-list', async(event, userMail) =>{
     }
 });
 
-//zmień rolę użytkownika z wyższej na usera
-ipcMain.on('set-user-role-to-default', async (event, userModMail)=>{
-    let message;
-    if(userModMail && userModMail !== null){
-        return await setUserRoleToDefault(userModMail);
-    }
-    message = "nie podano użytkownika";
-    return {success: false, message: message}
-});
-
 //Zmień rolę użytkownika
 ipcMain.on('set-user-role', async (event, userModMail, roleName)=>{
-    let message;
-    if(userModMail && userModMail !== null && roleName && roleName !== null){
-
+    if(userModMail && roleName){
+        let result = await setUserRole(roleName, userModMail);
+        if(result){
+            if(result.success){
+                return {success: true, data: result.data};
+            }
+            return {success: false, error: result.error};
+        }
+        return {success: false, error: "błąd przyznawania roli"};
     }
-    message = "nie podano użytkownika lub roli";
-    return {success: false, message: message}
+    return {success: false, error: "nie podano użytkownika lub roli"};
+});
+
+//zdegraduj użytkownika do zwykłego usera
+ipcMain.handle('remove-role-from-user', async(event, user)=>{
+    try{
+        if(!user){
+            return {success: false, error: "brak danych"};
+        }
+        let result = await removeRoleFromUser(user);
+        if(result){
+            if(result.success){
+                return {success: true, data: result.data};
+            }else{
+                return {success: false, error: result.data};
+            }
+        } else{
+            return {success: false, error: "błąd pobierania danych"};
+        }
+    }catch(error){
+        console.error("błąd usuwania roli użytkownika: ", error);
+        return {success: false, error: "błąd usuwania roli użytkownika"};
+    }
 });
 
 // Zmień okno z logowania na główne

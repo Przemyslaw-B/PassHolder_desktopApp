@@ -29,10 +29,10 @@ contextBridge.exposeInMainWorld('api', {
   getAllRolesList: () => ipcRenderer.invoke("get-all-roles-list"),
   //Pobierz listę ról użytkowników
   getAllRoles: () => ipcRenderer.invoke("get-all-roles"),
-  //modyfikuj rolę wybranego użytkownika do domyślnego username
-  setUserRoleToDefault: (userModMail) => ipcRenderer.invoke("set-user-role-to-default", userModMail),
   //modyfikuj rolę wybranego użytkownika na inną.
   setUserRole: (userModMail, roleName) => ipcRenderer.invoke("set-user-role", userModMail, roleName),
+  //zdegraduj użytkownika do roli zwykłego usera
+  removeRoleFromUser: (user) => ipcRenderer.invoke("remove-role-from-user", user),
 
   //Zakładanie konta użytkownika
   createUserAccount: (email, name, password) => ipcRenderer.invoke("create-user-account", email, name, password),
@@ -65,7 +65,6 @@ contextBridge.exposeInMainWorld('api', {
   //zapis nowego hasła bezpieczeństwa jeśli nie istnieje
   setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.handle('set-new-security-password', newSecurityPassword),
 
-
   //Odczytaj hash hasła bezpieczeństwa użytkownika
   getSecurityPasswordHash: () => ipcRenderer.invoke('get-security-password-hash'),
   //Odczytaj hasło bezpieczeństwa użytkownika
@@ -74,7 +73,6 @@ contextBridge.exposeInMainWorld('api', {
   setSecurityPassword: (securityPassword) => ipcRenderer.invoke('set-security-password', securityPassword),
   //Czy należy podać hasło bezpieczeństwa
   isSecurityPasswordRequired:() => ipcRenderer.invoke('is-security-password-required'),
-
 
   //Wyczyść zapisane hasło bezpieczeństwa
   //clearSecurityPassword: () => ipcRenderer.invoke('clear-security-password'),
@@ -88,7 +86,7 @@ contextBridge.exposeInMainWorld('api', {
   //Pobierz rekordy z lokalnej bazy danych
   getStorage:() => ipcRenderer.invoke('get-storage'),
   //Aktualizacja danych haseł
-  //storageUpdate:(data) => ipcRenderer.invoke('update-storage', data),
+  //StorageUpdate:(data) => ipcRenderer.invoke('update-storage', data),
   //Aktualizacja danych haseł
   storageUpdate:(data) => ipcRenderer.invoke('modify-storage-record', data),
   //dodawanie nowego rekordu
@@ -98,6 +96,7 @@ contextBridge.exposeInMainWorld('api', {
 
   //Pobieranie danych do filtrów Logów
   getLogFiltersData: () => ipcRenderer.invoke('get-log-filters-data'),
+  //Pobierz logi uwzględniając wybrane filtry
   getLogsData: (filtersData) => ipcRenderer.invoke('get-logs-data', filtersData),
 
 

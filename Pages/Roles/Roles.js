@@ -179,14 +179,12 @@ function hideUserSearchList(){
     }
     debounceTimer = setTimeout(async () => {
       try{
-        //let result = await window.api.GetUserMailList(value);
         setUsermailSearchList();
         }catch(err){
           console.error(err);
         }
     }, 300);
-});
-
+    });
   }
 
     async function setAddUserRoleSelectorOptions(){
@@ -298,7 +296,14 @@ function hideUserSearchList(){
     });
 
     confirmButton.addEventListener("click", async ()=>{
-
+      let role = document.getElementById("");
+      let userMail = document.getElementById("");
+      let result = await window.api.setUserRole();
+      hideEditModal();
+      loadRoles();
+      if(result){
+        
+      }
     });
   }
 
@@ -312,6 +317,15 @@ function hideUserSearchList(){
     });
 
     confirmButton.addEventListener("click", async ()=>{
-
+      let role = document.getElementById("add-new-user-role-selector").value;
+      let userMail = document.getElementById("add-new-user-role-usermail").value;
+      if(role && userMail){
+        let result = await window.api.setUserRole(userMail, role);
+        hideConfirmModal();
+        loadRoles();
+        if(result){
+          
+        }
+      }
     });
   }

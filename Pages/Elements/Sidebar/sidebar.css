@@ -37,6 +37,20 @@
   padding-top: 10vh;   /* <-- odstęp od góry */
 }
 
+#passwords-icon.pressed,
+#logs-icon.pressed,
+#roles-icon.pressed,
+#settings-icon.pressed{
+  background-color: var(--hover-color);
+}
+
+#passwords-label.pressed,
+#logs-label.pressed,
+#roles-label.pressed,
+#settings-label.pressed{
+  color: var(--hover-color);
+}
+
 /*
 .sidebar.active {
   transform: translateX(var(--sidebar-size-not-active));

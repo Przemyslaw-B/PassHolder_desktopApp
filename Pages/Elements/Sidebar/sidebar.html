@@ -6,20 +6,20 @@
   <!-- Menu boczne -->
     <div class="sidebar" id="sidebar">
       <!-- <a href="#" onclick="loadPage('home-content')" >Strona Główna</a> -->
-      <a href="#" onclick="loadPage('storage-content'); loadStorage();" >
+      <a href="#" onclick="loadPage('storage-content'); loadStorage();" id="storage-sidebar-space">
         <div class="sidebar-icon" id="passwords-icon"></div>
         <span class="label" id="passwords-label">Hasła</span>
       </a>
-      <a href="#" onclick="loadPage('settings-content')" >
-        <div class="sidebar-icon" id="settings-icon"></div>
-        <span class="label" id="settings-label">Ustawienia</span>
-      </a>
-      <a href="#" onclick="loadPage('logs-content'); loadLogs()" >
+      <a href="#" onclick="loadPage('logs-content'); loadLogs()" id="logs-sidebar-space">
         <div class="sidebar-icon" id="logs-icon"></div>
         <span class="label" id="logs-label">Logi</span>
       </a>
-      <a href="#" onclick="loadPage('role-content'); loadRoles()" >
+      <a href="#" onclick="loadPage('role-content'); loadRoles()" id="roles-sidebar-space">
         <div class="sidebar-icon" id="roles-icon"></div>
         <span class="label" id="roles-label">Role</span>
+      </a>
+      <a href="#" onclick="loadPage('settings-content')" id="settings-sidebar-space">
+        <div class="sidebar-icon" id="settings-icon"></div>
+        <span class="label" id="settings-label">Ustawienia</span>
       </a>
     </div>
