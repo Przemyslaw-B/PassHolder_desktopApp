@@ -1,6 +1,8 @@
+const QRCode = require("qrcode");
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron');
 const { config } = require('process');
 const { ServerResponse } = require('http');
+
 
 //const path = require('path')
 //const fs = require('fs');
@@ -225,7 +227,7 @@ ipcMain.handle('create-user-account', async (event, email, name, password) =>{
 ipcMain.handle('send-login-request', async (event, email, password)=>{
     try{
         let result = await sendLoginRequest(email, password);
-        return {success: true, data: result.data}
+        return {success: true, data: result.data};
     }catch(error){
         console.error('Błąd logowania:', error);
         return { success: false, error: error.message };
@@ -797,6 +799,16 @@ ipcMain.handle('is-security-password-set', async()=>{
     }catch(err){
         console.error("Błąd weryfikacji zapisu securityPassword:", err);
         return {success: false};
+    }
+});
+
+ipcMain.handle('get-qr-code', async (event, data)=>{
+    try{
+        const qr = await QRCode.toDataURL(data);
+        return {success: true, data: qr};
+    } catch(error){
+        console.log("error:", error);
+        return {success: false, error: error};
     }
 });
 

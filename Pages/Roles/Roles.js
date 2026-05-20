@@ -15,7 +15,8 @@
         editModalButtonsInit();
         confirmModalButtonsInit();
         setAddUserRoleSelectorOptions();
-        loadRoles();
+
+        //loadRoles();
       });
   });
 

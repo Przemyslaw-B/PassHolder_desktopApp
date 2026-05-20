@@ -1,3 +1,6 @@
+let authMethode;
+let qrCode;
+
 //Pobierz język
 /*
 async function getLanguagePack(){
@@ -80,7 +83,6 @@ async function loginValidation(){
     //Wysyłanie danych do API
     const responseData = await loginRequest(email, password);
     //console.log("login data:", responseData);
-    console.log("response data:", responseData);
     if(!responseData || responseData === null){
       showMessage("Connection error");
     } else{
@@ -121,6 +123,9 @@ async function saveSecurityPasswordHash(){
 // Wysłanie danych logowania
 async function loginRequest(email, password, url){
   let result = await window.api.sendLoginRequest(email, password);
+  authMethode = result.data.authMethode;
+  qrCode = result.data.qrCode;
+  console.log("zapisany qrCode:", qrCode);
   return result;
   /*
   try{
@@ -379,8 +384,28 @@ async function setUser(username){
     document.querySelector(".auth-container").style.display="none";
   }
   //pokaż treść weryfikacji
-  function showAuthenticationContent(){
+  async function showAuthenticationContent(){
     document.querySelector(".auth-container").style.display="block";
+    if(authMethode === 3){
+      await renderQrCode();
+    }
+  }
+
+  async function renderQrCode(){
+    console.log("renderowanie QR Code..");
+    const container = document.getElementById("qr-code");
+    if (!container) return;
+    container.innerHTML = ""; // reset
+    const result = await window.api.getQrCode(qrCode);
+    if (!result.success) {
+      console.error("QR error:", result.error);
+      return;
+    }
+    const img = document.createElement("img");
+    img.width = 220;
+    img.height = 220;
+    img.src = result.data;
+    container.appendChild(img);
   }
 
   //pokaż powiadomienie

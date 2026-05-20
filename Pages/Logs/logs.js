@@ -25,7 +25,8 @@
         initFilterResetButtons();
         resetFilters();
         //userMailSugetion();
-        loadLogs();
+        
+        //loadLogs();
       });
   });
 

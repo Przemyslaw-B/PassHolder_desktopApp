@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmModify();
       cancelModifyModal();
 
-      loadStorage();
+      //loadStorage();
     });
 });
 

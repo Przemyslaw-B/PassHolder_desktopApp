@@ -119,4 +119,6 @@ contextBridge.exposeInMainWorld('api', {
   getUserAuthMethode: () => ipcRenderer.invoke('get-user-auth-methode'),
   //pobierz wszystkie dostępne metody autoryzacji
   getAllAuthMethodes: () => ipcRenderer.invoke('get-all-auth-methodes'),
+
+  getQrCode: (qrCode) => ipcRenderer.invoke('get-qr-code', qrCode)
 });

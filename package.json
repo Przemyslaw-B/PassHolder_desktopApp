@@ -21,6 +21,7 @@
     "better-sqlite3": "^12.5.0",
     "electron-updater": "^6.8.3",
     "keytar": "^7.9.0",
+    "qrcode": "^1.5.4",
     "tom-select": "^2.6.0"
   },
   "build": {
