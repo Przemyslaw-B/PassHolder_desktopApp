@@ -24,8 +24,12 @@
     "getSecurityPassword": "http://localhost:8081/api/getSecurityPassword",
     "setSecurityPassword": "http://localhost:8081/api/setSecurityPassword",
     
+    "changeAuthMethodeVerifyUser":"http://localhost:8081/api/changeAuthMethodeVerifyUser",
     "getAllAuthenticationMethodes": "http://localhost:8081/api/getAllAuthenticationMethodes",
     "getUserAuthenticationMethode": "http://localhost:8081/api/getUserAuthenticationMethode",
+    "sendNewMethodeActivationCode":"http://localhost:8081/api/sendMethodeActivationCode",
+    "activateNewAuthMethode":"http://localhost:8081/api/activateAuthMethode",
+    "getQrCode": "http://localhost:8081/api/getQrCode",
     
     "getUserPhoneNumber": "",
     "activatePhone": "http://localhost:8081/api/activatePhone",

@@ -3,7 +3,7 @@ const {getToken} = require('../../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('../../GetConfigData.js');
 
 
-async function authenticateUser(authCode) {
+async function authenticateUser(email, authCode) {
   try {
     const tempUrls = await getConfigData();
     const url = tempUrls.authentication;
@@ -18,6 +18,7 @@ async function authenticateUser(authCode) {
 
     const response = await axios.post(
             url, {
+            'email': email,
             'authKey': authCode
             },
             {

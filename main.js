@@ -56,6 +56,10 @@ const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPa
 
 const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
+const {changeAuthMethodeVerifyUser} = require('./API/AuthMethodes/ChangeMethodeVerifyUser.js');
+const {sendNewMethodeActivationCode} = require('./API/AuthMethodes/SendNewMethodeActivationCode.js');
+const {setUserNewAuthMethode} = require('./API/AuthMethodes/SetUserNewAuthMethode.js');
+
 
 const {getUsermailFilterData} = require('./API/Roles/GetUsermailFilterData.js');
 const {setUserRole} = require('./API/Roles/SetUserRole.js');
@@ -235,10 +239,10 @@ ipcMain.handle('send-login-request', async (event, email, password)=>{
 });
 
 //Wyślij otrzymany kod autoryzacyjny
-ipcMain.handle('send-authentication-code', async (event, authCode) =>{
+ipcMain.handle('send-authentication-code', async (event, email, authCode) =>{
     try{
         if(authCode){
-            let result = await authenticateUser(authCode);
+            let result = await authenticateUser(email, authCode);
             return {success: true, data: result.data};
         } else{
             return {success: false, error: "no code recieverd"};
@@ -765,6 +769,57 @@ ipcMain.handle('clear-security-password', async ()=>{
     }
 });
 */
+
+ipcMain.handle('auth-methode-change-validate-user', async (event, password)=>{
+    try{
+        let result = await changeAuthMethodeVerifyUser(password);
+        if(result){
+            if(result.success){
+                return {success: true};
+            } else{
+                return {success: false};
+            }
+        }
+        return {success: false, error: "błąd weryfikacji"}
+    }catch(error){
+        console.error("Błąd weryfikacji użytkownika", err);
+        return {success: false, error: err};
+    }
+});
+
+ipcMain.handle('send-new-auth-methode-activation-code', async (event, methode)=>{
+    try{
+        let result = await sendNewMethodeActivationCode(methode);
+        if(result){
+            if(result.success){
+                return {success: true};
+            } else{
+                return {success: false};
+            }
+        }
+        return {success: false, error: "błąd wysyłko kodu aktywacyjnego"}
+    }catch(error){
+        console.error("Błąd weryfikacji użytkownika", err);
+        return {success: false, error: err};
+    }
+});
+
+ipcMain.handle('activate-new-auth-methode', async (event, methode, code)=>{
+    try{
+        let result = await setUserNewAuthMethode(methode, code);
+        if(result){
+            if(result.success){
+                return {success: true};
+            } else{
+                return {success: false};
+            }
+        }
+        return {success: false, error: "błąd wysyłko kodu aktywacyjnego"}
+    }catch(error){
+        console.error("Błąd weryfikacji użytkownika", err);
+        return {success: false, error: err};
+    }
+});
 
 ipcMain.handle('get-user-auth-methode', async ()=>{
     try{

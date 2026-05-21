@@ -2,6 +2,25 @@
     display: none;
 }
 
+#settings-auth-verify-modal.hidden{
+    display: none;
+}
+
+#options-space{
+    display: flex;
+    flex-direction: column;
+}
+
+#options-space > div {
+    padding: 1rem 0;
+    border-bottom: 1px solid #aaa;
+}
+
+/* usuń linię z ostatniego elementu */
+#options-space > div:last-child {
+    border-bottom: none;
+}
+
 #phone-confirm-modal.hidden{
     display: none;
 }
@@ -15,6 +34,63 @@
     align-items: center;
     gap: 1rem;
     user-select: none;
+}
+
+#settings-auth-verify-modal{
+    position: fixed;
+    inset: 0;
+    min-width: 10rem;
+    min-height: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1.5rem;
+    z-index: 9999;
+}
+
+#settings-auth-verify-modal-content{
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    min-width: 10rem;
+    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+#settings-auth-verify-modal-content-title-text{
+    display: flex;
+    justify-content: center;
+}
+
+#settings-auth-verify-modal-content-describtion-text{
+    display: flex;
+    justify-content: center;
+}
+
+#settings-auth-verify-modal-title{
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: bolder;
+    justify-content: center;
+}
+
+#settings-auth-verify-modal-input-space{
+    display: flex;
+    justify-content: center;
+}
+
+#settings-auth-verify-modal-info{
+    font-size: 0.8rem;
+    font-style: italic;
+    font-weight: lighter;
+    justify-content: center
 }
 
 #phone-confirm-modal{
@@ -47,8 +123,22 @@
 #settings-phone-input{
     height: 1.5rem;
     width: 8rem;
+}
+
+.default-input{
     border-radius: 0.5rem;
     border: 1px solid #ccc;
+}
+
+.input-auth-methode{
+    width: 7rem;
+    height: 1.5rem;
+}
+
+#authMethode-change-modal-buttons-space{
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
 }
 
 .settings-button{
@@ -67,13 +157,35 @@
     border: 1px solid #ccc;
 }
 
+#auth-methode-space{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+}
+#change-authMethode-button-space{
+    align-items: center;
+}
+
 #phone-confirm-modal-input-space{
     display: flex;
     justify-content: center;
 }
 
 #phone-confirm-modal-buttons-space{
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+}
+
+#settings-auth-verify-modal-password-input{
+    width: 12rem;
+    height: 1.5rem;
+}
+
+.options-modal-button-space{
+    margin-top: 0.5rem;
     display: flex;
     justify-content: center;
     gap: 3rem;
@@ -102,8 +214,112 @@
     color: #6e6e6e;
 }
 
-#auth-methode{
+#settings-auth-verify-modal-message-space{
+    display: flex;
+}
+
+#settings-auth-verify-modal-message-space.hidden{
+    display: none;
+}
+
+.modal-option-content{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modal-option-describtion-span{
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+#authMethode-change-modal{
+    position: fixed;
+    inset: 0;
+    min-width: 15rem;
+    min-height: 20rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1.5rem;
+    z-index: 9999;
+}
+
+#authMethode-change-modal.hidden{
+    display: none;
+}
+
+#authMethode-change-modal-content{
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    min-width: 10rem;
+    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.auth-option-input-space{
+    display: flex;
+    justify-content: center;
+}
+
+#authMethode-change-modal-email{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#authMethode-change-modal-email.hidden{
+    display: none;
+}
+
+#authMethode-change-modal-phone{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#authMethode-change-modal-phone.hidden{
+    display: none;
+}
+
+#authMethode-change-modal-TOTP{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#authMethode-change-modal-TOTP.hidden{
+    display: none;
+}
+
+.message-space{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 0.5rem;
+    min-height: 2rem;
+    min-width: 10rem;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.message-text{
+    color: black;
+}
+
+/*
+#auth-methode-selector{
     min-height: 1.5rem;
     min-width: 6rem;
     border-radius: 0.5rem;
 }
+    */

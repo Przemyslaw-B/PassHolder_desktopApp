@@ -40,7 +40,7 @@ contextBridge.exposeInMainWorld('api', {
   //Wykonaj Zapytanie do API z danymi logowania.
   sendLoginRequest: (email, password) => ipcRenderer.invoke("send-login-request", email, password),
   //Wyślij kod autoryzacyjny
-  sendAuthenticationCode: (authCode) => ipcRenderer.invoke("send-authentication-code", authCode),
+  sendAuthenticationCode: (email, authCode) => ipcRenderer.invoke("send-authentication-code", email, authCode),
   //Zamknij okno logowania i otwórz ekran główny.
   loginSuccess: () => ipcRenderer.send('login-success'),
   //Wylogowanie
@@ -115,6 +115,13 @@ contextBridge.exposeInMainWorld('api', {
   // Sprawdź czy hasło wygasło
   //isPasswordExpired:(idPass) => ipcRenderer.invoke('is-password-expired', idPass),
 
+
+  //Zweryfikuj użytkownika przy próbie zmiany metody autoryzacji
+  authMethodeChangeValidateUser: (password) => ipcRenderer.invoke('auth-methode-change-validate-user',password),
+  //Wyślij kod aktywacyjny do nowej metody
+  sendNewAuthActivationCode: (methode) => ipcRenderer.invoke('send-new-auth-methode-activation-code', methode),
+  //Aktywuj nową metodę
+  activateNewAuthMethode: (methode, code) => ipcRenderer.invoke('activate-new-auth-methode', methode, code),
   //Pobierz metodę autoryzacji użytkownika
   getUserAuthMethode: () => ipcRenderer.invoke('get-user-auth-methode'),
   //pobierz wszystkie dostępne metody autoryzacji
