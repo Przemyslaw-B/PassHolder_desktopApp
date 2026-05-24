@@ -124,6 +124,8 @@ contextBridge.exposeInMainWorld('api', {
   activateNewAuthMethode: (methode, code) => ipcRenderer.invoke('activate-new-auth-methode', methode, code),
   //Pobierz metodę autoryzacji użytkownika
   getUserAuthMethode: () => ipcRenderer.invoke('get-user-auth-methode'),
+  //Pobierz numer telefonu usera
+  getUserPhone: () => ipcRenderer.invoke('get-user-phone'),
   //pobierz wszystkie dostępne metody autoryzacji
   getAllAuthMethodes: () => ipcRenderer.invoke('get-all-auth-methodes'),
 

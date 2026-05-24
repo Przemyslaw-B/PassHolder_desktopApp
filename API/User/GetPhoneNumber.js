@@ -20,20 +20,11 @@ async function getUserPhoneNumber() {
         Authorization: `Bearer ${token}`
       }
     });
-    const tempNumber = anonimate(response.data.methode);
-    return { success: true, data: tempNumber};
+    return { success: true, data: response.data};
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
+ 
 
-function anonimate(number){
-    if(number){
-        const visible = number.slice(-3);
-        const hidden = "*".repeat(number.length-3);
-        return hidden + visible;
-    }
-    return null;
-}   
-
-module.exports = { getUserAuthMethode };
+module.exports = { getUserPhoneNumber };

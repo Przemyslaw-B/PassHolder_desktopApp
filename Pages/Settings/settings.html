@@ -25,7 +25,18 @@
 
     <!-- okno potwierdzenia numeru telefonu -->
     <div id="phone-confirm-modal" class="hidden">
-      <div id="phone-confirm-modal-content">
+      <!-- Dodawanie nowego numeru -->
+      <div id="phone-set-number-modal-content" class="">
+        <span id="phone-set-number-modal-info">Podaj swój numer telefonu.</span>
+        <select id="phone-number-prefix"></select>
+        <input type="tel" id="settings-phone-input" placeholder="123 456 789" maxlength="11" autocomplete="tel">
+        <div id="phone-set-number-modal-buttons-space">
+          <button id = "phone-set-number-modal-cancel-button" class="settings-button">Anuluj</button>
+          <button id = "phone-set-number-modal-send-code-button" class="settings-button">Zatwierdź</button>
+        </div>
+      </div>
+      <!-- Potwierdzenie numeru -->
+      <div id="phone-confirm-modal-content" class="hidden">
         <span id="phone-confirm-modal-info">Podaj kod przesłany na podany numer.</span>
         <div id="phone-confirm-modal-input-space">
           <input type="text" id="phone-confirm-modal-secure-code" class="default-input" placeholder="kod weryfikacyjny">
@@ -33,7 +44,7 @@
         <div id="phone-confirm-modal-buttons-space">
           <button id = "phone-confirm-modal-cancel-button" class="settings-button">Anuluj</button>
           <button id = "phone-confirm-modal-confirm-button" class="settings-button">Potwierdź</button>
-        </div>  
+        </div> 
         <span id="phone-confirm-modal-message" class="hidden"></span>
       </div>
     </div>
@@ -85,10 +96,8 @@
     <div id="options-space">
       <div id="phone-number-space">
       <span id="settings-phone-number-title">Numer telefonu:</span>
-      <span id="settings-phone-number">123456789</span>
-      <select id="phone-number-prefix"></select>
-      <input type="tel" id="settings-phone-input" placeholder="123 456 789" maxlength="11" autocomplete="tel">
-      <button id="settings-add-number" class="settings-button">Zapisz numer</button>
+      <span id="settings-phone-number"></span>
+      <button id="settings-add-number" class="settings-button">Dodaj numer</button>
       <button id="settings-edit-number" class="settings-button">Edytuj numer</button>
     </div>  
 

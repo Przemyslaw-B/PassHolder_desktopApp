@@ -55,6 +55,7 @@ const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword/Se
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
 
 const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
+const {getUserPhoneNumber} = require("./API/User/GetPhoneNumber.js");
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
 const {changeAuthMethodeVerifyUser} = require('./API/AuthMethodes/ChangeMethodeVerifyUser.js');
 const {sendNewMethodeActivationCode} = require('./API/AuthMethodes/SendNewMethodeActivationCode.js');
@@ -773,12 +774,8 @@ ipcMain.handle('clear-security-password', async ()=>{
 ipcMain.handle('auth-methode-change-validate-user', async (event, password)=>{
     try{
         let result = await changeAuthMethodeVerifyUser(password);
-        if(result){
-            if(result.success){
-                return {success: true};
-            } else{
-                return {success: false};
-            }
+        if(result && result.success && result.data.success){
+            return {success: true};
         }
         return {success: false, error: "błąd weryfikacji"}
     }catch(error){
@@ -807,8 +804,9 @@ ipcMain.handle('send-new-auth-methode-activation-code', async (event, methode)=>
 ipcMain.handle('activate-new-auth-methode', async (event, methode, code)=>{
     try{
         let result = await setUserNewAuthMethode(methode, code);
+        console.log("Aktywowano nowa metode?", result);
         if(result){
-            if(result.success){
+            if(result.success && result.data.success){
                 return {success: true};
             } else{
                 return {success: false};
@@ -828,6 +826,19 @@ ipcMain.handle('get-user-auth-methode', async ()=>{
     } catch(err){
         console.error("Błąd odczytu metody autoryzacji użytkownika", err);
         return {success: false, error: err};
+    }
+});
+
+ipcMain.handle('get-user-phone', async ()=>{
+    try{
+        let result = await getUserPhoneNumber();
+        if(result && result.success){
+            return {success: true, data: result.data};
+        }
+        return {success: false, error: result.error};
+    }catch(error){
+        console.error("Błąd odczytu metody numeru tel.", error);
+        return {success: false, error: error};
     }
 });
 
