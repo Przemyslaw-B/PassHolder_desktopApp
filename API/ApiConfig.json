@@ -32,6 +32,6 @@
     "getQrCode": "http://localhost:8081/api/getQrCode",
     
     "getUserPhoneNumber": "http://localhost:8081/api/getUserPhone",
-    "activatePhone": "http://localhost:8081/api/activatePhone",
-    "requestPhoneActivationKey": "http://localhost:8081/api/requestPhoneActivationKey"
+    "requestPhoneCode":"http://localhost:8081/api/requestPhoneActivationKey",
+    "activatePhone": "http://localhost:8081/api/activatePhone"
 }

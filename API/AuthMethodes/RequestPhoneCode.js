@@ -2,10 +2,10 @@ const axios = require('axios');
 const {getToken} = require('./../../SecureStorage/tokenStorage.js'); 
 const {getConfigData} = require('./../GetConfigData.js');3
 
-async function getQrCode() {
+async function requestPhoneCode(phone) {
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.getQrCode;
+    const url = tempUrls.requestPhoneCode;
     const token = await getToken();
     if(!token || token === null){
       return { success: false, error: "brak zapisanego tokenu"};
@@ -13,8 +13,10 @@ async function getQrCode() {
     if(!url || url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.get(
-        url,
+    const response = await axios.post(
+        url,{
+            "phone": phone,
+        },
         {
         headers: {
         Authorization: `Bearer ${token}`
@@ -26,4 +28,4 @@ async function getQrCode() {
   }
 }
 
-module.exports = { getQrCode };
+module.exports = { requestPhoneCode };

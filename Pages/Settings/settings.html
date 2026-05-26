@@ -39,7 +39,7 @@
       <div id="phone-confirm-modal-content" class="hidden">
         <span id="phone-confirm-modal-info">Podaj kod przesłany na podany numer.</span>
         <div id="phone-confirm-modal-input-space">
-          <input type="text" id="phone-confirm-modal-secure-code" class="default-input" placeholder="kod weryfikacyjny">
+          <input type="text" id="phone-confirm-modal-secure-code" class="default-input" placeholder="kod weryfikacyjny" maxlength="6" name="code">
         </div>
         <div id="phone-confirm-modal-buttons-space">
           <button id = "phone-confirm-modal-cancel-button" class="settings-button">Anuluj</button>
@@ -72,7 +72,7 @@
         </div>
         <!-- TOTP -->
         <div id="authMethode-change-modal-TOTP" class="modal-option-content hidden">
-          <span id="authMethode-change-modal-email-text" class="modal-option-describtion-span">Podaj kod wyświetlany w aplikacji Authenticator.</span>
+          <span id="authMethode-change-modal-email-text" class="modal-option-describtion-span">Zeskanuj kod QR i podaj kod wyświetlany w aplikacji Authenticator.</span>
           <div id="qrCode-space">
             <div id="qrCode"></div>
           </div>
@@ -81,7 +81,12 @@
           </div>
         </div>
 
-        <div id="authMethode-change-modal-buttons-space">
+        <div id="authMethode-change-modal-type-select-button-space">
+          <button id="authMethode-change-modal-type-button-cancel" class="settings-button">Anuluj</button>
+          <button id="authMethode-change-modal-type=button-confirm" class="settings-button">Zatwierdź</button>
+        </div >
+
+        <div id="authMethode-change-modal-buttons-space" class="hidden">
           <button id="authMethode-change-modal-button-cancel" class="settings-button">Anuluj</button>
           <button id="authMethode-change-modal-button-confirm" class="settings-button">Zatwierdź</button>
         </div>

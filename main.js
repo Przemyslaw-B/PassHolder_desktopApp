@@ -2,6 +2,8 @@ const QRCode = require("qrcode");
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron');
 const { config } = require('process');
 const { ServerResponse } = require('http');
+const { initUpdater } = require("./Updates/Updater.js");
+
 
 
 //const path = require('path')
@@ -57,6 +59,7 @@ const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPa
 const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
 const {getUserPhoneNumber} = require("./API/User/GetPhoneNumber.js");
 const {getAllAuthMethodes} = require("./API/AuthMethodes/GetAllAuthMethodes.js");
+const {getQrCode} = require("./API/AuthMethodes/GetQrCode.js");
 const {changeAuthMethodeVerifyUser} = require('./API/AuthMethodes/ChangeMethodeVerifyUser.js');
 const {sendNewMethodeActivationCode} = require('./API/AuthMethodes/SendNewMethodeActivationCode.js');
 const {setUserNewAuthMethode} = require('./API/AuthMethodes/SetUserNewAuthMethode.js');
@@ -70,6 +73,8 @@ const {removeRoleFromUser} = require('./API/Roles/RemoveRoleFromUser.js');
 
 const {getLogFiltersData} = require('./API/Logs/GetLogFiltersData.js');
 const {getLogsData} = require('./API/Logs/GetLogsData.js');
+const {requestPhoneCode} = require('./API/AuthMethodes/RequestPhoneCode.js');
+const { activatePhone } = require("./API/AuthMethodes/ActivatePhone.js");
 
 const appName="PassHolder";
 
@@ -115,11 +120,14 @@ if(!getInstanceLock){
     //initDB();                       //Inicjalizacja lokalnej Bazy Danych
     //selectDefaultLanguage();        //Domyślny język
     //clearSecurityPassword();        //Usuń zapisane Security Password
+    //initUpdater();                  // Aktualizacja przed uruchomieniem
     createLoginWindow();            //Otwarcie okna Logowania
     startInTray();                  //Uruchomienie Aplikacji w Tray
     trayOpenFunction();             //Otwieranie okien z paska ukrytych ikon
 });
 }
+
+
 
 // Blokuj skróty klawiszove DevTools
 function disableDevTools(){
@@ -244,6 +252,7 @@ ipcMain.handle('send-authentication-code', async (event, email, authCode) =>{
     try{
         if(authCode){
             let result = await authenticateUser(email, authCode);
+            console.log("send-auth-code", result);
             return {success: true, data: result.data};
         } else{
             return {success: false, error: "no code recieverd"};
@@ -801,10 +810,43 @@ ipcMain.handle('send-new-auth-methode-activation-code', async (event, methode)=>
     }
 });
 
+ipcMain.handle('request-phone-code', async (event, phone)=>{
+    try{
+        let result = await requestPhoneCode(phone);
+        if(result){
+            if(result.success && result.data.success){
+                return {success: true};
+            } else{
+                return {success: false};
+            }
+        }
+        return {success: false, error: "błąd wysyłki kodu aktywacyjnego"}
+    }catch(error){
+        console.error("Błąd wysyłania żądania", err);
+        return {success: false, error: err};
+    }
+});
+
+ipcMain.handle('activate-phone', async (event, phone,code)=>{
+    try{
+        let result = await activatePhone(phone,code)
+        if(result){
+            if(result.success && result.data.success){
+                return {success: true};
+            } else{
+                return {success: false};
+            }
+        }
+        return {success: false, error: "błąd wysyłki kodu aktywacyjnego"}
+    }catch(error){
+        console.error("Błąd weryfikacji numeru", err);
+        return {success: false, error: err};
+    }
+});
+
 ipcMain.handle('activate-new-auth-methode', async (event, methode, code)=>{
     try{
         let result = await setUserNewAuthMethode(methode, code);
-        console.log("Aktywowano nowa metode?", result);
         if(result){
             if(result.success && result.data.success){
                 return {success: true};
@@ -868,9 +910,14 @@ ipcMain.handle('is-security-password-set', async()=>{
     }
 });
 
-ipcMain.handle('get-qr-code', async (event, data)=>{
+ipcMain.handle('get-qr-code', async ()=>{
     try{
-        const qr = await QRCode.toDataURL(data);
+        const result = await getQrCode();
+        if(!result || result.success===false || !result.data){
+            return {success: false, error: "nie można pobrać QR kodu"}; 
+        }
+        console.log("result QR-code", result);
+        const qr = await QRCode.toDataURL(result.data.qrCode);
         return {success: true, data: qr};
     } catch(error){
         console.log("error:", error);

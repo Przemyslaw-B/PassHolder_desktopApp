@@ -117,11 +117,15 @@ contextBridge.exposeInMainWorld('api', {
 
 
   //Zweryfikuj użytkownika przy próbie zmiany metody autoryzacji
-  authMethodeChangeValidateUser: (password) => ipcRenderer.invoke('auth-methode-change-validate-user',password),
+  authMethodeChangeValidateUser: (password) => ipcRenderer.invoke('auth-methode-change-validate-user', password),
   //Wyślij kod aktywacyjny do nowej metody
   sendNewAuthActivationCode: (methode) => ipcRenderer.invoke('send-new-auth-methode-activation-code', methode),
   //Aktywuj nową metodę
   activateNewAuthMethode: (methode, code) => ipcRenderer.invoke('activate-new-auth-methode', methode, code),
+  // wyślij kod aktywacyjny na tel
+  requestPhoneCode: (phone) => ipcRenderer.invoke('request-phone-code', phone),
+  //aktywuj numer
+  activatePhone: (phone,code) => ipcRenderer.invoke('activate-phone', phone,code),
   //Pobierz metodę autoryzacji użytkownika
   getUserAuthMethode: () => ipcRenderer.invoke('get-user-auth-methode'),
   //Pobierz numer telefonu usera
@@ -129,5 +133,5 @@ contextBridge.exposeInMainWorld('api', {
   //pobierz wszystkie dostępne metody autoryzacji
   getAllAuthMethodes: () => ipcRenderer.invoke('get-all-auth-methodes'),
 
-  getQrCode: (qrCode) => ipcRenderer.invoke('get-qr-code', qrCode)
+  getQrCode: () => ipcRenderer.invoke('get-qr-code')
 });

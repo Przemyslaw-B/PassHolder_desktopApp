@@ -1,9 +1,9 @@
 let email;
-let authMethode;
-let qrCode;
+let authMethod;
 
 window.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('loginButton').addEventListener('click', async ()=>loginValidation());
+  loginButtonsInit();
 });
 
 // Walidacja użytkownika
@@ -27,7 +27,7 @@ async function loginValidation(){
       let loginData = responseData.data;
       if(loginData.status === "Validated"){
         setAuthenticationContent();
-      } if(loginData.status === "Invalid"){
+      } else if(loginData.status === "Invalid"){
         //Błędne dane logowania
         const message = "Podano niewłaściwe dane logowania";
         showMessage(message);
@@ -48,8 +48,8 @@ async function saveSecurityPasswordHash(){
 // Wysłanie danych logowania
 async function loginRequest(email, password, url){
   let result = await window.api.sendLoginRequest(email, password);
-  authMethode = result.data.authMethode;
-  qrCode = result.data.qrCode;
+  authMethod = result.data.authMethode;
+  //qrCode = result.data.qrCode;
   //console.log("zapisany qrCode:", qrCode);
   return result;
 }
@@ -72,35 +72,16 @@ async function setUser(username){
   const response = await window.api.setUser(username)
 }
 
-  // Przycisk wysłania weryfikacji 2FA
-  document.getElementById("auth-confirm-button").addEventListener("click", async () => {
-    const authCode = document.getElementById("auth-input").value.trim();
-    if(authCode==="" || authCode.length != 6){
-      const message = "Podany kod jest nieprawidłowy";
-      showMessage(message);
-    } else{
-      const response = await authentication(authCode);
-      //console.log("AUTH:", response);
-      const authStatus = response.auth;
-      //console.log("Auth response: ", authStatus);
-      if(authStatus==="success"){
-        const rep = await window.api.setUser(response.data.username); //zapisz zalogowanego usera
-        const tokenRes = await window.api.saveToken(response.data.token); //zapisz token
-        await saveSecurityPasswordHash();
-        const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
-      } else{
-        //Podano zły klucz autoryzacji
-        const message = "Podany kod jest nieprawidłowy";
-        showMessage(message);
-      }
-    }
-  });
-
-  // 2FA
-  async function authentication(authCode){
-    let result = await window.api.sendAuthenticationCode(email, authCode);
-    return result.data;
+// 2FA
+async function authentication(authCode){
+  let result = await window.api.sendAuthenticationCode(email, authCode);
+  if(result.success===false && result.data.error){
+  console.log("Authentication error:", result.data.error);
+  return;
   }
+  console.log("authentication result:", result);
+  return result.data;
+}
 
   async function creatingAccount(){
     const email = document.getElementById("creatingAcc-email-input").value.trim();
@@ -137,34 +118,7 @@ async function setUser(username){
     const message = "Hasło jest zbyt krótkie. (Minimum 6 znaków)";
     showMessage(message);
   }
-    
-  }
-
-  //Zawsze chowaj powiadomienie po wciśnięciu lewego przycisku
-  document.addEventListener("click", ()=>{
-    hideMessage();
-  });
-
-  //Obsługa przycisku zatwierdzenia utworzenia nowego konta
-  document.getElementById("new-account-confirm-button").addEventListener("click", ()=>{
-    creatingAccount();
-  });
-
-
-  // Obsługa przycisku przejścia do tworzenia nowego konta
-  document.getElementById("createAccount").addEventListener("click", ()=>{
-    setCreatingAccountContent();
-  });
-
-  // Obsługa powrotu z tworzenia konta do ekranu logowania
-  document.getElementById("new-account-cancel-button").addEventListener("click", ()=>{
-    setLoginContent();
-  });
-
-  // Obsługa powrotu z weryfikacji do ekranu logowania
-  document.getElementById("auth-cancel-button").addEventListener("click", ()=>{
-    setLoginContent();
-  });
+}
 
   // Zmiana zawartości okna na Tworzenie konta
   function setCreatingAccountContent(){
@@ -230,28 +184,21 @@ async function setUser(username){
   function hideAuthenticationContent(){
     document.querySelector(".auth-container").style.display="none";
   }
+  
+  
   //pokaż treść weryfikacji
   async function showAuthenticationContent(){
     document.querySelector(".auth-container").style.display="block";
-    if(authMethode === 3){
-      await renderQrCode();
+    const authDescribtion = document.getElementById("auth-explain");
+    if(authMethod === 1){
+      authDescribtion.textContent = "Kod weryfikacyjny został wysłany na Twój email.";
+    } else if(authMethod===2){
+      authDescribtion.textContent = "Kod weryfikacyjny został wysłany na przypisany numer telefonu.";
+    } else if(authMethod === 3){
+      authDescribtion.textContent = "Podaj kod weryfikacyjny z aplikacji do autoryzacji.";
+    } else {
+      authDescribtion.textContent = "Kod weryfikacyjny został wysłany.";
     }
-  }
-
-  async function renderQrCode(){
-    const container = document.getElementById("qr-code");
-    if (!container) return;
-    container.innerHTML = ""; // reset
-    const result = await window.api.getQrCode(qrCode);
-    if (!result.success) {
-      console.error("QR error:", result.error);
-      return;
-    }
-    const img = document.createElement("img");
-    img.width = 220;
-    img.height = 220;
-    img.src = result.data;
-    container.appendChild(img);
   }
 
   //pokaż powiadomienie
@@ -266,3 +213,57 @@ async function setUser(username){
     const msgBox = document.querySelector(".message-container");
     msgBox.classList.remove("show");
   }
+
+  function loginButtonsInit(){
+  // Przycisk wysłania weryfikacji 2FA
+  document.getElementById("auth-confirm-button").addEventListener("click", async () => {
+    const authCode = document.getElementById("auth-input").value.trim();
+    if(authCode==="" || authCode.length != 6){
+      const message = "Podany kod jest nieprawidłowy";
+      showMessage(message);
+    } else{
+      const response = await authentication(authCode);
+      const authStatus = response.auth;
+      if(response && authStatus==="success"){
+        const rep = await window.api.setUser(response.data.username); //zapisz zalogowanego usera
+        const tokenRes = await window.api.saveToken(response.data.token); //zapisz token
+        await saveSecurityPasswordHash();
+        const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
+      } else{
+        //Podano zły klucz autoryzacji
+        const message = "Podany kod jest nieprawidłowy";
+        showMessage(message);
+      }
+    }
+  });
+
+  //Zawsze chowaj powiadomienie po wciśnięciu lewego przycisku
+  document.addEventListener("click", ()=>{
+    hideMessage();
+  });
+
+  //Obsługa przycisku zatwierdzenia utworzenia nowego konta
+  document.getElementById("new-account-confirm-button").addEventListener("click", ()=>{
+    creatingAccount();
+  });
+
+
+  // Obsługa przycisku przejścia do tworzenia nowego konta
+  document.getElementById("createAccount").addEventListener("click", ()=>{
+    setCreatingAccountContent();
+  });
+
+  // Obsługa powrotu z tworzenia konta do ekranu logowania
+  document.getElementById("new-account-cancel-button").addEventListener("click", ()=>{
+    setLoginContent();
+  });
+
+  // Obsługa powrotu z weryfikacji do ekranu logowania
+  document.getElementById("auth-cancel-button").addEventListener("click", ()=>{
+    setLoginContent();
+  });
+
+  }
+
+
+  

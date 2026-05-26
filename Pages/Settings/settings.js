@@ -3,6 +3,7 @@ let allAuthMethodes;
 let message;
 let userPhone;
 let userTempPhone;
+let qrCode;
 
 let passwordAttempt=0;
 let passwordAttemptTimer;
@@ -54,25 +55,31 @@ document.addEventListener("DOMContentLoaded", () => {
       logoutButtonInit();
       authVerifyModalInit();
       authMethodeButtonsInit();
+      setPhoneNumberButton();
+      editPhoneNumberButton();
       await authMethodeSelectorInit();  
-
-      /*
-      //Obsługa suwaka od rotacji
-      const rotationSelect = document.getElementById("rotation");
-     rotationSelect.addEventListener("change", async ()=>{
-      const newValue = parseInt(rotationSelect.value, 10);
-      console.log("Wybrano rotację:", newValue);
-      await saveNewRotationTime(newValue);  //zapis do BD
     });
-    loadCurrentRotationTimeValue();
-    */
-    });
-    
 });
 
 async function loadSettings(){
+  userPhone=null;
+  userAuthMethode=null;
   await getUserAuthMethode();
   await getUserNumber();
+  const userPhoneSpan = document.getElementById("settings-phone-number");
+  const editPhoneButton = document.getElementById("settings-edit-number");
+  const addPhoneButton = document.getElementById("settings-add-number");
+  if(userPhone && userPhone !== ""){
+    userPhoneSpan.textContent = anonimate(userPhone);
+    addPhoneButton.classList.add("hidden");
+    editPhoneButton.classList.remove("hidden");
+  } else {
+    userPhoneSpan.textContent = "";
+    editPhoneButton.classList.add("hidden");
+    addPhoneButton.classList.remove("hidden");
+  }
+  const userActiveAuthMethode = document.getElementById("selected-auth-methode");
+  userActiveAuthMethode.textContent = userAuthMethode;
 }
 
 async function settingsInit(){
@@ -85,26 +92,6 @@ async function settingsInit(){
   const userSelectedAuthMethode = document.getElementById("selected-auth-methode");
   userSelectedAuthMethode.value = userAuthMethode;
   userSelectedAuthMethode.textContent = userAuthMethode;
-
-  /*
-  const authMethodeSelect = document.getElementById("auth-methode");
-  authMethodeSelect.replaceChildren();
-  const placeholder = new Option("Metoda autoryzacji", "", true, true);
-  placeholder.disabled = true;
-  placeholder.hidden = true;
-  authMethodeSelect.appendChild(placeholder);
-  if(allAuthMethodes && allAuthMethodes.length>0){
-    for(let methode of allAuthMethodes){
-      console.log("metoda:", methode);
-      const option = document.createElement("option");
-      option.value = methode;
-      option.textContent = methode;
-      authMethodeSelect.appendChild(option);
-    }
-  }
-  //przypisanie wartości usera
-  authMethodeSelect.value = userAuthMethode;
-  */
 }
 
 async function getAllMethodeList(){
@@ -115,7 +102,6 @@ async function getAllMethodeList(){
 async function getUserAuthMethode(){
   let result = await window.api.getUserAuthMethode();
   userAuthMethode = result.data;
-  //console.log("user auth methode:", userAuthMethode);
 }
 
 async function getUserNumber(){
@@ -152,13 +138,20 @@ function setEditAuthMethodeButton(){
   });
 }
 
-async function setPhoneNumberButton(){
-  const button = document.getElementById("settings-add-number");
-  const input = document.getElementById("settings-phone-input").value;
+function setPhoneNumberButton(){
+  const addNewPhonebutton = document.getElementById("settings-add-number");
+  addNewPhonebutton.addEventListener("click", ()=>{
+    console.log("Otwieram modal dodawania numeru");
+    const newPhoneModal = document.getElementById("phone-confirm-modal");
+    newPhoneModal.classList.remove("hidden");
+  });
 }
 
-async function editPhoneNumberButton(){
-  const button = document.getElementById("settings-edit-number");
+function editPhoneNumberButton(){
+  const editPhoneButton = document.getElementById("settings-edit-number");
+  editPhoneButton.addEventListener("click", ()=>{
+
+  });
 }
 
 function confirmPhoneModalButtonsInit(){
@@ -191,13 +184,12 @@ function confirmPhoneModalButtonsInit(){
 
   confirmSetNumberButton.addEventListener("click", async ()=>{
     let userInput = document.getElementById("settings-phone-input");
-    if(!userInput){
+    let prefix = document.getElementById("phone-number-prefix");
+    if(!userInput || !prefix){
       return;
     }
-    userTempPhone = userInput.value;
-    //TODO wysyłka sms
-    //let result = await window.api.
 
+    userTempPhone = `${prefix.value} ${userInput.value}`;
     userInput.value="";
     let setNumberBox = document.getElementById("phone-set-number-modal-content");
     let activateNumberBox = document.getElementById("phone-confirm-modal-content");
@@ -205,10 +197,24 @@ function confirmPhoneModalButtonsInit(){
     userCodeInput.value="";
     setNumberBox.classList.add("hidden");
     activateNumberBox.classList.remove("hidden");
+    await window.api.requestPhoneCode(userTempPhone);
   });
 
   confirmButton.addEventListener("click", async ()=>{
-    //TODO wysyłanie kodu weryfikacyjnego
+    let message = document.getElementById("phone-confirm-modal-message");
+    message.classList.add("hidden");
+    let inputCode = document.getElementById("phone-confirm-modal-secure-code");
+    let codeVal = inputCode.value;
+    if(codeVal.length === 6){
+      let result = await window.api.activatePhone(userTempPhone, codeVal);
+      if(result && result.success===true){
+        await loadSettings();
+        const phoneModal = document.getElementById("phone-confirm-modal");
+        phoneModal.classList.add("hidden");
+      }
+    }
+    message.classList.remove("hidden");
+    message.textContent = "Nieprawidłowy kod."
   });
 } 
 
@@ -288,6 +294,13 @@ function passwordSettingAttempt(){
 }
 
 async function showAuthMethodeChangeModal(){
+  hideAuthMethodeChangeCodeEnter();
+  const methodeSelector = document.getElementById("auth-methode-selector");
+  methodeSelector.value= userAuthMethode;
+
+  const methodeSelectorSpace = document.getElementById("authMethode-change-modal-select-space");
+  methodeSelectorSpace.classList.remove("hidden");
+
   const changingAuthModal = document.getElementById("authMethode-change-modal");
   changingAuthModal.classList.remove("hidden");
 
@@ -304,23 +317,44 @@ async function showAuthMethodeChangeModal(){
 }
 
 async function authMethodeButtonsInit(){
+  const typeSelectCancelButton = document.getElementById("authMethode-change-modal-type-button-cancel");
+  const typeSelectConfirmButton = document.getElementById("authMethode-change-modal-type=button-confirm");
+
+  typeSelectCancelButton.addEventListener("click", ()=>{
+    hideAuthMethodeChangeModal();
+  });
+
+  typeSelectConfirmButton.addEventListener("click", async ()=>{
+    const typeSelectButtonsSpace = document.getElementById("authMethode-change-modal-type-select-button-space");
+    const confirmMethodButtonsSpace = document.getElementById("authMethode-change-modal-buttons-space");
+    typeSelectButtonsSpace.classList.add("hidden");
+    confirmMethodButtonsSpace.classList.remove("hidden");
+    const methodeSelectorSpace = document.getElementById("authMethode-change-modal-select-space");
+    const selectedValue = document.getElementById("auth-methode-selector").value;
+    if(selectedValue){
+      await sendNewAuthMethodeActivationCode(selectedValue);
+      methodeSelectorSpace.classList.add("hidden");
+      await handleAuthMethodeChange(selectedValue);
+    }
+  });
+
   const cancelButton = document.getElementById("authMethode-change-modal-button-cancel");
   const confirmButton = document.getElementById("authMethode-change-modal-button-confirm");
   cancelButton.addEventListener("click", ()=>{
     hideAuthMethodeChangeModal();
   });
-    confirmButton.addEventListener("click", async ()=>{
-    let result = await validateNewAuthMethodeCode();
-    console.log("code validation?", result);
-    if(result?.success===true){
-      hideAuthMethodeChangeModal();
-      //TODO RELOAD OPTION CONTENT!!!!!!!!!!!
-    } else{
-      const messageBox = document.getElementById("authMethode-change-modal-message-space");
-      const messageContent = document.getElementById("authMethode-change-modal-message-content");
-      messageBox.classList.remove("hidden");
-      messageContent.textContent = "Podany kod jest nieprawidłowy.";
-    }
+  confirmButton.addEventListener("click", async ()=>{
+  let result = await validateNewAuthMethodeCode();
+  await loadSettings();
+  //console.log("code validation?", result);
+  if(result?.success===true){
+    hideAuthMethodeChangeModal();
+  } else{
+    const messageBox = document.getElementById("authMethode-change-modal-message-space");
+    const messageContent = document.getElementById("authMethode-change-modal-message-content");
+    messageBox.classList.remove("hidden");
+    messageContent.textContent = "Podany kod jest nieprawidłowy.";
+  }
   });
 }
 
@@ -343,12 +377,21 @@ async function validateNewAuthMethodeCode(){
 }
 
 function hideAuthMethodeChangeModal(){
+  hideAuthMethodeChangeCodeEnter();
   const messageBox = document.getElementById("authMethode-change-modal-message-space");
   messageBox.classList.add("hidden");
   const messageContent = document.getElementById("authMethode-change-modal-message-content");
   messageContent.textContent="";
   const changingAuthModal = document.getElementById("authMethode-change-modal");
   changingAuthModal.classList.add("hidden");
+
+  const typeSelectButtonsSpace = document.getElementById("authMethode-change-modal-type-select-button-space");
+  const confirmMethodButtonsSpace = document.getElementById("authMethode-change-modal-buttons-space");
+  typeSelectButtonsSpace.classList.remove("hidden");
+  confirmMethodButtonsSpace.classList.add("hidden");
+
+  const methodeSelectorSpace = document.getElementById("authMethode-change-modal-select-space");
+  methodeSelectorSpace.classList.remove("hidden");
 }
 
 async function authMethodeSelectorInit(){
@@ -379,9 +422,18 @@ async function authMethodeSelectorInit(){
   //przypisanie wartości usera
   authMethodeSelect.value = userAuthMethode;
 
-  authMethodeSelect.addEventListener("change", async (e)=>{
-    await handleAuthMethodeChange(e.target.value);
-  });
+  //authMethodeSelect.addEventListener("change", async (e)=>{
+  //  await handleAuthMethodeChange(e.target.value);
+  //});
+}
+
+function hideAuthMethodeChangeCodeEnter(){
+  const emailDiv = document.getElementById("authMethode-change-modal-email");
+  const phoneDiv = document.getElementById("authMethode-change-modal-phone");
+  const totpDiv = document.getElementById("authMethode-change-modal-TOTP");
+  emailDiv.classList.add("hidden");
+  phoneDiv.classList.add("hidden");
+  totpDiv.classList.add("hidden");
 }
 
 async function handleAuthMethodeChange(selectedValue){
@@ -392,7 +444,6 @@ async function handleAuthMethodeChange(selectedValue){
   phoneDiv.classList.add("hidden");
   totpDiv.classList.add("hidden");
 
-  await sendNewAuthMethodeActivationCode(selectedValue);
   if(userAuthMethode !== selectedValue){
     switch(selectedValue){
     case "mail":
@@ -405,6 +456,7 @@ async function handleAuthMethodeChange(selectedValue){
 
     case "google authenticator":
       totpDiv.classList.remove("hidden");
+      await renderQrCode();
       break;
    }
   }
@@ -460,4 +512,18 @@ function anonimate(){
   return `${prefix} ${hidden} ${visible}`
 }  
 
-
+async function renderQrCode(){
+  const container = document.getElementById("qrCode");
+    if (!container) return;
+    container.innerHTML = ""; // reset
+    const result = await window.api.getQrCode();
+    if (!result.success) {
+      console.error("QR error:", result.error);
+      return;
+    }
+    const img = document.createElement("img");
+    img.style.width = "12rem";
+    img.style.height = "12rem";
+    img.src = result.data;
+    container.appendChild(img);
+}
