@@ -148,7 +148,7 @@ body {
 
 .message-container{
   position: fixed;
-  bottom: 1rem;
+  bottom: 2.3rem;
   border-radius: 10px;
   background-color: white;
   box-shadow: 0 0 10px rgba(0,0,0,0.3);
@@ -169,5 +169,16 @@ body {
   position: center;
   font-size: 0.8rem;
   margin: 1rem;
+}
+
+#login-version-space{
+  position: fixed;
+  bottom: 0.5rem;
+  right: 0.8rem;
+}
+
+#login-version-content{
+  font-size: 0.8rem;
+  color: #999;
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "passholder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -38,7 +38,7 @@
     },
     "publish": [{
     "provider": "generic",
-    "url": "https://twojadomena.pl/api/update/"
+    "url": "http://31.70.88.182:8081/api/update/"
     }]
   }
 }

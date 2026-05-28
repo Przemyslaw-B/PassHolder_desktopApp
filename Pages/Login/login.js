@@ -1,9 +1,10 @@
 let email;
 let authMethod;
 
-window.addEventListener('DOMContentLoaded', ()=>{
+window.addEventListener('DOMContentLoaded', async ()=>{
   document.getElementById('loginButton').addEventListener('click', async ()=>loginValidation());
   loginButtonsInit();
+  await setLoginContent();
 });
 
 // Walidacja użytkownika
@@ -21,6 +22,7 @@ async function loginValidation(){
     const password = await window.api.hashPassword(passwordTemp);
     //Wysyłanie danych do API
     const responseData = await loginRequest(email, password);
+    //console.log("responseData login request:", responseData);
     if(!responseData || responseData === null){
       showMessage("Connection error");
     } else{
@@ -106,7 +108,7 @@ async function authentication(authCode){
     //Konto zostało utworzone
     const message = "Konto zostało utowrzone";
     showMessage(message);
-    setLoginContent();
+    await setLoginContent();
   }
     } else{
       //Nie wypełniono całego formularza
@@ -129,11 +131,12 @@ async function authentication(authCode){
   }
 
   // Zmiana zawartości okna na logowanie
-  function setLoginContent(){
+  async function setLoginContent(){
     hideAuthenticationContent();
     hideCreatingAccountContent();
     showLoginContent();
     clearInputsLogin();
+    await showAppVersion();
   }
 
   // Zmiana zawartości okna na weryfikację
@@ -214,6 +217,16 @@ async function authentication(authCode){
     msgBox.classList.remove("show");
   }
 
+  async function showAppVersion(){
+    let result = await window.api. getAppVersion();
+    console.log("version:", result)
+    if(result && result.success===true && result.data){
+      let versionContent = document.getElementById("login-version-content");
+      versionContent.textContent = result.data;
+    }
+    return;
+  } 
+
   function loginButtonsInit(){
   // Przycisk wysłania weryfikacji 2FA
   document.getElementById("auth-confirm-button").addEventListener("click", async () => {
@@ -236,7 +249,6 @@ async function authentication(authCode){
       }
     }
   });
-
   //Zawsze chowaj powiadomienie po wciśnięciu lewego przycisku
   document.addEventListener("click", ()=>{
     hideMessage();
@@ -254,13 +266,13 @@ async function authentication(authCode){
   });
 
   // Obsługa powrotu z tworzenia konta do ekranu logowania
-  document.getElementById("new-account-cancel-button").addEventListener("click", ()=>{
-    setLoginContent();
+  document.getElementById("new-account-cancel-button").addEventListener("click", async ()=>{
+    await setLoginContent();
   });
 
   // Obsługa powrotu z weryfikacji do ekranu logowania
-  document.getElementById("auth-cancel-button").addEventListener("click", ()=>{
-    setLoginContent();
+  document.getElementById("auth-cancel-button").addEventListener("click", async ()=>{
+    await setLoginContent();
   });
 
   }

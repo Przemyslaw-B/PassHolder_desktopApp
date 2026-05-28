@@ -2,27 +2,8 @@ const QRCode = require("qrcode");
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron');
 const { config } = require('process');
 const { ServerResponse } = require('http');
-const { initUpdater } = require("./Updates/Updater.js");
 
-
-
-//const path = require('path')
-//const fs = require('fs');
-//const {selectLanguage} = require('./Language/LanguageSelector.js');
-//const {defaultLanguage} = require('./Language/DefaultLanguage.js');
-//const {initDatabase} = require('./LocalDB/DataBaseInitialization/InitDB.js');
-//const {getUserId} = require("./LocalDB/DataBaseInitialization/User/getUserId.js");
-//const {createNewUserIfNotExist}=require("./LocalDB/DataBaseInitialization/User/createUser.js");
-//const {checkChangesAndUpdate, checkLocalChangesAndUpdate} = require("./StorageParser/updateChanges.js");
-//const {addNewRecordToLocal} = require("./StorageParser/addNewRecordToLocal.js");
-//const {getAllCredentialsDetails} = require("./LocalDB/StoredCredentials/Read/GetCredentialsDetails.js");
-//const {removeCredential} = require("./LocalDB/StoredCredentials/Delete/RemoveCredential.js");
-//const {changeRotationTime} = require("./Rotation/changeRotationTime.js");
-//const {checkIfExpired} = require("./Rotation/checkIfExpired.js");
-//const {calculateExpirationDate} = require("./Rotation/calculateExpirationDate.js");
-//const {isRotationOn} = require("./Rotation/isRotationOn.js");
-//const {getUserRotationTime} = require("./Rotation/getUserRotationTime.js");
-//const {saveSecurityPassword, getSecurityPassword, clearSecurityPassword} = require('./SecureStorage/securityPasswordStorage.js');
+const { initUpdater, getAppVersion } = require("./Updates/Updater.js");
 
 const {getConfigData} = require('./API/GetConfigData.js');
 
@@ -83,17 +64,12 @@ let mainWindow;
 let currentWindow;
 
 let tray;
-//const trayIconPath = path.join(__dirname, 'Icons', './tray.png');
-//let main_icon = { width: 1200, height: 800, icon: path.join(__dirname, 'Icons', './ikona.ico')};
 let securityPassword;
 let isLoggedIn = false; //flaga zalogowania
 let isQuitting = false; // Flaga zamknięcia aplikacji
 
-//let selectedLanguage;
-//let languageData; 
 let user;
 let userId;
-//let db;
 
 const getInstanceLock = app.requestSingleInstanceLock();
 
@@ -117,17 +93,12 @@ if(!getInstanceLock){
     // Kolejność ładowania  
     app.whenReady().then(() => {
     //disableDevTools();            //Wyłącz DevTools w aplikacji
-    //initDB();                       //Inicjalizacja lokalnej Bazy Danych
-    //selectDefaultLanguage();        //Domyślny język
-    //clearSecurityPassword();        //Usuń zapisane Security Password
-    //initUpdater();                  // Aktualizacja przed uruchomieniem
+    initUpdater();                  // Aktualizacja przed uruchomieniem
     createLoginWindow();            //Otwarcie okna Logowania
     startInTray();                  //Uruchomienie Aplikacji w Tray
     trayOpenFunction();             //Otwieranie okien z paska ukrytych ikon
 });
 }
-
-
 
 // Blokuj skróty klawiszove DevTools
 function disableDevTools(){
@@ -143,13 +114,6 @@ app.on('browser-window-created', (_, window) => {
   });
 });
 }
-
-/*
-// Ustawienie języka domyślnego.
-function selectDefaultLanguage(){
-   selectedLanguage, languageData = defaultLanguage();
-}
-   */
 
 // Wyłącz wyłączanie aplikacji, gdy wszystkie okna są wyłączone
 app.on('window-all-closed', (event) => {
@@ -196,31 +160,6 @@ function createMainWindow(){
         }
     });
 }
-
-/*
-//  Załadowanie wersji językowej. (Domyślnie język systemowy (pl) lub en)
-ipcMain.handle('load-language', async (event, lang) => {    
-    try{
-        selectedLanguage = lang;
-        //languageData = selectLanguage(lang);
-        trayReload(); // Załaduj język do menu Tray
-        return { success: true, data: languageData };
-    }catch (error) {
-    console.error('Błąd:', error);
-    return { success: false, error: error.message };
-  }
-});
-
-//Zwróć używaną paczkę językową
-ipcMain.handle('get-language-pack', async(event)=>{
-    try{
-        return languageData;
-    }catch (error) {
-    console.error('Błąd:', error);
-    return { success: false, error: error.message };
-  }
-});
-*/
 
 //Zakładanie nowego konta użytkownika
 ipcMain.handle('create-user-account', async (event, email, name, password) =>{
@@ -588,45 +527,6 @@ ipcMain.handle('get-logs-data', async(event, filtersData)=>{
     }
 });
 
-/*
-ipcMain.handle('update-storage', async (event, cloudData)=>{
-    try{
-        const configData = getConfigData();
-        const token = await getToken();
-        checkChangesAndUpdate(db, cloudData, userId, configData, token);
-    } catch(err){
-        console.error("Błąd aktualizacji danych haseł storage.", err);
-        return {success: false};
-    }
-});
-*/
-
-/*
-ipcMain.handle('remove-storage', async (event, data)=>{
-    try{
-        removeCredential(db, data);
-    }catch(err){
-        console.err("Błąd usuwania rekordu ze storage.");
-        return {success: false}
-    }
-});
-*/
-
-/*
-ipcMain.handle('save-local-storage', async (event, data)=>{
-    try{
-        const configData = getConfigData();     
-        const token = await getToken();
-        await addNewRecordToLocal(db, userId, data);
-        await checkLocalChangesAndUpdate(db, userId, configData, token);
-        return {success: true};
-    }catch(err){
-        console.error("Błąd zapisu do lokalnej DB", err)
-        return {success: false};
-    }
-});
-*/
-
 ipcMain.handle('save-token', async (event, token)=>{
     try{
         await saveToken(token);
@@ -696,7 +596,7 @@ ipcMain.handle('set-security-password', (event, input)=>{
 
 ipcMain.handle('save-security-password', async (event, securityPassword)=>{
     try{
-        //await saveSecurityPassword(securityPassword);
+        await saveSecurityPassword(securityPassword);
         return {success: true};
     } catch(err){
         console.error("Błąd kasowania tokenu:", err);
@@ -767,18 +667,6 @@ ipcMain.handle('set-new-security-password', async (event, newSecurityPassword)=>
     }
     return false;
 });
-
-/*
-ipcMain.handle('clear-security-password', async ()=>{
-    try{
-        await clearSecurityPassword();
-        return {success: true};
-    } catch(err){
-        console.error("Błąd kasowania tokenu:", err);
-        return {success: false};
-    }
-});
-*/
 
 ipcMain.handle('auth-methode-change-validate-user', async (event, password)=>{
     try{
@@ -925,51 +813,16 @@ ipcMain.handle('get-qr-code', async ()=>{
     }
 });
 
-/*
-// czy rotacja jest włączona
-ipcMain.handle('is-rotation-on', async ()=>{
-    const isOn = await isRotationOn(db, userId);
-    return isOn;
+//Zwróć aktualną uruchomioną wersję aplikacji
+ipcMain.handle('get-app-version', ()=>{
+    try{
+        let result = getAppVersion();
+        return {success: true, data: result};
+    }catch(error){
+        console.error("error:", error);
+        return {success: false, data: result};
+    }
 });
-*/
-
-/*
-// Pobierz aktualną wartość rotation time
-ipcMain.handle('get-rotation-time', async ()=>{
-    const val = await getUserRotationTime(db, userId);
-    return val;
-});
-*/
-
-/*
-// pobierz datę wygaśnięcia hasła
-ipcMain.handle('get-expiration-date', async (event, idPass)=>{
-    const calculatedDate = await calculateExpirationDate(db, userId, idPass);
-    return calculatedDate;
-});
-*/
-
-/*
-// aktualizacja ilości dni wygasania haseł
-ipcMain.handle('update-rotation-time', async (event, newTime)=>{
-    changeRotationTime(db, userId, newTime);
-});
-*/
-
-/*
-// Sprawdź czy hasło wygasło
-ipcMain.handle('is-password-expired', async (event, idPass)=>{
-    const isExpiretd = await checkIfExpired(db, userId, idPass);
-    return isExpiretd
-});
-*/
-
-// Inicjalizacja lokalnej bazy danych
-/*
-function initDB(){
-    db = initDatabase();
-}  
-*/ 
 
 // Wywołanie aplikacji w Tray - menu ukrytych ikon
 function startInTray(){
@@ -979,7 +832,7 @@ function startInTray(){
     }
 }
 
-// Ładowanie języka Tray
+// Ładowanie Tray
 function trayReload(){
     tray = loadTray(tray);
 }

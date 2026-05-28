@@ -1,4 +1,5 @@
 const { autoUpdater } = require("electron-updater");
+const { app } = require("electron");
 
 function initUpdater() {
     check();
@@ -49,4 +50,8 @@ function forceRestart() {
     }, 1000*60*30);
 }
 
-module.exports = {initUpdater};
+function getAppVersion() {
+    return app.getVersion();
+}
+
+module.exports = {initUpdater, getAppVersion};
