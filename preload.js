@@ -63,7 +63,7 @@ contextBridge.exposeInMainWorld('api', {
   //Zapisz lokalnie hasło bezpieczeństwa
   saveSecurityPasswordToLocal: (securityPassword) => ipcRenderer.invoke('save-security-password', securityPassword),
   //zapis nowego hasła bezpieczeństwa jeśli nie istnieje
-  setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.handle('set-new-security-password', newSecurityPassword),
+  setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('set-new-security-password', newSecurityPassword),
 
   //Odczytaj hash hasła bezpieczeństwa użytkownika
   getSecurityPasswordHash: () => ipcRenderer.invoke('get-security-password-hash'),
