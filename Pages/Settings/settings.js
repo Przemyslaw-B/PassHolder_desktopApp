@@ -3,6 +3,7 @@ let allAuthMethodes;
 let message;
 let userPhone;
 let userTempPhone;
+let haveSecPass;
 let qrCode;
 
 let passwordAttempt=0;
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.text())
     .then(async html => {
       settingsContainer.innerHTML = html;
+      await haveSecurityPassword();
       setPrefixSelectorOptions();
       await loadSettings();
       await getAllMethodeList();
@@ -57,6 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
       authMethodeButtonsInit();
       setPhoneNumberButton();
       editPhoneNumberButton();
+      securityPassResetButton();
+      securityPassRemoveButton();
       await authMethodeSelectorInit();  
     });
 });
@@ -80,6 +84,13 @@ async function loadSettings(){
   }
   const userActiveAuthMethode = document.getElementById("selected-auth-methode");
   userActiveAuthMethode.textContent = userAuthMethode;
+
+  const securityPassSpace = document.getElementById("security-password-reset-space");
+  if(haveSecPass && haveSecPass===true){
+    securityPassSpace.classList.remove("hidden");
+  } else{
+    securityPassSpace.classList.add("hidden");
+  }
 }
 
 async function settingsInit(){
@@ -511,6 +522,97 @@ function anonimate(){
   const hidden = "*".repeat(userPhone.length - prefixLength - 3);
   return `${prefix} ${hidden} ${visible}`
 }  
+
+//Otwarcie modalu resetowania hasła bezpieczeństwa
+function securityPassResetButton(){
+  const button = document.getElementById("security-password-reset-button");
+  if(!button){return;}
+  button.addEventListener("click", ()=>{
+    const resetModal = document.getElementById("security-pass-reset-space");
+    if(!resetModal){return;}
+    resetModal.classList.remove("hidden");
+    const messageBox = document.getElementById("security-pass-reset-message-space");
+    messageBox.classList.add("hidden");
+    const resetModalInputContent = document.getElementById("security-pass-reset-input-content");
+    const resetModalCodeContent = document.getElementById("security-pass-reset-code-confirm-content");
+    if(!resetModalInputContent || !resetModalCodeContent){return;}
+    resetModalInputContent.classList.remove("hidden");
+    resetModalCodeContent.classList.add("hidden");
+    const oldInput = document.getElementById("security-pass-reset-old-input");
+    const newInput = document.getElementById("security-pass-reset-new-input");
+    const repeatInput = document.getElementById("security-pass-reset-new-repeat-input");
+    if(!oldInput || !newInput || !repeatInput){return;}
+    oldInput.value="";
+    newInput.value="";
+    repeatInput.value="";
+  });
+}
+
+//TODO
+function securityPassResetModalButtons(){
+  const cancelButton = document.getElementById("reset-security-pass-modal-button-cancel");
+  const confirmButton = document.getElementById("reset-security-pass-modal-button-confirm");
+  if(!cancelButton || !confirmButton){return;}
+
+  cancelButton.addEventListener("click", ()=>{
+    const modal = document.getElementById("security-pass-reset-space");
+    if(!modal){return;}
+    modal.classList.add("hidden");
+  });
+
+  confirmButton.addEventListener("click", async ()=>{
+    const messageBox = document.getElementById("security-pass-reset-message-space");
+    messageBox.classList.add("hidden");
+    const oldInput = document.getElementById("security-pass-reset-old-input");
+    const newInput = document.getElementById("security-pass-reset-new-input");
+    const repeatInput = document.getElementById("security-pass-reset-new-repeat-input");
+    let message = "";
+    if(!oldInput || !newInput || !repeatInput){return;}
+    let oldValue = oldInput.value;
+    let newValue = newInput.value;
+    let repeatValue = repeatInput.value;
+    if(!oldValue || !newValue || !repeatValue){return;}
+    let oldHash = await window.api.hashPassword(oldValue);
+    let compareOldPass = await window.api.compareSecurityPassword(oldHash);
+    if(!compareOldPass || compareOldPass===false){
+      message = "Niepoprawne stare hasło";
+    } else if(newValue!==repeatValue){
+      message = "Hasła muszą być identyczne";
+    } else {
+      let isPassOk = await window.api.validateNewSecurityPassword(newValue);
+      if(isPassOk && isPassOk.success===true){
+        //TODO
+        //ustawienie nowego hasła
+        let result = "";//await window.api.changeSecurityPassword(newValue);
+        if(result){
+
+        }
+      } else {
+        message = isPassOk.message;
+      }
+    }
+    //Pokaż wiadomość
+    if(message && message.length>0){
+      const messageBox = document.getElementById("security-pass-reset-message-space");
+      const messageText = document.getElementById("security-pass-reset-message-span");
+      messageText.value=message;
+      messageBox.classList.remove("hidden");
+    }
+  });
+}
+
+//TODO
+function securityPassRemoveButton(){
+  const button = document.getElementById("security-password-remove-button");
+  if(!button){return;}
+}
+
+async function haveSecurityPassword(){
+  let result = await window.api.isSecurityPasswordSet();
+  if(result){
+    haveSecPass = result;
+  }
+}
 
 async function renderQrCode(){
   const container = document.getElementById("qrCode");

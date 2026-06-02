@@ -33,6 +33,7 @@ const {saveToken, getToken, clearToken} = require('./SecureStorage/tokenStorage.
 
 const {encryptUserPassword, decryptUserPassword} = require('./Encryption/EncryptUserPassword.js');
 
+const {haveSecurityPassword} = require('./API/SecurityPassword/HaveSecurityPassword.js');
 const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
 const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword/SecurityPassword.js');
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
@@ -56,6 +57,7 @@ const {getLogFiltersData} = require('./API/Logs/GetLogFiltersData.js');
 const {getLogsData} = require('./API/Logs/GetLogsData.js');
 const {requestPhoneCode} = require('./API/AuthMethodes/RequestPhoneCode.js');
 const { activatePhone } = require("./API/AuthMethodes/ActivatePhone.js");
+const { setSecurityPasswordHash } = require("./SecurityPassword/SecurityPasswordHash.js");
 
 const appName="PassHolder";
 
@@ -571,6 +573,31 @@ ipcMain.handle('get-security-password-hash', async ()=>{
     }
 });
 
+ipcMain.handle('have-security-password', async ()=>{
+    try{
+        let response = await haveSecurityPassword();
+        if(response && response.success && response.data && response.data===true){
+            return true;
+        }
+        return false;
+    } catch(err){
+        console.error("Błąd odczytu", err);
+        return false;
+    }
+});
+
+ipcMain.handle('compare-security-password', async (event, userInput)=>{
+    try{
+        let userInputHashed = await hash(userInput);
+        let oldPassHash = await getSecurityPasswordIfExist();
+        if(userInputHashed && oldPassHash && userInputHashed===oldPassHash){return true;}
+        return false;
+    } catch(err){
+        console.error("Błąd odczytu", err);
+        return false;
+    }
+});
+
 ipcMain.handle('get-security-password', ()=>{
     try{
         let response = getSecurityPassword();
@@ -648,7 +675,7 @@ ipcMain.handle('user-password-encryption-key', async (event, userPassword)=>{
     }
 });
 
-ipcMain.handle('validateNewSecurityPassword', (event, newSecurityPassword)=>{
+ipcMain.handle('validate-new-security-password', (event, newSecurityPassword)=>{
     const response = validateNewSecurityPassword(newSecurityPassword);
     return response;
 });
@@ -666,6 +693,22 @@ ipcMain.handle('set-new-security-password', async (event, newSecurityPassword)=>
         }
     }
     return false;
+});
+
+ipcMain.handle('change-security-password', async (event, userInput)=>{
+    try{
+        if(userInput){
+            let hashPass = await hash(userInput)
+            let result = await saveNewSecurityPassword(hashPass);
+            if(result && result.success && result.success===true){
+                return {success: true};
+            }
+        }
+        return {success: false}
+    }catch(error){
+        console.error("Błąd zmiany hasła bezpieczeństwa", err);
+        return {success: false, error: err};
+    }
 });
 
 ipcMain.handle('auth-methode-change-validate-user', async (event, password)=>{

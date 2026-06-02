@@ -377,6 +377,21 @@
     display: none;
 }
 
+#security-password-reset-space{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+}
+
+#security-password-reset-space.hidden{
+    display: none;
+}
+
+#security-pass-reset-message-space.hidden{
+    display: none;
+}
+
 .message-space{
     display: flex;
     justify-content: center;

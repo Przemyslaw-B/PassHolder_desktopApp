@@ -64,7 +64,10 @@ contextBridge.exposeInMainWorld('api', {
   saveSecurityPasswordToLocal: (securityPassword) => ipcRenderer.invoke('save-security-password', securityPassword),
   //zapis nowego hasła bezpieczeństwa jeśli nie istnieje
   setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('set-new-security-password', newSecurityPassword),
-
+  //Ustaw nowe hasło bezpieczeństwa
+  changeSecurityPassword: (userInput) => ipcRenderer.invoke('change-security-password', userInput),
+  //Usuń security password
+  removeSecurityPassword: () => ipcRenderer.invoke('remove-security-password'),
   //Odczytaj hash hasła bezpieczeństwa użytkownika
   getSecurityPasswordHash: () => ipcRenderer.invoke('get-security-password-hash'),
   //Odczytaj hasło bezpieczeństwa użytkownika
@@ -79,9 +82,11 @@ contextBridge.exposeInMainWorld('api', {
   //Czy hasło bezpieczenstwa jest ustawione
   isSecurityPasswordSet: ()=> ipcRenderer.invoke('is-security-password-set'),
   //Weryfikacja spełnienia wymogów przez nowe hasło bezpieczeństwa
-  validateNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('validateNewSecurityPassword', newSecurityPassword),
+  validateNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('validate-new-security-password', newSecurityPassword),
   //Weryfikuj poprawność hasła bezpieczeństwa
   validateSecurityPassword: (securityPassword) => ipcRenderer.invoke('validate-security-password', securityPassword),
+  //porównaj stare hasła security
+  compareSecurityPassword: (userInput) => ipcRenderer.invoke('compare-security-password', userInput),
 
   //Pobierz rekordy z lokalnej bazy danych
   getStorage:() => ipcRenderer.invoke('get-storage'),

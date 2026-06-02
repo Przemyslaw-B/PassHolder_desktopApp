@@ -6,10 +6,10 @@
     const rolesContainer = document.getElementById("role-content");
     fetch("../Roles/roles.html")
       .then(res => res.text())
-      .then(html => {
+      .then(async html => {
         rolesContainer.innerHTML = html;
+        await getAllRolesList();
         initNewRolesForm();
-        getAllRolesList();
         userMailSearchInit();
         hideUserSearchList();
         editModalButtonsInit();
@@ -122,7 +122,6 @@ async function loadRoles(){
 
   async function getAllRolesList(){
     let result = await window.api.getAllRolesList();
-    //console.log("get-all-roles result:", result);
     allRolesList = result.data;
   }
 

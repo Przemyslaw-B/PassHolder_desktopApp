@@ -18,7 +18,7 @@
     const logsContainer = document.getElementById("logs-content");
     fetch("../Logs/logs.html")
       .then(res => res.text())
-      .then(html => {
+      .then(async html => {
         logsContainer.innerHTML = html;
         //loadUrls();
         initFiltersSelector();
@@ -167,32 +167,6 @@
     if(result && result.success && result.data){
       return result.data;
     }
-    /*
-    try{
-      const responseConfig = await window.api.loadApiConfig();
-      const config = responseConfig.config;
-      const url = config.getFiltersData;
-      const token = await getToken();
-      if (!token) {
-        throw new Error("Brak tokenu");
-      }
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }
-      });
-      if(!response.ok){
-        throw new Error(`Błąd API: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log("data filters:", data);
-      return data;
-    }catch(err){
-      console.error("[loadFiltersData] błąd:", err);
-    } 
-      */
   }
 
   async function downloadLogsData(){

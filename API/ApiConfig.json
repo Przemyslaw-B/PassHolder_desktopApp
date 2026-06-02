@@ -21,6 +21,7 @@
     "getLogs": "http://31.70.88.182:8081/api/recieveLogs",
     "getLogFiltersData": "http://31.70.88.182:8081/api/getAuditFiltersData",
 
+    "haveSecurityPassword": "http://31.70.88.182:8081/api/haveSecurityPassword",
     "getSecurityPassword": "http://31.70.88.182:8081/api/getSecurityPassword",
     "setSecurityPassword": "http://31.70.88.182:8081/api/setSecurityPassword",
     
