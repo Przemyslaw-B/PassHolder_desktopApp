@@ -101,9 +101,10 @@
     <!-- Okno usunięcia hasła bezpieczeństwa -->
      <div id="security-pass-remove-space" class="hidden">
       <div id="security-pass-remove-content">
-        <div id="security-pass-remove-confirm-content">
+
+        <div id="security-pass-remove-confirm-content" class="hidden">
           <span id="security-pass-remove-describtion">Usunięcie hasła bezpieczenstwa spowoduje utracenie wszystkich zapisanych haseł</span>
-          <div id="remove-security-pass-buttons-space" class="hidden">
+          <div id="remove-security-pass-buttons-space" class="button-space">
             <button id="remove-security-pass-button-cancel" class="settings-button">Anuluj</button>
             <button id="remove-security-pass-button-confirm" class="settings-button">Zatwierdź</button>
           </div>
@@ -111,7 +112,8 @@
 
         <div id="security-pass-remove-code-confirm-content" class="hidden">
           <span id="security-pass-remove-code-span">Podaj otrzymany kod:</span>
-          <div id="security-pass-remove-code-buttons-space" class="hidden">
+          <input id="security-pass-remove-code-input" class="default-input" placeholder="podaj kod">
+          <div id="security-pass-remove-code-buttons-space" class="button-space">
             <button id="security-pass-remove-code-button-cancel" class="settings-button">Anuluj</button>
             <button id="security-pass-remove-code-button-confirm" class="settings-button">Zatwierdź</button>
           </div>
@@ -123,12 +125,13 @@
     <!-- Okno zmiany hasła bezpieczeństwa -->
      <div id="security-pass-reset-space" class="hidden">
       <div id="security-pass-reset-content">
+
         <div id="security-pass-reset-input-content" class="hidden">
-          <span id="security-pass-reset-describtion">W celu zresetowania podaj stare hasło bezpieczeństwa a następnie nowe.</span>
-          <input id="security-pass-reset-old-input" class="default-input" placeholder="stare hasło">
-          <input id="security-pass-reset-new-input" class="default-input" placeholder="nowe hasło">
-          <input id="security-pass-reset-new-repeat-input" class="default-input" placeholder="powtórz nowe hasło">
-          <div id="reset-security-pass-buttons-space" class="hidden">
+          <span id="security-pass-reset-describtion" class="span-describtion">W celu zresetowania podaj stare hasło bezpieczeństwa a następnie nowe.</span>
+          <input id="security-pass-reset-old-input" class="default-input input-pass-change" placeholder="stare hasło">
+          <input id="security-pass-reset-new-input" class="default-input input-pass-change" placeholder="nowe hasło">
+          <input id="security-pass-reset-new-repeat-input" class="default-input input-pass-change" placeholder="powtórz nowe hasło">
+          <div id="reset-security-pass-buttons-space" class="button-space">
             <button id="reset-security-pass-modal-button-cancel" class="settings-button">Anuluj</button>
             <button id="reset-security-pass-modal-button-confirm" class="settings-button">Zatwierdź</button>
           </div>
@@ -137,7 +140,7 @@
         <div id="security-pass-reset-code-confirm-content" class="hidden">
           <span id="security-pass-reset-code-span">Podaj otrzymany kod:</span>
           <input id="security-pass-reset-code-input" class="default-input" placeholder="podaj kod">
-          <div id="security-pass-reset-code-buttons-space" class="hidden">
+          <div id="security-pass-reset-code-buttons-space" class="button-space">
             <button id="security-pass-reset-code-button-cancel" class="settings-button">Anuluj</button>
             <button id="security-pass-reset-code-button-confirm" class="settings-button">Zatwierdź</button>
           </div>
@@ -146,6 +149,7 @@
         <div id="security-pass-reset-message-space" class="message-space hidden">
           <span id="security-pass-reset-message-span" class="message-text"></span>
         </div>
+        
       </div>
      </div>
 

@@ -60,7 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
       setPhoneNumberButton();
       editPhoneNumberButton();
       securityPassResetButton();
+      securityPassResetModalButtons();
       securityPassRemoveButton();
+      seucrityPassRemoveModalButtons();
       await authMethodeSelectorInit();  
     });
 });
@@ -552,11 +554,9 @@ function securityPassResetButton(){
 function securityPassResetModalButtons(){
   const cancelButton = document.getElementById("reset-security-pass-modal-button-cancel");
   const confirmButton = document.getElementById("reset-security-pass-modal-button-confirm");
-  if(!cancelButton || !confirmButton){return;}
 
   cancelButton.addEventListener("click", ()=>{
     const modal = document.getElementById("security-pass-reset-space");
-    if(!modal){return;}
     modal.classList.add("hidden");
   });
 
@@ -605,6 +605,47 @@ function securityPassResetModalButtons(){
 function securityPassRemoveButton(){
   const button = document.getElementById("security-password-remove-button");
   if(!button){return;}
+  button.addEventListener("click", ()=>{
+    const modal = document.getElementById("security-pass-remove-space");
+    modal.classList.remove("hidden");
+    const modalContent = document.getElementById("security-pass-remove-confirm-content");
+    modalContent.classList.remove("hidden");
+    const modalContentCode = document.getElementById("security-pass-remove-code-confirm-content");
+    modalContentCode.classList.add("hidden");
+  });
+}
+
+function seucrityPassRemoveModalButtons(){
+  const cancelButton = document.getElementById("remove-security-pass-button-cancel");
+  const confirmButton = document.getElementById("remove-security-pass-button-confirm");
+
+  cancelButton.addEventListener("click", ()=>{
+    const modal = document.getElementById("security-pass-remove-space");
+    modal.classList.add("hidden");
+  });
+
+  confirmButton.addEventListener("click", async ()=>{
+    //TODO wysłanie kodu weryfikacyjnego
+    const codeInput = document.getElementById("security-pass-remove-code-input");
+    codeInput.value = "";
+    const confirmContent = document.getElementById("security-pass-remove-confirm-content");
+    confirmContent.classList.add("hidden");
+    const codeContent = document.getElementById("security-pass-remove-code-confirm-content");
+    codeContent.classList.remove("hidden");
+  });
+
+  const cancelCodeButton = document.getElementById("security-pass-remove-code-button-cancel");
+  const confirmCodeButton = document.getElementById("security-pass-remove-code-button-confirm");
+
+  cancelCodeButton.addEventListener("click", ()=>{
+    const modal = document.getElementById("security-pass-remove-space");
+    modal.classList.add("hidden");
+  });
+
+  confirmCodeButton.addEventListener("click", async ()=>{
+    //TODO weryfikacja kodu i usunięcie hasła oraz storage
+
+  });
 }
 
 async function haveSecurityPassword(){

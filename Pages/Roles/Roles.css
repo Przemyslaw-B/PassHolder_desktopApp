@@ -305,3 +305,23 @@
 .default-role-button:hover{
     color: #1abc9c;
 }
+
+#role-edit-modal-select-content{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#role-edit-modal-select-content.hidden{
+    display: none;
+}
+
+#role-edit-modal-code-content{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#role-edit-modal-code-content.hidden{
+    display: none;
+}
