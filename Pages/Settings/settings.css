@@ -511,6 +511,10 @@
     align-items: center;
 }
 
+#security-pass-reset-input-content.hidden{
+    display: none;
+}
+
 #security-pass-reset-code-confirm-content{
     display: flex;
     flex-direction: column;

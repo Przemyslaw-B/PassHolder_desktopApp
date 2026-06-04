@@ -65,7 +65,7 @@ contextBridge.exposeInMainWorld('api', {
   //zapis nowego hasła bezpieczeństwa jeśli nie istnieje
   setNewSecurityPassword: (newSecurityPassword)=> ipcRenderer.invoke('set-new-security-password', newSecurityPassword),
   //Ustaw nowe hasło bezpieczeństwa
-  changeSecurityPassword: (userInput) => ipcRenderer.invoke('change-security-password', userInput),
+  changeSecurityPassword: (userInput, oldSecPass, code) => ipcRenderer.invoke('change-security-password', userInput, oldSecPass, code),
   //Usuń security password
   removeSecurityPassword: () => ipcRenderer.invoke('remove-security-password'),
   //Odczytaj hash hasła bezpieczeństwa użytkownika

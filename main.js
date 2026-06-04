@@ -193,7 +193,6 @@ ipcMain.handle('send-authentication-code', async (event, email, authCode) =>{
     try{
         if(authCode){
             let result = await authenticateUser(email, authCode);
-            console.log("send-auth-code", result);
             return {success: true, data: result.data};
         } else{
             return {success: false, error: "no code recieverd"};
@@ -590,7 +589,7 @@ ipcMain.handle('compare-security-password', async (event, userInput)=>{
     try{
         let userInputHashed = await hash(userInput);
         let oldPassHash = await getSecurityPasswordIfExist();
-        if(userInputHashed && oldPassHash && userInputHashed===oldPassHash){return true;}
+        if(userInputHashed && oldPassHash && oldPassHash.success&& oldPassHash.success===true && userInputHashed===oldPassHash.securityPassword){return true;}
         return false;
     } catch(err){
         console.error("Błąd odczytu", err);
@@ -660,6 +659,33 @@ ipcMain.handle('is-security-password-required', () =>{
     }
 });
 
+ipcMain.handle('remove-security-password', async()=>{
+    try{
+        let result = await removeSecurityPassword();
+    }catch(error){
+        console.error("Błąd usuwania hasła bezpieczeństwa");
+    }
+});
+
+ipcMain.handle('change-security-password', async(event, userInput, oldSecPass, code)=>{
+    try{
+        if(!userInput || !oldSecPass || !code ){return {success: false};}
+        const hashNewPass = await hash(userInput);
+        //Pobranie haseł
+        console.log("ZMIANA HASŁA BEZPIECZEŃSTWA..");
+        let resultStorage = await getStorage();
+        if(!resultStorage || resultStorage.success || resultStorage.success===false || !resultStorage.data){return {success:faslsxe};}
+        console.log("result storage:", resultStorage);
+        let hashSecPass= hash(userInput);
+        console.log("hash sec pass:", hashSecPass);
+        //TODO wysłanie nowego hash na serwer razem z nowym storage.
+        return{success: true};
+    }catch(error){
+        console.error("Błąd zmiany hasła bezpieczeństwa");
+        return{success: false};
+    }
+});
+
 ipcMain.handle('user-password-encryption-key', async (event, userPassword)=>{
     try{
         console.log("user-password-encryption-key userPassword:", userPassword);
@@ -695,21 +721,7 @@ ipcMain.handle('set-new-security-password', async (event, newSecurityPassword)=>
     return false;
 });
 
-ipcMain.handle('change-security-password', async (event, userInput)=>{
-    try{
-        if(userInput){
-            let hashPass = await hash(userInput)
-            let result = await saveNewSecurityPassword(hashPass);
-            if(result && result.success && result.success===true){
-                return {success: true};
-            }
-        }
-        return {success: false}
-    }catch(error){
-        console.error("Błąd zmiany hasła bezpieczeństwa", err);
-        return {success: false, error: err};
-    }
-});
+
 
 ipcMain.handle('auth-methode-change-validate-user', async (event, password)=>{
     try{

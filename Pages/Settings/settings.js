@@ -6,6 +6,9 @@ let userTempPhone;
 let haveSecPass;
 let qrCode;
 
+let oldSecPass;
+let newSecPass;
+
 let passwordAttempt=0;
 let passwordAttemptTimer;
 
@@ -567,31 +570,65 @@ function securityPassResetModalButtons(){
     const newInput = document.getElementById("security-pass-reset-new-input");
     const repeatInput = document.getElementById("security-pass-reset-new-repeat-input");
     let message = "";
-    if(!oldInput || !newInput || !repeatInput){return;}
     let oldValue = oldInput.value;
     let newValue = newInput.value;
     let repeatValue = repeatInput.value;
     if(!oldValue || !newValue || !repeatValue){return;}
-    let oldHash = await window.api.hashPassword(oldValue);
-    let compareOldPass = await window.api.compareSecurityPassword(oldHash);
+    let compareOldPass = await window.api.compareSecurityPassword(oldValue);
+    console.log("compare old Pass result:", compareOldPass);
     if(!compareOldPass || compareOldPass===false){
       message = "Niepoprawne stare hasło";
     } else if(newValue!==repeatValue){
       message = "Hasła muszą być identyczne";
     } else {
       let isPassOk = await window.api.validateNewSecurityPassword(newValue);
-      if(isPassOk && isPassOk.success===true){
-        //TODO
-        //ustawienie nowego hasła
-        let result = "";//await window.api.changeSecurityPassword(newValue);
-        if(result){
-
-        }
+      if(isPassOk && isPassOk.success===true){ 
+        oldSecPass = oldValue;
+        newSecPass = newValue;
+        const inputContent = document.getElementById("security-pass-reset-input-content");
+        inputContent.classList.add("hidden");
+        const codeContent = document.getElementById("security-pass-reset-code-confirm-content");
+        codeContent.classList.remove("hidden");
+        const codeInput = document.getElementById("security-pass-reset-code-input");
+        codeInput.value="";
       } else {
+        console.log("isPassOk:", isPassOk);
         message = isPassOk.message;
       }
     }
     //Pokaż wiadomość
+    if(message && message.length>0){
+      const messageBox = document.getElementById("security-pass-reset-message-space");
+      const messageText = document.getElementById("security-pass-reset-message-span");
+      console.log("message content:", message);
+      messageText.value=message;
+      messageBox.classList.remove("hidden");
+    }
+  });
+
+  const codeCancelButton = document.getElementById("security-pass-reset-code-button-cancel");
+  const codeConfirmButton = document.getElementById("security-pass-reset-code-button-confirm");
+
+  codeCancelButton.addEventListener("click", ()=>{
+    const modal = document.getElementById("security-pass-reset-space");
+    modal.classList.add("hidden");
+  });
+
+  codeConfirmButton.addEventListener("click", async ()=>{
+    const messageBox = document.getElementById("security-pass-reset-message-space");
+    messageBox.classList.add("hidden");
+    let message = "";
+    const codeInput = document.getElementById("security-pass-reset-code-input");
+    const codeValue = codeInput.value;
+    if(codeValue.length !== 6){
+      message = "nieprawidłowy kod";
+    } else{
+      let result = await window.api.changeSecurityPassword(newSecPass, oldSecPass, codeValue);
+      console.log("change security password result:", result);
+      if(result.success===false){
+        message = "nieprawidłowy kod";
+      }
+    }
     if(message && message.length>0){
       const messageBox = document.getElementById("security-pass-reset-message-space");
       const messageText = document.getElementById("security-pass-reset-message-span");
