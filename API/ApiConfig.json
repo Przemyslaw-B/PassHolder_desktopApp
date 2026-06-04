@@ -24,7 +24,9 @@
     "haveSecurityPassword": "http://31.70.88.182:8081/api/haveSecurityPassword",
     "getSecurityPassword": "http://31.70.88.182:8081/api/getSecurityPassword",
     "setSecurityPassword": "http://31.70.88.182:8081/api/setSecurityPassword",
-    
+    "changeSecurityPassword": "http://31.70.88.182:8081/api/resetSecurityPassword",
+    "removeSecurityPassword": "http://31.70.88.182:8081/api/removeSecurityPassword",
+
     "changeAuthMethodeVerifyUser":"http://31.70.88.182:8081/api/changeAuthMethodeVerifyUser",
     "getAllAuthenticationMethodes": "http://31.70.88.182:8081/api/getAllAuthenticationMethodes",
     "getUserAuthenticationMethode": "http://31.70.88.182:8081/api/getUserAuthenticationMethode",

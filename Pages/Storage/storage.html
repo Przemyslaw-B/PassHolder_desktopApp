@@ -16,7 +16,7 @@
 </template>
 
 <!-- Dodawanie hasła bezpieczeństwa-->
- <div id="security-password-modal" class="">
+ <div id="security-password-modal" class="hidden">
   <div id="security-password-modal-title-space" class="center-position">
     <span id="security-password-modal-title">Dodaj hasło bezpieczeństwa</span>
   </div>
@@ -51,7 +51,6 @@
     <div id="saveRecord-button"></div>
   </div>
   <div id="addRecord-button"></div>
-  <!-- <button id="addRecord-button">✚</button> -->
 </div>
 
 <!-- Nagłówki tabeli -->
@@ -84,20 +83,6 @@
         <span id="modify-password-span">Password:</span>
         <input type="password" id="modify-password">
       </div>
-
-      <!--
-      <div id="modify-rotation-slot">
-        <span id="modify-rotation-span">Rotacja:</span>
-        <select id="modify-rotation" name="rotation">
-          <option value="0">off</option>
-          <option value="30">30</option>
-          <option value="60">60</option>
-          <option value="90">90</option>
-          <option value="180">180</option>
-          <option value="365">365</option>
-        </select>
-      </div>
-      -->
 
     </div>
     <div id="modify-modal-buttons-place">

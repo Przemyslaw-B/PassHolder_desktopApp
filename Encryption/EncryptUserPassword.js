@@ -5,9 +5,9 @@ const {setUserEncryptionKey,getUserEncryptionKey} = require('./../Encryption/Use
 
 async function encryptUserPassword(userPassword){
   let key = await getUserEncryptionKey();
-  console.log("klucz szyfrowania:", key);
+  //console.log("klucz szyfrowania:", key);
   if(key && key !== null){
-    return encrypt(userPassword, key);
+    return encryptWithKey(userPassword, key);
   }
   return null;
 }
@@ -16,7 +16,7 @@ async function decryptUserPassword(userPassword){
   try{
     let key = await getUserEncryptionKey();
     if(key && key !== null){
-      let result = decrypt(userPassword, key);
+      let result = decryptWithKey(userPassword, key);
       if(result && result.success){
       return {success: true, data: result.data};
       }
@@ -27,7 +27,7 @@ async function decryptUserPassword(userPassword){
   }
 }
 
-function decrypt(input, SECRET_KEY){
+function decryptWithKey(input, SECRET_KEY){
   if(input==null){
     return null;
   }const{iv,tag,data}=JSON.parse(input);
@@ -47,7 +47,7 @@ function decrypt(input, SECRET_KEY){
   return {success: false, error: "nie można odszyfrować"};
 }
 
-function encrypt(input, SECRET_KEY) {
+function encryptWithKey(input, SECRET_KEY) {
   if(input == null){
     return null;
   }
@@ -64,4 +64,4 @@ function encrypt(input, SECRET_KEY) {
   });
 }
 
-module.exports = { encryptUserPassword, decryptUserPassword };
+module.exports = { encryptUserPassword, decryptUserPassword, encryptWithKey, decryptWithKey };

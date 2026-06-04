@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.text())
     .then(async html => {
       settingsContainer.innerHTML = html;
-      await haveSecurityPassword();
+      //await haveSecurityPassword();
       setPrefixSelectorOptions();
       await loadSettings();
       await getAllMethodeList();
@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadSettings(){
+  await haveSecurityPassword();
   userPhone=null;
   userAuthMethode=null;
   await getUserAuthMethode();
@@ -623,9 +624,13 @@ function securityPassResetModalButtons(){
     if(codeValue.length !== 6){
       message = "nieprawidłowy kod";
     } else{
+
       let result = await window.api.changeSecurityPassword(newSecPass, oldSecPass, codeValue);
       console.log("change security password result:", result);
-      if(result.success===false){
+      if(result.success===true){
+        const modal = document.getElementById("security-pass-reset-space");
+        modal.classList.add("hidden");
+      } else{
         message = "nieprawidłowy kod";
       }
     }

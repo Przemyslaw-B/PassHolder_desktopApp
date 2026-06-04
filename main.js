@@ -21,6 +21,7 @@ const {getStorage} = require('./API/Storage/GetStorage.js');
 const {modifyStorageRecord} = require('./API/Storage/ModifyRecord.js');
 const {addNewStorageRecord} = require('./API/Storage/AddNewStorageRecord.js');
 const {removeStorageRecord} = require('./API/Storage/RemoveStorageRecord.js');
+const {reEncryptStorage} = require('./Storage/ReEncryptStorage.js');
 
 const {runTray} = require('./Tray/RunTray.js');
 
@@ -37,6 +38,8 @@ const {haveSecurityPassword} = require('./API/SecurityPassword/HaveSecurityPassw
 const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
 const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword/SecurityPassword.js');
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
+const {changeSecurityPassword} = require('./API/SecurityPassword/ChangeSecurityPassword.js');
+const {removeSecurityPassword} = require('./API/SecurityPassword/RemoveSecurityPassword.js');
 
 const {getUserAuthMethode} = require("./API/AuthMethodes/GetUserAuthMethode.js");
 const {getUserPhoneNumber} = require("./API/User/GetPhoneNumber.js");
@@ -667,18 +670,16 @@ ipcMain.handle('remove-security-password', async()=>{
     }
 });
 
-ipcMain.handle('change-security-password', async(event, userInput, oldSecPass, code)=>{
+ipcMain.handle('change-security-password', async(event, newSecurityPassword, oldSecurityPassword, code, storage)=>{
     try{
-        if(!userInput || !oldSecPass || !code ){return {success: false};}
-        const hashNewPass = await hash(userInput);
-        //Pobranie haseł
-        console.log("ZMIANA HASŁA BEZPIECZEŃSTWA..");
+        if(!newSecurityPassword || !oldSecurityPassword || !code ){return {success: false};}
+        const hashNewPass = await hash(newSecurityPassword);
         let resultStorage = await getStorage();
-        if(!resultStorage || resultStorage.success || resultStorage.success===false || !resultStorage.data){return {success:faslsxe};}
-        console.log("result storage:", resultStorage);
-        let hashSecPass= hash(userInput);
-        console.log("hash sec pass:", hashSecPass);
-        //TODO wysłanie nowego hash na serwer razem z nowym storage.
+        if(!resultStorage || !resultStorage.success || resultStorage.success===false || !resultStorage.data){return {success: false};}
+        let newStorage = reEncryptStorage(oldSecurityPassword, resultStorage.data);
+        let hashSecPass = hash(newSecurityPassword);
+        let result = await changeSecurityPassword(hashSecPass, code, newStorage);
+        setSecurityPassword(newSecurityPassword);
         return{success: true};
     }catch(error){
         console.error("Błąd zmiany hasła bezpieczeństwa");

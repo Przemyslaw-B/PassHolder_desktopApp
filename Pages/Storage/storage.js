@@ -113,7 +113,7 @@ async function loadStorage(){
     if(!isSecurityPassword){  //brak ustawionego hasła bezpieczeństwa
       showSecurityPasswordModal();
     } else{
-      if(isSecurityPasswordRequired){
+      if(!tempSecPass || tempSecPass===""){
         showUserPasswordSecurityModal();
       }
       hideSecurityPasswordModal();
@@ -129,7 +129,7 @@ async function loadStorage(){
 
 async function downloadData(){
   let result = await window.api.getStorage();
-  if(result.success){
+  if(result && result.success){
     return result.data;
   } else{
     console.log("error: ", result.error);
@@ -172,7 +172,7 @@ async function downloadData(){
 
 async function setStorageGUI(data){
   //console.log("Data length: " + data.length)
-  if (data != null || data.length > 0){
+  if (data != null && data.length > 0){
     const container = document.getElementById("storage-list");
     const template = document.getElementById("storage-row-template");
     container.innerHTML = ""; //Wyczyszczenie poprzednich wierszy w celu uniknięcia powielania po kolejnynm otwarciu
@@ -375,8 +375,8 @@ async function initAddRecordForm(){
 
   //Rozwinięcie formularza
   addRecordButton.addEventListener("click", async ()=>{
-    let result = await isSecurityPasswordRequired();
-    if(!tempSecPass && result){
+    //let result = await isSecurityPasswordRequired();
+    if(!tempSecPass || tempSecPass===""){
       showUserPasswordSecurityModal();
     } else {
       addRecordButton.style.display="none"  //Ukryj ten przycisk
@@ -443,14 +443,12 @@ async function initAddRecordForm(){
 //Dodaj nowy record do bazy danych
 async function addCredentialRecordToDataBase(data){
   let result = await window.api.addNewStorageRecord(data);
-  if(result){
-    if(result.success){
-      return result.data;
-    } else{
-      console.log("error:", result.error)
-    }
-    return;
-  }
+  if(result && result.success){
+    return result.data;
+  } 
+  onsole.log("error:", result.error)
+  return;
+}
   
   /*
   try{
@@ -479,7 +477,6 @@ async function addCredentialRecordToDataBase(data){
     await window.api.logout();
   }
   */
-}
 
 async function removeRecord(){
   if(recordToDelete){
