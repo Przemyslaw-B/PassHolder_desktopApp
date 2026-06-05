@@ -602,7 +602,7 @@ function securityPassResetModalButtons(){
       const messageBox = document.getElementById("security-pass-reset-message-space");
       const messageText = document.getElementById("security-pass-reset-message-span");
       console.log("message content:", message);
-      messageText.value=message;
+      messageText.textContent=message;
       messageBox.classList.remove("hidden");
     }
   });
@@ -637,7 +637,7 @@ function securityPassResetModalButtons(){
     if(message && message.length>0){
       const messageBox = document.getElementById("security-pass-reset-message-space");
       const messageText = document.getElementById("security-pass-reset-message-span");
-      messageText.value=message;
+      messageText.textContent=message;
       messageBox.classList.remove("hidden");
     }
   });
@@ -686,7 +686,30 @@ function seucrityPassRemoveModalButtons(){
 
   confirmCodeButton.addEventListener("click", async ()=>{
     //TODO weryfikacja kodu i usunięcie hasła oraz storage
-
+    const messageBox = document.getElementById("remove-secPass-modal-message-space");
+    const messageContent = document.getElementById("remove-secPass-modal-message-content");
+    messageContent.textContent="";
+    messageBox.classList.add("hidden");
+    let message="";
+    const input = document.getElementById("security-pass-remove-code-input");
+    const codeValue = input.value;
+    if(codeValue.length!==6){
+      message="nieprawidłowy kod";
+    } else{
+      let result = await window.api.removeSecurityPassword(codeValue);
+      console.log("usuwanie hasła result", result);
+      if(result && result.success===true){
+        const modal = document.getElementById("security-pass-remove-space");
+        modal.classList.add("hidden");
+      } else{
+        message="nieprawidłowy kod";
+      }
+    }
+    
+    if(message && message.length>0){
+      messageBox.classList.remove("hidden");
+      messageContent.textContent = message;
+    }
   });
 }
 

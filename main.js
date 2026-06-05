@@ -662,11 +662,14 @@ ipcMain.handle('is-security-password-required', () =>{
     }
 });
 
-ipcMain.handle('remove-security-password', async()=>{
+ipcMain.handle('remove-security-password', async(event, code)=>{
     try{
-        let result = await removeSecurityPassword();
+        let result = await removeSecurityPassword(code);
+        if(result && result.data && result.data.success===true){return {success: true};}
+        return {success: false};
     }catch(error){
         console.error("Błąd usuwania hasła bezpieczeństwa");
+        return {success: false};
     }
 });
 

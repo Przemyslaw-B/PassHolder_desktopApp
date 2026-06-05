@@ -397,6 +397,16 @@
     display: none;
 }
 
+#remove-secPass-modal-message-space{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#remove-secPass-modal-message-space.hidden{
+    display: none;
+}
+
 .message-space{
     display: flex;
     justify-content: center;

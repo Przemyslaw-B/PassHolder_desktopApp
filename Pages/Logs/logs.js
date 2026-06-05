@@ -21,6 +21,7 @@
       .then(async html => {
         logsContainer.innerHTML = html;
         //loadUrls();
+        await getFiltersData();
         initFiltersSelector();
         initFilterResetButtons();
         resetFilters();
