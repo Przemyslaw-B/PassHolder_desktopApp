@@ -6,6 +6,10 @@
   --sidebar-icon-size: 2rem;
 }
 
+body.sidebar-open .content-global {
+    margin-left: var(--sidebar-size-active);
+}
+
 /* rozwijane menu ikona */
 #showMenu {
   position: fixed;

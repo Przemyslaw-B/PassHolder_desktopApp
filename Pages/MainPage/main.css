@@ -19,11 +19,16 @@
   width: 2rem;
 }
 
+.tab{
+  margin-left: 0.5rem;
+}
+
+
 /* content */
 .content-global { 
   flex: 1;  /* Zajęcie całego miejsca*/
   min-width: 0; /* zwężanie zamiast przesuwania treści */
-  padding: 1.3rem;
+  /* padding: 1.3rem; */
   background-color: #f9f9f9;
   /* transition: margin-left 0.3s ease;  płynne przesuwanie */
   overflow-x: auto; /* Zapobieganie poziomemu przewijaniu*/

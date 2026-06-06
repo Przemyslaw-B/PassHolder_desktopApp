@@ -39,7 +39,7 @@
       <div id="phone-confirm-modal-content" class="hidden">
         <span id="phone-confirm-modal-info">Podaj kod przesłany na podany numer.</span>
         <div id="phone-confirm-modal-input-space">
-          <input type="text" id="phone-confirm-modal-secure-code" class="default-input" placeholder="kod weryfikacyjny" maxlength="6" name="code">
+          <input type="text" id="phone-confirm-modal-secure-code" class="default-input input-auth-methode" placeholder="kod weryfikacyjny" maxlength="6" name="code">
         </div>
         <div id="phone-confirm-modal-buttons-space">
           <button id = "phone-confirm-modal-cancel-button" class="settings-button">Anuluj</button>
@@ -60,14 +60,14 @@
         <div id="authMethode-change-modal-email" class="modal-option-content hidden">
           <span id="authMethode-change-modal-email-text" class="modal-option-describtion-span">Podaj kod wysłany na Twój email.</span>
           <div class="auth-option-input-space">
-            <input id="authMethode-change-modal-email-input" class="default-input input-auth-methode" placeholder="kod z email">
+            <input id="authMethode-change-modal-email-input" class="default-input input-auth-methode" placeholder="kod z email" maxlength="6">
           </div>
         </div>
         <!-- sms -->
         <div id="authMethode-change-modal-phone" class="modal-option-content hidden">
           <span id="authMethode-change-modal-email-text" class="modal-option-describtion-span">Podaj kod wysłany na numer telefonu.</span>
           <div class="auth-option-input-space">
-            <input id="authMethode-change-modal-sms-input" class="default-input input-auth-methode" placeholder="kod z sms">
+            <input id="authMethode-change-modal-sms-input" class="default-input input-auth-methode" placeholder="kod z sms" maxlength="6">
           </div>
         </div>
         <!-- TOTP -->
@@ -77,7 +77,7 @@
             <div id="qrCode"></div>
           </div>
           <div class="auth-option-input-space">
-            <input id="authMethode-change-modal-totp-input" class="default-input input-auth-methode" placeholder="kod z aplikacji">
+            <input id="authMethode-change-modal-totp-input" class="default-input input-auth-methode" placeholder="kod z aplikacji" maxlength="6">
           </div>
         </div>
 
@@ -112,7 +112,7 @@
 
         <div id="security-pass-remove-code-confirm-content" class="hidden">
           <span id="security-pass-remove-code-span">Podaj otrzymany kod:</span>
-          <input id="security-pass-remove-code-input" class="default-input" placeholder="podaj kod">
+          <input id="security-pass-remove-code-input" class="default-input input-auth-methode" placeholder="podaj kod" maxlength="6">
           <div id="security-pass-remove-code-buttons-space" class="button-space">
             <button id="security-pass-remove-code-button-cancel" class="settings-button">Anuluj</button>
             <button id="security-pass-remove-code-button-confirm" class="settings-button">Zatwierdź</button>
@@ -143,7 +143,7 @@
 
         <div id="security-pass-reset-code-confirm-content" class="hidden">
           <span id="security-pass-reset-code-span">Podaj otrzymany kod:</span>
-          <input id="security-pass-reset-code-input" class="default-input" placeholder="podaj kod">
+          <input id="security-pass-reset-code-input" class="default-input input-auth-methode" placeholder="podaj kod">
           <div id="security-pass-reset-code-buttons-space" class="button-space">
             <button id="security-pass-reset-code-button-cancel" class="settings-button">Anuluj</button>
             <button id="security-pass-reset-code-button-confirm" class="settings-button">Zatwierdź</button>

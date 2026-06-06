@@ -11,8 +11,8 @@
 
   let logFilterData;
 
-  //let apiUrlConfig;
-
+  let pageNumber=1;
+  let rowAmount=20
 
   document.addEventListener("DOMContentLoaded", ()=>{
     const logsContainer = document.getElementById("logs-content");
@@ -20,24 +20,13 @@
       .then(res => res.text())
       .then(async html => {
         logsContainer.innerHTML = html;
-        //loadUrls();
         await getFiltersData();
         initFiltersSelector();
         initFilterResetButtons();
         resetFilters();
         //userMailSugetion();
-        
-        //loadLogs();
       });
   });
-
-  /*
-  async function loadUrls(){
-      const responseConfig = await window.api.loadApiConfig();
-      apiUrlConfig = responseConfig.config;
-  }
-      */
-
 
   function initFiltersSelector(){
     const selectType = document.getElementById("logs-type-selector");
@@ -53,52 +42,74 @@
 
     const selectToDate = document.getElementById("dateTo-log");
 
-    selectType.addEventListener('change', () =>{
+    const ipInput = document.getElementById("logs-ip-input");
+
+    const rowsPerPageSelector = document.getElementById("rows-per-page");
+
+    selectType.addEventListener('change', async () =>{
       logTypeFilter = selectType.value;
       typeFilterValue = selectType.value;
       if(logTypeFilter && logTypeFilter !== ""){ 
         typeResetWrapper.classList.add('active-filter');
         selectType.classList.remove('active-filter-placeholder');
-        reloadLogList();
+        await reloadLogList();
       } else{
         typeResetWrapper.classList.remove('active-filter');
         selectType.classList.add('active-filter-placeholder');
       }
     });
-    /*
-    selectUser.addEventListener('change', () =>{
-      logUserFilter = selectUser.value;
-      if(logUserFilter && logUserFilter !== ""){
-        userResetWrapper.classList.add('active-filter');
-        selectUser.classList.remove('active-filter-placeholder');
-      } else{
-        userResetWrapper.classList.remove('active-filter');
-        selectUser.classList.add('active-filter-placeholder');
-      }
-    });
-    */
 
-    selectSettedBy.addEventListener('change', () =>{
+    selectSettedBy.addEventListener('change', async () =>{
       logSettedByFilter = selectSettedBy.value;
       responsibleAdminValue = selectSettedBy.value;
       if(logSettedByFilter && logSettedByFilter !== ""){
         settedByResetWrapper.classList.add('active-filter');
         selectSettedBy.classList.remove('active-filter-placeholder');
-        reloadLogList();
+        await reloadLogList();
       } else{
         settedByResetWrapper.classList.remove('active-filter');
         selectSettedBy.classList.add('active-filter-placeholder');
       }
     });
 
-    selectFromDate.addEventListener('change', ()=>{
+    ipInput.addEventListener("input", async ()=>{
+      const ipInput = document.getElementById("logs-ip-input");
+      let inputIpValue = ipInput.value;
+      await reloadLogList();
+    })
+
+    selectFromDate.addEventListener('change', async ()=>{
       dateFromValue = selectFromDate.value;
-      reloadLogList();
+      await reloadLogList();
     });
 
-    selectToDate.addEventListener('change', ()=>{
+    selectToDate.addEventListener('change', async ()=>{
       dateToValue = selectToDate.value;
-      reloadLogList();
+      await reloadLogList();
+    });
+
+    rowsPerPageSelector.addEventListener('change', async()=>{
+      rowsAmountSelector = document.getElementById("rows-per-page");
+      rowAmount = Number(rowsAmountSelector.value);
+      if(!rowAmount || rowAmount <20){
+        rowAmount=20;
+      }
+      await reloadLogList();
+    });
+
+    const prevPageButton = document.getElementById("prev-page");
+    const nextPageButton = document.getElementById("next-page");
+
+    prevPageButton.addEventListener("click", async()=>{
+      if(pageNumber && pageNumber>1){
+        pageNumber=pageNumber-1;
+        await reloadLogList();
+      }
+    });
+
+    nextPageButton.addEventListener("click", async()=>{
+      pageNumber=pageNumber+1;
+      await reloadLogList();
     });
   } 
 
@@ -116,17 +127,6 @@
       typeFilterValue = "";
       reloadLogList();
     });
-
-
-    /*
-    userLogFilterResetButton.addEventListener('click', ()=>{
-      console.log("Przyciski aktywny");
-      const userFilterSelector = document.getElementById("logs-user-selector");
-      userFilterSelector.value="";
-      userLogFilterResetButton.classList.remove('active-filter');
-      userFilterSelector.classList.add('active-filter-placeholder');
-    });
-    */
 
     settedByFilterResetButton.addEventListener('click', ()=>{
       //console.log("Przyciski aktywny");
@@ -150,7 +150,6 @@
       await setLogsGUI(data);
     }catch(err){
       console.error("[loadLogs] błąd:", err);
-      //await window.api.logout();
     }
   }
 
@@ -173,11 +172,17 @@
   async function downloadLogsData(){
     let typeFilter = document.getElementById("logs-type-selector").value || undefined;
     let ipFilter = document.getElementById("logs-ip-input").value || undefined;
+    const ipFilterInput = document.getElementById("logs-ip-input");
+    const ipFilterVal = ipFilterInput.value;
+    console.log("ipFilterValue,", ipFilterVal);
     let settedByFilter = document.getElementById("logs-settedBy-selector").value || undefined;
     let fromDateFilter = document.getElementById("dateFrom-log").value || undefined;
     let toDateFilter = document.getElementById("dateTo-log").value || undefined;
     let pageNumberFilter = 0;
     let pageSizeFilter = 0;
+    if(!rowAmount || rowAmount<20){rowAmount=20;}
+    if(!pageNumber || pageNumber<1){pageNumber=1;}
+
     let filtersData = {
       "pageNumber": pageNumberFilter,
       "pageSize": pageSizeFilter,
@@ -185,59 +190,20 @@
       "adminMail": settedByFilter,
       "ip": ipFilter,
       "fromDate": fromDateFilter,
-      "toDate": toDateFilter
+      "toDate": toDateFilter,
+      "pageNumber": pageNumber,
+      "rowAmount": rowAmount
     };
     let result = await window.api.getLogsData(filtersData);
     if(result && result.success && result.data){
       return result.data;
      }
-
-    /*
-    try{
-      let typeFilter = document.getElementById("logs-type-selector").value || undefined;
-      //let userFilter = document.getElementById("logs-user-select").value || undefined;
-      let ipFilter = document.getElementById("logs-ip-input").value || undefined;
-      let settedByFilter = document.getElementById("logs-settedBy-selector").value || undefined;
-      let fromDateFilter = document.getElementById("dateFrom-log").value || undefined;
-      let toDateFilter = document.getElementById("dateTo-log").value || undefined;
-      const responseConfig = await window.api.loadApiConfig();  //odczytanie pliku endpointów
-      const config = responseConfig.config;
-      const url = config.getLogs;
-      //console.log("pobieranie logów - uderzenie do api url:", url);
-      const token = await getToken();
-      const response = await fetch(url,{
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          pageNumber: 0,
-          pageSize: 0,
-          typeName: typeFilter,
-          //userMail: userFilter,
-          adminMail: settedByFilter,
-          fromDate: fromDateFilter,
-          toDate: toDateFilter
-        })
-      });
-      if(!response.ok){
-        throw new Error(`Błąd API: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.logs;
-    }catch(err){
-      console.error("[loadLogs] błąd:", err);
-      //await window.api.logout();
-    } 
-    */
   }
 
   async function setLogsGUI(data){
     //console.log("Data length: " + data.length)
     //Wyczyszczenie wierszy jeśli były
-    console.log("setLogsGUI data:", data);
+    //console.log("setLogsGUI data:", data);
     const container = document.getElementById("log-list");
     container.innerHTML = "";
     if(data != null && data.length > 0){
@@ -245,7 +211,7 @@
       let counter = 0;
       for(let i=0; i<data.length; i++){
         const picked = data[i];
-        console.log("data:", data[i]);
+        ~//console.log("data:", data[i]);
         counter++;
         const clone = template.content.cloneNode(true);
         clone.querySelector("#number-log").textContent = counter;
@@ -307,7 +273,7 @@
 
   function setResponsibleAdministratorOptions(){
     const admins = logFilterData.administrators;  
-    console.log("admins", admins);
+    //console.log("admins", admins);
     const select = document.getElementById("logs-settedBy-selector");
     select.replaceChildren();
     const placeholder = new Option("Wybierz administratora", "", true, true);

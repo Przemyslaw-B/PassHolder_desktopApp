@@ -180,8 +180,9 @@
 }
 
 .input-auth-methode{
-    width: 7rem;
-    height: 1.5rem;
+    width: 6rem;
+    height: 2rem;
+        text-align: center;
 }
 
 #authMethode-change-modal-buttons-space{

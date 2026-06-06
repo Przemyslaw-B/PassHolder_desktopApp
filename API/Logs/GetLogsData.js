@@ -22,7 +22,9 @@ async function getLogsData(filtersData) {
         'adminMail': filtersData.adminMail,
         'ip': filtersData.ip,
         'fromDate': filtersData.fromDate,
-        'toDate': filtersData.toDate
+        'toDate': filtersData.toDate,
+        "pageNumber": filtersData.pageNumber,
+        "rowAmount": filtersData.rowAmount
       },
       {
       headers: {

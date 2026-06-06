@@ -16,67 +16,93 @@
   </div>
 </template>
 
-<!-- miejsce na filtry -->
-<div id="filters-place">
-  <!-- nagłówek -->
-  <div id="logs-filter-title">
-    <span id="logs-filter-title-text">Filtry:</span>
-  </div>
-  <!-- Filtry -->
-  <div id="filters-upper" >
-    <!--
-    <div id="user-filter" class="log-single-filter">
-      <span id="userfilter-title" class="log-filter-name">User:</span>
-      <select type="text" id="logs-user-select" class="log-filter-input" placeholder="User"></input>
-    </div> 
-    -->
-  </div>
-
-  <div id="filters">
-    <div id="type-filter" class="log-single-filter">
-      <span id="type-filter-title" class="log-filter-name">Typ:</span>
-      <select id="logs-type-selector" class="log-filter-selector active-filter-placeholder">
-        <option value="" disabled selected hidden>Wybierz typ</option>
-      </select>
-      <div id="type-logs-reset-icon" class="log-reset-icon"></div>
-    </div>  
-
-    <div id="settedBy-filter" class="log-single-filter">
-      <span id="settedBy-title" class="log-filter-name">Administrator</span>
-      <select id="logs-settedBy-selector" class="log-filter-selector active-filter-placeholder">
-        <option value="" disabled selected hidden>Wybierz administratora</option>
-      </select>
-      <div id="settedBy-logs-reset-icon" class="log-reset-icon"></div>
-    </div>  
-
-    <div id="ip-filter" class="log-single-filter">
-      <span id="ipfilter-title" class="log-filter-name">ip:</span>
-      <input type="text" id="logs-ip-input" class="log-filter-input" placeholder="255.255.255.255"></input>
-    </div> 
-
-    <div id="dateFrom-log-filter" class="log-single-filter">
-      <span id="from-log-title" class="log-filter-name">Od:</label>
-      <input type="date" id="dateFrom-log" class="log-date-filter">
+<div id="logs-page-body">
+  <!-- miejsce na filtry -->
+  <div id="filters-place">
+    <!-- nagłówek -->
+    <div id="logs-filter-title">
+      <span id="logs-filter-title-text"></span>
     </div>
-    <div id="dateTo-log-filter" class="log-single-filter">
-      <span id="to-log-title" class="log-filter-name">Do:</label>
-      <input type="date" id="dateTo-log" class="log-date-filter"> 
+    <!-- Filtry -->
+    <div id="filters-upper" >
+      <!--
+      <div id="user-filter" class="log-single-filter">
+        <span id="userfilter-title" class="log-filter-name">User:</span>
+        <select type="text" id="logs-user-select" class="log-filter-input" placeholder="User"></input>
+      </div> 
+      -->
     </div>
 
-  </div>  
-</div>
+    <div id="filters">
+      <div id="type-filter" class="log-single-filter">
+        <span id="type-filter-title" class="log-filter-name">Typ:</span>
+        <select id="logs-type-selector" class="log-filter-selector active-filter-placeholder">
+          <option value="" disabled selected hidden>Wybierz typ</option>
+        </select>
+        <div id="type-logs-reset-icon" class="log-reset-icon"></div>
+      </div>  
 
-<!-- Nagłówki tabeli -->
-<div class="single-log-data-headers log-column-size" id="log-titles">
-  <span class="title-log" id="titleNumber-log">No.</span>
-  <span class="title-log" id="titleEvent-log">Zdarzenie</span>
-  <span class="title-log" id="titleUser-log">Dotyczy żytkownika</span>
-  <span class="title-log" id="titleSettedBy-log">Wykonał</span>
-  <!-- <span class="title-log" id="titleRecord-log">Record</span> -->
-  <span class="title-log" id="titleIp-log">IP</span>
-  <span class="title-log" id="titleTimestamp-log">data</span>
-  <span class="title-log" id="titleDetails-log"></span>
-</div>
+      <div id="settedBy-filter" class="log-single-filter">
+        <span id="settedBy-title" class="log-filter-name">Administrator:</span>
+        <select id="logs-settedBy-selector" class="log-filter-selector active-filter-placeholder">
+          <option value="" disabled selected hidden>Wybierz administratora</option>
+        </select>
+        <div id="settedBy-logs-reset-icon" class="log-reset-icon"></div>
+      </div>  
 
-<!-- Główna zawartość listy -->
-<div id="log-list" class="log-list-elements"></div>
+      <div id="ip-filter" class="log-single-filter">
+        <span id="ipfilter-title" class="log-filter-name">ip:</span>
+        <input type="text" id="logs-ip-input" class="log-filter-input" placeholder="255.255.255.255"></input>
+      </div> 
+
+      <div id="dateFrom-log-filter" class="log-single-filter">
+        <span id="from-log-title" class="log-filter-name">Od:</label>
+        <input type="date" id="dateFrom-log" class="log-date-filter">
+      </div>
+      <div id="dateTo-log-filter" class="log-single-filter">
+        <span id="to-log-title" class="log-filter-name">Do:</label>
+        <input type="date" id="dateTo-log" class="log-date-filter"> 
+      </div>
+
+    </div>  
+  </div>
+
+  <div id="logs-container">
+    <!-- Nagłówki tabeli -->
+    <div class="single-log-data-headers log-column-size" id="log-titles">
+      <span class="title-log" id="titleNumber-log">No.</span>
+      <span class="title-log" id="titleEvent-log">Zdarzenie</span>
+      <span class="title-log" id="titleUser-log">Dotyczy żytkownika</span>
+      <span class="title-log" id="titleSettedBy-log">Wykonał</span>
+      <!-- <span class="title-log" id="titleRecord-log">Record</span> -->
+      <span class="title-log" id="titleIp-log">IP</span>
+      <span class="title-log" id="titleTimestamp-log">data</span>
+      <span class="title-log" id="titleDetails-log"></span>
+    </div>
+    <!-- Główna zawartość listy -->
+    <div id="log-list-space">
+      <div id="log-list" class="log-list-elements"></div>
+    </div>
+  </div>
+
+  <!-- Dolny selector stron -->
+  <div id="pages-select-space">
+    <div id="page-numbers-space">
+      <button id="prev-page">‹</button>
+      <span id="page-info">1</span>
+      <button id="next-page">›</button>
+    </div>
+
+    <div id="page-row-amount-space">
+      <span id="page-selector-title">ilość na strone:</span>
+      <select id="rows-per-page">
+        <option value="20" selected>20</option>
+        <option value="20">50</option>
+        <option value="75">75</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+
+  </div>
+
+</div>
