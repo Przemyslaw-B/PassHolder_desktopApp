@@ -520,8 +520,9 @@ ipcMain.handle('get-logs-data', async(event, filtersData)=>{
     try{
         if(filtersData){
             let result = await getLogsData(filtersData);
-            if(result && result.success && result.data){
-                return {success: true, data: result.data};
+            console.log("result:", result);
+            if(result && result.success && result.data && result.pageNumber){
+                return {success: true, data: result.data, pageNumber: result.pageNumber, lastPage: result.lastPage};
             }
             return {success: false, error: "nie można pobrać danych"};
         }

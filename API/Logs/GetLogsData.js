@@ -24,14 +24,14 @@ async function getLogsData(filtersData) {
         'fromDate': filtersData.fromDate,
         'toDate': filtersData.toDate,
         "pageNumber": filtersData.pageNumber,
-        "rowAmount": filtersData.rowAmount
+        "rowsAmount": filtersData.rowAmount
       },
       {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
-    return { success: true, data: response.data.logs};
+    return { success: true, data: response.data.logs, pageNumber: response.data.pageNumber, lastPage: response.data.lastPage};
   } catch (error) {
     console.error("AXIOS ERROR:", error);
     return { success: false, error: error.message };

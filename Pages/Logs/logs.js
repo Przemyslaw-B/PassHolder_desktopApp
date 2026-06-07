@@ -13,6 +13,7 @@
 
   let pageNumber=1;
   let rowAmount=20
+  let lastPage=false;
 
   document.addEventListener("DOMContentLoaded", ()=>{
     const logsContainer = document.getElementById("logs-content");
@@ -47,6 +48,7 @@
     const rowsPerPageSelector = document.getElementById("rows-per-page");
 
     selectType.addEventListener('change', async () =>{
+      pageNumber=1;
       logTypeFilter = selectType.value;
       typeFilterValue = selectType.value;
       if(logTypeFilter && logTypeFilter !== ""){ 
@@ -60,6 +62,7 @@
     });
 
     selectSettedBy.addEventListener('change', async () =>{
+      pageNumber=1;
       logSettedByFilter = selectSettedBy.value;
       responsibleAdminValue = selectSettedBy.value;
       if(logSettedByFilter && logSettedByFilter !== ""){
@@ -75,16 +78,19 @@
     ipInput.addEventListener("input", async ()=>{
       const ipInput = document.getElementById("logs-ip-input");
       let inputIpValue = ipInput.value;
+      pageNumber=1;
       await reloadLogList();
     })
 
     selectFromDate.addEventListener('change', async ()=>{
       dateFromValue = selectFromDate.value;
+      pageNumber=1;
       await reloadLogList();
     });
 
     selectToDate.addEventListener('change', async ()=>{
       dateToValue = selectToDate.value;
+      pageNumber=1;
       await reloadLogList();
     });
 
@@ -94,6 +100,7 @@
       if(!rowAmount || rowAmount <20){
         rowAmount=20;
       }
+      pageNumber=1;
       await reloadLogList();
     });
 
@@ -108,8 +115,10 @@
     });
 
     nextPageButton.addEventListener("click", async()=>{
-      pageNumber=pageNumber+1;
-      await reloadLogList();
+      if(lastPage === false){
+        pageNumber=pageNumber+1;
+        await reloadLogList();
+      }
     });
   } 
 
@@ -195,9 +204,35 @@
       "rowAmount": rowAmount
     };
     let result = await window.api.getLogsData(filtersData);
+    if(result){
+      lastPage=result.lastPage;
+    }
+    if(result && result.lastPage===true){
+      const nextPageButton = document.getElementById("next-page");
+      nextPageButton.classList.remove("page-icon-on");
+      nextPageButton.classList.add("page-icon-off");
+    } else{
+      const nextPageButton = document.getElementById("next-page");
+      nextPageButton.classList.remove("page-icon-off");
+      nextPageButton.classList.add("page-icon-on");
+    }
+
+    if(pageNumber===1){
+      const prevPageButton = document.getElementById("prev-page");
+      prevPageButton.classList.remove("page-icon-on");
+      prevPageButton.classList.add("page-icon-off");
+    } else{
+      const prevPageButton = document.getElementById("prev-page");
+      prevPageButton.classList.remove("page-icon-off");
+      prevPageButton.classList.add("page-icon-on");
+    }
+
     if(result && result.success && result.data){
+      if(result.data.pageNumber && result.data.pageNumber!==pageNumber){
+        pageNumber=result.data.pageNumber;
+      }
       return result.data;
-     }
+    }
   }
 
   async function setLogsGUI(data){
@@ -208,7 +243,7 @@
     container.innerHTML = "";
     if(data != null && data.length > 0){
       const template = document.getElementById("log-row-template");
-      let counter = 0;
+      let counter = pageNumber*rowAmount-rowAmount;
       for(let i=0; i<data.length; i++){
         const picked = data[i];
         ~//console.log("data:", data[i]);
@@ -230,6 +265,8 @@
     } else {
       console.log("Brak danych do wyświetlenia..");
     }
+    const pageInfo = document.getElementById("page-info");
+    pageInfo.textContent = pageNumber;
   }
 
   function getDayFromTimestamp(stamp){
@@ -298,6 +335,7 @@
     responsibleAdminValue = "";
     dateFromValue = "";
     dateToValue = "";
+    pageNumber=1;
   }
 
   /*

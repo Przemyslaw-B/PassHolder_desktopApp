@@ -1,4 +1,5 @@
 #roles-top-space{
+    margin-top: 1rem;
     width: 100%;
     min-height: 4rem;
     display: flex;
@@ -9,7 +10,6 @@
 #add-new-user-role-form{
     display: flex;
     gap: 1rem;
-    margin-right: 1rem;
 }
 
 #add-new-user-role-form.hidden{
@@ -55,6 +55,7 @@
 }
 
 .top-space-role-button{
+    margin-right: 1rem;
     height: 1.5rem;
     width: 1.5rem;
     background-color: #2c3e50; 

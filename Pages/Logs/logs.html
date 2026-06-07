@@ -8,7 +8,7 @@
     <!-- <span class=single-log-data id="record-log"> </span> -->
     <span id="ip-log" class=single-log-data> </span>
     <!-- <span class=single-log-data id="timestamp-log"> </span> -->
-    <div id="single-log-data-time">
+    <div id="single-log-data-time" class="date-space">
       <span id="day-log" class=single-log-data> </span>
       <span id="time-log" class=single-log-data> </span>
     </div>
@@ -88,16 +88,17 @@
   <!-- Dolny selector stron -->
   <div id="pages-select-space">
     <div id="page-numbers-space">
-      <button id="prev-page">‹</button>
+      
+      <div id="prev-page" class="page-icons-format"></div>
       <span id="page-info">1</span>
-      <button id="next-page">›</button>
+      <div id="next-page" class="page-icons-format"></div>
     </div>
 
     <div id="page-row-amount-space">
-      <span id="page-selector-title">ilość na strone:</span>
-      <select id="rows-per-page">
+      <span id="page-selector-title">Pozycje na strone:</span>
+      <select id="rows-per-page" class="page-amount-selector">
         <option value="20" selected>20</option>
-        <option value="20">50</option>
+        <option value="50">50</option>
         <option value="75">75</option>
         <option value="100">100</option>
       </select>
