@@ -557,3 +557,29 @@
     text-align: justify;
     word-wrap: break-word;
 }
+
+#user-phone-change-modal{
+    position: fixed;
+    inset: 0;
+    min-width: 10rem;
+    min-height: 15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1.5rem;
+    z-index: 9999;
+}
+
+#user-phone-change-modal.hidden{
+    display: none;
+}
+
+#user-phone-change-buttons-space{
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+}

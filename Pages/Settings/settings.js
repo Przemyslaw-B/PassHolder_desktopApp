@@ -167,7 +167,8 @@ function setPhoneNumberButton(){
 function editPhoneNumberButton(){
   const editPhoneButton = document.getElementById("settings-edit-number");
   editPhoneButton.addEventListener("click", ()=>{
-
+    const userPhoneChangeModal = document.getElementById("user-phone-change-modal");
+    userPhoneChangeModal.classList.remove("hidden");
   });
 }
 
@@ -734,4 +735,19 @@ async function renderQrCode(){
     img.style.height = "12rem";
     img.src = result.data;
     container.appendChild(img);
+}
+
+function userPhoneChangeButtonsInit(){
+  
+  const userPhoneChangeModalCancelButton = document.getElementById("user-phone-change-cancel-button");
+  const userPhoneChangeModalConfirmButton = document.getElementById("user-phone-change-confirm-button");
+
+userPhoneChangeModalCancelButton.addEventListener("click", ()=>{
+  const userPhoneChangeModal = document.getElementById("user-phone-change-modal");
+  userPhoneChangeModal.classList.add("hidden");
+});
+
+userPhoneChangeModalConfirmButton.addEventListener("click", ()=>{
+
+});
 }
