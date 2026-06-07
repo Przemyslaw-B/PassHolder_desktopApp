@@ -528,8 +528,8 @@
     gap: 1rem; /* odstępy między elementami */
     background: #fff;
     border-radius: 0.5rem;
-    width: 50%;
-    max-width: 90%;
+    min-width: 30%;
+    padding: 1.5rem;
     align-items: flex-end;
 }
 
@@ -556,6 +556,13 @@
 #modify-modal-content input{
     width: 15rem;
     box-sizing: border-box;
+}
+
+.default-input-style{
+    height: 2rem;
+    width: 15rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
 }
 
 #modify-modal-content select{
@@ -688,4 +695,23 @@
 #global-options-menu.hidden {
     display: none;
 }
-/* */
+
+.storage-button-space{
+    display: flex;
+    flex-direction: row;
+    gap: 30%;
+}
+
+.storage-button{
+    width: 5rem;
+    height: 2rem;
+    background: #2c3e50;
+    color: white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.storage-button:hover{
+    color: #1abc9c;
+}

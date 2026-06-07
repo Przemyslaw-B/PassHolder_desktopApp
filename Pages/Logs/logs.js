@@ -183,7 +183,6 @@
     let ipFilter = document.getElementById("logs-ip-input").value || undefined;
     const ipFilterInput = document.getElementById("logs-ip-input");
     const ipFilterVal = ipFilterInput.value;
-    console.log("ipFilterValue,", ipFilterVal);
     let settedByFilter = document.getElementById("logs-settedBy-selector").value || undefined;
     let fromDateFilter = document.getElementById("dateFrom-log").value || undefined;
     let toDateFilter = document.getElementById("dateTo-log").value || undefined;

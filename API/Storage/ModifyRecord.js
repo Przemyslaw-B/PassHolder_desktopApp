@@ -3,7 +3,7 @@ const {getToken} = require('./../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('./../GetConfigData.js');
 
 
-async function modifyStorageRecord(recordToModify, data) {
+async function modifyStorageRecord(data) {
   if(data && data.recordId && data.url && data.login && data.password){
     try {
     const tempUrls = await getConfigData();
@@ -18,7 +18,6 @@ async function modifyStorageRecord(recordToModify, data) {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-
     const response = await axios.post(url, {
       'recordId': data.recordId,
       'url': data.url,
@@ -30,6 +29,7 @@ async function modifyStorageRecord(recordToModify, data) {
         Authorization: `Bearer ${token}`
       }
     });
+    console.log("cvhange storage record result:", response);
     return { success: true, data: response.data};
   } catch (error) {
     console.error("AXIOS ERROR:", error);

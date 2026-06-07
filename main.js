@@ -520,7 +520,6 @@ ipcMain.handle('get-logs-data', async(event, filtersData)=>{
     try{
         if(filtersData){
             let result = await getLogsData(filtersData);
-            console.log("result:", result);
             if(result && result.success && result.data && result.pageNumber){
                 return {success: true, data: result.data, pageNumber: result.pageNumber, lastPage: result.lastPage};
             }
@@ -693,7 +692,6 @@ ipcMain.handle('change-security-password', async(event, newSecurityPassword, old
 
 ipcMain.handle('user-password-encryption-key', async (event, userPassword)=>{
     try{
-        console.log("user-password-encryption-key userPassword:", userPassword);
         if(userPassword){
             let result = await setUserEncryptionKey(userPassword);  
         }else{
@@ -864,7 +862,6 @@ ipcMain.handle('get-qr-code', async ()=>{
         if(!result || result.success===false || !result.data){
             return {success: false, error: "nie można pobrać QR kodu"}; 
         }
-        console.log("result QR-code", result);
         const qr = await QRCode.toDataURL(result.data.qrCode);
         return {success: true, data: qr};
     } catch(error){

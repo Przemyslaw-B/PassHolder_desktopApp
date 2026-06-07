@@ -73,21 +73,21 @@
     <div id="modify-form-content">
       <div id="modify-url-slot">
         <span id="modify-url-span">URL:</span>
-        <input type="text" id="modify-url">
+        <input type="text" id="modify-url" class="default-input-style">
       </div>
       <div id="modify-login-slot">
         <span id="modify-login-span">Login:</span>
-        <input type="text" id="modify-login">
+        <input type="text" id="modify-login" class="default-input-style">
       </div>
       <div id="modify-password-slot">
         <span id="modify-password-span">Password:</span>
-        <input type="password" id="modify-password">
+        <input type="password" id="modify-password" class="default-input-style">
       </div>
 
     </div>
-    <div id="modify-modal-buttons-place">
-      <button id="cancel-modify">Anuluj</button>
-      <button id="confirm-modify">Potwierdź</button>
+    <div id="modify-modal-buttons-place" class="storage-button-space">
+      <button id="cancel-modify" class="storage-button">Anuluj</button>
+      <button id="confirm-modify" class="storage-button">Potwierdź</button>
     </div>
   </div>
 </div>
@@ -96,8 +96,10 @@
 <div id="confirm-modal" class="hidden">
   <div class="modal-content">
     <p>Czy na pewno chcesz usunąć?</p>
-    <button id="cancel-delete">Anuluj</button>
-    <button id="confirm-delete">Usuń</button>
+    <div class="storage-button-space">
+      <button id="cancel-delete" class="storage-button">Anuluj</button>
+      <button id="confirm-delete" class="storage-button">Usuń</button>
+    </div>
   </div>
 </div>
 

@@ -25,8 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // pobierz treść z html i wstaw do kontenera
   fetch("../Storage/storage.html")
     .then(res => res.text())
-    .then(html => {
+    .then(async html => {
       storageContainer.innerHTML = html;
+      
       initAddRecordFormOnce();
       securityPasswordModal();
       userPasswordSecurityModalButtons();
@@ -42,15 +43,18 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmModify();
       cancelModifyModal();
 
-      //loadStorage();
+      await isSecurityPasswordSet();
+      await loadStorage();
     });
 });
 
 async function isSecurityPasswordSet(){
   const response = await window.api.isSecurityPasswordSet();
-  if(response && response === true){
-    return response;
+  if(response === true){
+    return true;
   }
+    hideUserPasswordSecurityModal();
+    showSecurityPasswordModal();
   return false;
 }
 
@@ -69,18 +73,14 @@ function securityPasswordModal(){
   securityPasswordModalConfirmButton.addEventListener("click", async (e) => {
     const securityPassword = document.getElementById("add-security-password-modal-password-input").value;
     const securityPasswordRepeat = document.getElementById("add-security-password-modal-password-input-repeat").value;
-    //console.log('securityPassword.value', securityPassword);
-    //console.log('securityPasswordRepeat.value', securityPasswordRepeat);
     if((securityPassword === null || securityPassword === "")&& (securityPasswordRepeat === null || securityPasswordRepeat === "")){
       message = "Oba pola muszą zostać wypełnione."
     }
     if(securityPassword === securityPasswordRepeat){
       const result = await window.api.validateNewSecurityPassword(securityPassword);
-      //console.log('validateNewSecurityPassword:', result);
       if(result.success === true){
         const res = await window.api.setNewSecurityPassword(securityPassword);
-        //console.log('saveSecurityPassword:', res);
-        loadStorage();
+        await loadStorage();
       } else{
         message = result.message;
       }
@@ -109,21 +109,17 @@ function hideSecurityPasswordModal(){
 async function loadStorage(){
   try{
     const isSecurityPassword = await isSecurityPasswordSet();
-    //console.log('loadStorage - isSecurityPassword:', isSecurityPassword);
-    if(!isSecurityPassword){  //brak ustawionego hasła bezpieczeństwa
-      showSecurityPasswordModal();
-    } else{
-      if(!tempSecPass || tempSecPass===""){
+    if(isSecurityPassword===true){  //brak ustawionego hasła bezpieczeństwa
+      if(!tempSecPass || tempSecPass===null ||tempSecPass===""){
+        hideSecurityPasswordModal();
         showUserPasswordSecurityModal();
       }
       hideSecurityPasswordModal();
       const data = await downloadData();
-      //console.log(data);
       await setStorageGUI(data);
     }
   }catch(err){
     console.error("[loadStorage] błąd:", err);
-    //await window.api.logout();
   }
   }
 
@@ -134,48 +130,13 @@ async function downloadData(){
   } else{
     console.log("error: ", result.error);
   }
-  
-  /*
-   try{
-    // Odczytanie endpointów
-    const responseConfig = await window.api.loadApiConfig();
-    const config = responseConfig.config;
-    const url = config.storage; 
-
-    const tokenRes = await window.api.loadToken();
-    const token = tokenRes.token;
-    if(!tokenRes.success || token==null){
-      //console.log("Brak tokenu użytkownik nie jest zalogowany");
-      console.error("Brak tokenu użytkownik nie jest zalogowany");
-      return null;
-    }
-    
-    //Zapytanie do API
-    const response = await fetch(url,{
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
-    });
-    if (!response.ok){
-      throw new Error(`Błąd API: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.storage;
-} catch(err){
-    console.error("[loadStorage] błąd:", err);
-    await window.api.logout();
-  }
-    */
 }
 
 async function setStorageGUI(data){
-  //console.log("Data length: " + data.length)
+  const container = document.getElementById("storage-list");
+  const template = document.getElementById("storage-row-template");
+  container.innerHTML = ""; //Wyczyszczenie poprzednich wierszy w celu uniknięcia powielania po kolejnynm otwarciu
   if (data != null && data.length > 0){
-    const container = document.getElementById("storage-list");
-    const template = document.getElementById("storage-row-template");
-    container.innerHTML = ""; //Wyczyszczenie poprzednich wierszy w celu uniknięcia powielania po kolejnynm otwarciu
     counter =0;
     for(let i =0; i<data.length; i++){
     const picked = data[i];
@@ -201,81 +162,17 @@ async function setStorageGUI(data){
           navigator.clipboard.writeText(tempPass);//await decryptPassword(picked.password)
         }
       });
-      //clone.querySelector("#remove-record").textContent="✕";
-      //clone.querySelector("#dots-menu").textContent="⋮";
-      //optionBtn.insertAdjacentText("afterbegin", "⋮");
-      
-      /*
-      const optionBtn = clone.querySelector("#dots-menu");
-      optionBtn.dataset.id=picked.id;
-      optionBtn.dataset.id_cloud=picked.id;
-      optionBtn.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        //Najpierw zamknąć inne menu jeśli były otwarte
-        const row = optionBtn.closest(".storage-row");
-        const menu = row.querySelector(".options-menu");
-        const isOpen = !menu.classList.contains("hidden");
-        document.querySelectorAll(".options-menu").forEach(menu => {
-          menu.classList.add("hidden");
-        });
-        if (!isOpen) {
-          menu.classList.remove("hidden");
-        }
-        selectedRecord = picked.id;
-      });
-      */
-      
-      //const menu = clone.querySelector(".options-menu");
 
       //MENU
       const dotsBtn = clone.querySelector("#dots-menu");
-      //const globalMenu = document.querySelector(".options-menu");
       dotsBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         pickedRecordData = picked;
-        //console.log("picked?: ", picked);
-        //console.log("pickedRecordData?: ", pickedRecordData);
         showOptionsMenu(e, picked.id);
       });
 
-      //const editButton = globalMenu.querySelector(".edit-btn");
-      //const deleteButton = globalMenu.querySelector(".delete-btn");
-      /*
-      editButton.onclick = () => {
-        recordToModify = selectedRecord;
-        showModifyModal(picked.url, picked.login, picked.rotation);
-      };
-      */
-      /*
-      deleteButton.onclick = () => {
-        recordToDelete = selectedRecord;
-        showDeletingPopUp();
-      };
-      */
-
-      //container.appendChild(clone);
-
-      /*
-      menu.addEventListener("click", e => e.stopPropagation());
-      const editButton = menu.querySelector(".edit-btn");
-      editButton.addEventListener("click", async (e)=>{
-        //Menu edycji rekordu
-        recordToModify = selectedRecord;
-        showModifyModal(picked.url, picked.login, picked.rotation);
-      })
-        */
-       /*
-      const deleteButton = menu.querySelector(".delete-btn");
-      deleteButton.addEventListener("click", async (e)=>{
-        //Zatwierdzenie usuwania
-        recordToDelete=selectedRecord;
-        showDeletingPopUp();
-      })
-        */
       const eye = clone.querySelector("#toggle-eye");
       const passField=clone.querySelector("#password");
-      //passField.classList.add("show-password");
-      //eye.textContent = "👁️";
       eye.classList.toggle("toggle-eye-visible");
       eye.addEventListener("click", async ()=>{
         pickedPassEye = eye;
@@ -288,79 +185,14 @@ async function setStorageGUI(data){
           pickedPass = passField;
           pickedPassVal = picked.password;
           await showPassword();
-          //showUserPasswordSecurityModal();
         }
-        /*
-      if(passField.classList.contains("show-password")){
-        passField.classList.remove("show-password");
-        eye.classList.toggle("toggle-eye-visible");
-        passField.textContent = "••••••";
-      } else{
-        passField.classList.add("show-password");
-        eye.classList.toggle("toggle-eye-visible");
-        passField.textContent = await decryptPassword(picked.password);
-      }
-        */
       });
-      //ExpirationDate
-      
-      /*
-      const isRotation = await isRotationEnabled(picked.rotation);
-      const expDateField = clone.querySelector("#exp-date");
-      if(isRotation){ //jeśli rotacja włączona
-        const isExpired = await isPassExpired(picked.modDate, picked.rotation);
-        if(isExpired){  //jeśli hasło nieaktualne
-          expDateField.textContent = "Expired";
-          expDateField.classList.remove("not-expired")
-          expDateField.classList.add("expired");
-        }else{
-          //Hasło aktualne - pokaż datę 
-          clone.querySelector("#exp-date").textContent = await getExpirationDate(picked.modDate, picked.rotation);
-          expDateField.classList.remove("expired")
-          expDateField.classList.add("not-expired");
-        }
-      }else{  
-        //Rotacja wyłączona
-        clone.querySelector("#exp-date").textContent = "off";
-        expDateField.classList.remove("expired");
-        expDateField.classList.add("not-expired");
-      }
-      */
-
       container.appendChild(clone);
    }
   } else {
     //Brak zapisanych haseł lub Błąd odczytu z serwera
   }
 }
-
-/*
-async function isRotationEnabled(rotation){
-  if(rotation>0){return true;}
-  return false;
-}
-  */
-
-/*
-//Expiration date
-async function isPassExpired(date, rotation){
-  const baseDate = new Date(date);
-  const rotatedDate = new Date(baseDate);
-  rotatedDate.setDate(rotatedDate.getDate()+rotation);
-  const today = new Date();
-  if(rotatedDate < today){
-    return true;
-  }
-  return false;
-}
-
-async function getExpirationDate(date, rotation){
-  const baseDate = new Date(date);
-  const rotatedDate = new Date(baseDate);
-  rotatedDate.setDate(rotatedDate.getDate()+rotation);
-  return rotatedDate.toLocaleDateString();
-}
-*/
 
 //Obsługa formularza
 async function initAddRecordForm(){
@@ -449,34 +281,6 @@ async function addCredentialRecordToDataBase(data){
   onsole.log("error:", result.error)
   return;
 }
-  
-  /*
-  try{
-    const responseConfig = await window.api.loadApiConfig();
-    const config = responseConfig.config;
-    const url = config.uploadNewRecord; 
-    const tokenObj = await window.api.loadToken();
-    const token = tokenObj.token;
-     if(token!= null && url!=null){
-      const response = await fetch(url,{
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          url: data.url,
-          access_login: data.login,
-          access_pwd: data.password
-        })
-      });
-      return response.ok ? await response.json() : null;
-     }
-  }catch(err){
-    await window.api.logout();
-  }
-  */
 
 async function removeRecord(){
   if(recordToDelete){
@@ -493,35 +297,6 @@ async function removeRecord(){
     console.log("error:", "Brak pozycji do usunięcia.")
   }
   return;
-  
-  /*
-  try{
-    const responseConfig = await window.api.loadApiConfig();
-    const config = responseConfig.config;
-    const url = config.removePassFromCloud; 
-    const tokenObj = await window.api.loadToken();
-    const token = tokenObj.token;
-    console.log("Wysyłam request usunięcia rekordu: ", selectedRecord);
-    if(token!= null && url!=null){
-      //Remove from Cloud:
-      const response = await fetch(url,{
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          recordId: recordToDelete
-        })
-      });
-        recordToDelete = null;
-      return response.ok ? await response.json() : null;
-   }
-  } catch(err){
-    await window.api.logout();
-  }
-    */
 }
 
 async function isSecurityPasswordRequired(){
@@ -545,16 +320,8 @@ function hideUserPasswordSecurityModal(){
   pickedPassVal = null;
 }
 
-/*
-async function getDecryptedPassword(password){
-  let decryptedPassword = await window.api.decryptUserPassword(password);
-  return decryptedPassword 
-}
-  */
-
 //Pokaż okno edycji rekordu
 function showModifyModal(url, login){
-  //console.log("Rotacja wybranego rekordu: ", rotation);
   document.getElementById("modify-modal").classList.remove("hidden");
   //Placeholders
   document.getElementById("modify-url").placeholder="url";
@@ -565,7 +332,6 @@ function showModifyModal(url, login){
   document.getElementById("modify-url").value = url;
   document.getElementById("modify-login").value = login;
   document.getElementById("modify-password").value="";
-  //document.getElementById("modify-rotation").value=rotation;
 }
 
 //Anuluj i zamknij okno edycji rekordu
@@ -579,9 +345,19 @@ function cancelModifyModal(){
 //Obsługa przycisku zatwierdzenia zmian rekordu
 function confirmModify(){
   document.getElementById("confirm-modify").addEventListener("click", async () => {
+    const urlInput = document.getElementById("modify-url");
+    const loginInput = document.getElementById("modify-login");
+    const passwordInput = document.getElementById("modify-password");
+    newUrl = urlInput.value;
+    newLogin = loginInput.value;
+    newPassword = await encryptUserPassword(passwordInput.value, tempSecPass);
     await sendModifyToApi();
     document.getElementById("modify-modal").classList.add("hidden");
     recordToModify = null;
+    newLogin="";
+    newUrl="";
+    newPassword="";
+    await loadStorage();
   });
 }
 
@@ -593,7 +369,8 @@ async function sendModifyToApi(){
     'login': newLogin,
     'password': newPassword
   }
-  let result = await window.api.modifyRecord(data);
+  //let result = await window.api.modifyRecord(data);
+  let result = await window.api.storageUpdate(data);
   if(result){
     if(result.success && result.data){
       return result.data;
@@ -607,41 +384,6 @@ async function sendModifyToApi(){
     console.log("Błąd modyfikacji pozycji.")
   }
   return;
-  /*
-  let newLogin = document.getElementById("modify-login").value;
-  let newPassowrd = await encryptUserPassword(document.getElementById("modify-password").value);
-  let newUrl = document.getElementById("modify-url").value;
-  let newRotation = document.getElementById("modify-rotation").value;
-  try{
-    const responseConfig = await window.api.loadApiConfig();
-    const config = responseConfig.config;
-    const url = config.modifyRecord; 
-    const tokenObj = await window.api.loadToken();
-    const token = tokenObj.token;
-    if(token!= null && url!=null){
-      //Remove from Cloud:
-      const response = await fetch(url,{
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          recordId: recordToModify,
-          login: newLogin,
-          password: newPassowrd,
-          url: newUrl,
-          rotation: newRotation
-        })
-      });
-        recordToDelete = null;
-      return response.ok ? await response.json() : null;
-   }
-  } catch(err){
-    //await window.api.logout();
-  }
-    */
 }
 
 //Pokaż okno potwierdzenia usunięcia rekordu
@@ -654,11 +396,12 @@ function confirmDeleting(){
   document.getElementById("confirm-delete").addEventListener("click", async () => {
     if (recordToDelete) {
       await removeRecord();
-      await loadStorage();
     }
+    selectedRecord = null;
+    recordToDelete = null;
+    await loadStorage();
     document.getElementById("confirm-modal").classList.add("hidden");
   });
-  selectedRecord = null;
 }
 
 // Anuluj usunięcie rekordu
@@ -725,7 +468,11 @@ async function isRotationOn(){
 async function showOptionsMenu(event, recordId) {
   const iconRect = event.currentTarget.getBoundingClientRect(); //pozycja ikony
 
-  let result = await isSecurityPasswordRequired();
+  //let result = await isSecurityPasswordRequired();
+  let result = false;
+  if(!tempSecPass || tempSecPass===null || tempSecPass===""){
+    result=true;
+  }
   if(result){
     showUserPasswordSecurityModal();
     return;
@@ -789,12 +536,6 @@ function closeGlobalMenu() {
   menu.classList.add("hidden");
   menuOpen = false;
   selectedRecord = null;
-  //clearSelectedData();
-  //selectedRecord = null;
-  //recordToDelete = null;
-  //recordToModify = null;
-  //menuOpenRecordId = null;
-  //console.log("Menu powinno być już zamknięte");
 }
 
 function initGlobalMenuClose() {
@@ -831,13 +572,6 @@ function userPasswordSecurityModalButtons(){
         if(pickedPass && pickedPassEye && pickedPassVal){
           await showPassword();
         }
-        /*
-        if(decryptedPass){
-          //console.log(decryptedPass);
-          pickedPass.textContent = decryptedPass;
-          hideUserPasswordSecurityModal();
-        }
-          */
       }
     }
   });
@@ -902,34 +636,4 @@ function randomPasswordGenerateButtonInit(){
       navigator.clipboard.writeText(randomPass);
     }
   });
-}
-
-// Odebranie klucza publicznego
-async function getPublicKey(email) {
-  const responseUrl = await window.api.loadApiConfig();
-  const url = responseUrl.config.publicKey;
-
-  const tokenObj = await window.api.loadToken();
-  const token = tokenObj.token;
-  try{
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email })
-    });
-    if (!response.ok) {
-      throw new Error(`Błąd API: ${response.status}`);
-    }
-     const data = await response.json();
-     //console.log("publicKey", data.publicKey);
-     return data.publicKey;
-  }catch(error){
-      console.error("Błąd pobierania klucza.", error);
-      await window.api.logout();
-      return null;
-  }
 }
