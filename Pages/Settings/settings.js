@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
       securityPassResetModalButtons();
       securityPassRemoveButton();
       seucrityPassRemoveModalButtons();
+      userPhoneChangeButtonsInit();
       await authMethodeSelectorInit();  
     });
 });
@@ -168,7 +169,13 @@ function editPhoneNumberButton(){
   const editPhoneButton = document.getElementById("settings-edit-number");
   editPhoneButton.addEventListener("click", ()=>{
     const userPhoneChangeModal = document.getElementById("user-phone-change-modal");
+    const modalContent = document.getElementById("user-phone-change-modal-user-confirm-content");
+    const input = document.getElementById("settings-number-change-modal-password-input");
+    input.value="";
     userPhoneChangeModal.classList.remove("hidden");
+    modalContent.classList.remove("hidden");
+    const messageBox = document.getElementById("phone-change-message-space");
+    messageBox.classList.add("hidden");
   });
 }
 
@@ -268,7 +275,7 @@ function authVerifyModalInit(){
   });
 
   confirmButton.addEventListener("click", async()=>{
-     const passBox = document.getElementById("settings-auth-verify-modal-password-input");
+    const passBox = document.getElementById("settings-auth-verify-modal-password-input");
     const passValue = passBox.value;
     const messageBox = document.getElementById("settings-auth-verify-modal-message-space");
     const messageContent = document.getElementById("settings-auth-verify-modal-message-content");
@@ -747,7 +754,72 @@ userPhoneChangeModalCancelButton.addEventListener("click", ()=>{
   userPhoneChangeModal.classList.add("hidden");
 });
 
-userPhoneChangeModalConfirmButton.addEventListener("click", ()=>{
+userPhoneChangeModalConfirmButton.addEventListener("click", async ()=>{
+  const passInput = document.getElementById("settings-number-change-modal-password-input");
+  const messageBox = document.getElementById("phone-change-message-space");
+  const messageContent = document.getElementById("phone-change-message-content");
+  messageBox.classList.add("hidden");
+  if(passInput && passInput.value.length>0){
+    let hashPassword = passInput.value
+    let result = await window.api.validatePassword(hashPassword);
+    console.log("zmiana numeru hasło input result:", result);
+    if(passwordAttempt<5){
+      if(result && result.success){
+        passwordAttempt=0;
+        const oldContent = document.getElementById("user-phone-change-modal-user-confirm-content");
+        oldContent.classList.add("hidden");
+        const newNumberContent = document.getElementById("user-phone-change-modal-enter-new-number-content");
+        passInput.value = "";
+        const newNumberInput = document.getElementById("settings-change-phone-input");
+        newNumberInput.value="";
+        newNumberContent.classList.remove("hidden");
+      } else{
+        messageContent.textContent = "Podano nieprawidłowe hasło."; 
+        messageBox.classList.remove("hidden");
+        passwordSettingAttempt();
+      }
+      } else{
+        messageContent.textContent = "Zbyt wiele prób. Proszę spróbować później."; 
+        messageBox.classList.remove("hidden");
+      }
+  } else{
+    messageContent.textContent = "Proszę podać hasło"; 
+    messageBox.classList.remove("hidden");
+  }
+});
 
+const userPhoneChangeInputCancelButton = document.getElementById("user-phone-change-new-number-cancel-button");
+const userPhoneChangeInputConfirmButton = document.getElementById("user-phone-change-new-number-confirm-button")
+
+userPhoneChangeInputCancelButton.addEventListener("click", ()=>{
+  const modal = document.getElementById("user-phone-change-modal");
+  modal.classList.add("hidden");
+});
+
+userPhoneChangeInputConfirmButton.addEventListener("click", async ()=>{
+  const prefix = document.getElementById("change-phone-number-prefix");
+  const userInput = document.getElementById("settings-change-phone-input");
+  userTempPhone = `${prefix.value} ${userInput.value}`;
+  userInput.value="";
+  await window.api.requestPhoneCode(userTempPhone);
+  const oldModal = document.getElementById("user-phone-change-modal-enter-new-number-content");
+  oldModal.classList.add("hidden");
+  const newModal = document.getElementById("user-phone-change-modal-code-confirm-content");
+  const codeInput = document.getElementById("user-phone-change-modal-code-input");
+  codeInput.value="";
+  newModal.classList.remove("hidden");
+});
+
+const userPhoneChangeNumberConfirmButton = document.getElementById("user-phone-change-new-number-confirm-button");
+const userPhoneChangeNumberCancelButton = document.getElementById("user-phone-change-new-number-confirm-button");
+
+userPhoneChangeNumberCancelButton.addEventListener("click", ()=>{
+  const modal = document.getElementById("user-phone-change-modal");
+  modal.classList.add("hidden");
+});
+
+userPhoneChangeNumberConfirmButton.addEventListener("click", async ()=>{
+  const codeBox = document.getElementById("user-phone-change-modal-code-input");
+  //TODO weryfikacja kodu SMS i aktualizacja numeru
 });
 }

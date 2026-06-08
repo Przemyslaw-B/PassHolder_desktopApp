@@ -36,5 +36,7 @@
     
     "getUserPhoneNumber": "http://31.70.88.182:8081/api/getUserPhone",
     "requestPhoneCode":"http://31.70.88.182:8081/api/requestPhoneActivationKey",
-    "activatePhone": "http://31.70.88.182:8081/api/activatePhone"
+    "activatePhone": "http://31.70.88.182:8081/api/activatePhone",
+
+    "validatePassword": "http://31.70.88.182:8081/api/validatePassword"
 }

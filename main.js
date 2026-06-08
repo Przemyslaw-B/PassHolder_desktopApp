@@ -62,6 +62,8 @@ const {requestPhoneCode} = require('./API/AuthMethodes/RequestPhoneCode.js');
 const { activatePhone } = require("./API/AuthMethodes/ActivatePhone.js");
 const { setSecurityPasswordHash } = require("./SecurityPassword/SecurityPasswordHash.js");
 
+const {validatePassword} = require("./API/Password/ValidatePassword.js");
+
 const appName="PassHolder";
 
 let loginWindow;
@@ -878,6 +880,19 @@ ipcMain.handle('get-app-version', ()=>{
     }catch(error){
         console.error("error:", error);
         return {success: false, data: result};
+    }
+});
+
+ipcMain.handle('validate-password', async (event, input)=>{
+    try{
+        let result = await validatePassword(input);
+        if(result && result.data.validated === true){
+            return true;
+        }
+        return false;
+    }catch(error){
+        console.error("error", error);
+        return false
     }
 });
 

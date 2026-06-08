@@ -1,11 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
-  //Załaduj wybrany pakiet językowy
-  //loadLanguage: (lang) => ipcRenderer.invoke('load-language', lang),
-  //Zwróć używaną paczkę językową
-  //getLanguagePack: () => ipcRenderer.invoke('get-language-pack'),
-
   //Załaduj konfigurację endpointów.
   loadApiConfig: () => ipcRenderer.invoke("load-apiConfig"),
 
@@ -43,12 +38,15 @@ contextBridge.exposeInMainWorld('api', {
   sendAuthenticationCode: (email, authCode) => ipcRenderer.invoke("send-authentication-code", email, authCode),
   //Zamknij okno logowania i otwórz ekran główny.
   loginSuccess: () => ipcRenderer.send('login-success'),
+  //weryfikacja podanego hasła konta
+  validatePassword: (input) => ipcRenderer.invoke('validate-password', input),
   //Wylogowanie
   logout: () => ipcRenderer.send('logout'),
   //Ustaw nazwę użytkownika
   setUser: (username) => ipcRenderer.send('set-user', username),
   //Przełączanie zakładek
   switchCard: (pageName) => ipcRenderer.send('switch-card', pageName),
+
   
   //Zapis tokenu użytkownika
   saveToken: (token) => ipcRenderer.invoke('save-token', token),
@@ -104,24 +102,7 @@ contextBridge.exposeInMainWorld('api', {
   //Pobierz logi uwzględniając wybrane filtry
   getLogsData: (filtersData) => ipcRenderer.invoke('get-logs-data', filtersData),
 
-
-  //Usuwanie lokalnego rekordu
-  //removeLocalRecord:(data) => ipcRenderer.invoke('remove-storage', data),
-  //Zapisanie nowego rekordu w lokalnej DB
-  //localStorageUpdate:(data) => ipcRenderer.invoke('save-local-storage', data),
-  //Czy rotacja haseł jest włączona
-  //isRotationOn:() => ipcRenderer.invoke('is-rotation-on'),
-  // Pobierz wartość rotation Time
-  //getRotationTime:() => ipcRenderer.invoke('get-rotation-time'),
-  //Zwróć datę wygaśnięcia hasła
-  //getExpirationDate: (idPass) => ipcRenderer.invoke('get-expiration-date', idPass),
-  //Zmiana ilości dni wygaśnięcia hasła
-  //rotationTimeUpdate:(time) => ipcRenderer.invoke('update-rotation-time', time),
-  // Sprawdź czy hasło wygasło
-  //isPasswordExpired:(idPass) => ipcRenderer.invoke('is-password-expired', idPass),
-
-
-  //Zweryfikuj użytkownika przy próbie zmiany metody autoryzacji
+  //Zweryfikuj użytkownika (hasło) przy próbie zmiany metody autoryzacji
   authMethodeChangeValidateUser: (password) => ipcRenderer.invoke('auth-methode-change-validate-user', password),
   //Wyślij kod aktywacyjny do nowej metody
   sendNewAuthActivationCode: (methode) => ipcRenderer.invoke('send-new-auth-methode-activation-code', methode),

@@ -130,7 +130,19 @@
     border-radius: 0.5rem;
 }
 
+.phone-prefix-style{
+    min-width: 8rem;
+    min-height: 1.5rem;
+    border-radius: 0.5rem;
+}
+
 #settings-phone-input{
+    min-width: 10rem;
+    min-height: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+.phone-number-style{
     min-width: 10rem;
     min-height: 1.5rem;
     border-radius: 0.5rem;
@@ -562,7 +574,7 @@
     position: fixed;
     inset: 0;
     min-width: 10rem;
-    min-height: 15rem;
+    min-height: 8rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -573,13 +585,68 @@
     z-index: 9999;
 }
 
+#user-phone-change-modal-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    min-width: 10rem;
+    min-height: 8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
 #user-phone-change-modal.hidden{
     display: none;
 }
 
-#user-phone-change-buttons-space{
+.modal-button-space{
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 30%;
+}
+
+#user-phone-change-phone-input-buttons-space{
     margin-top: 0.5rem;
     display: flex;
     justify-content: center;
     gap: 3rem;
+}
+
+#user-phone-change-modal-user-confirm-content{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#user-phone-change-modal-user-confirm-content.hidden{
+    display: none;
+}
+
+#user-phone-change-modal-enter-new-number-content{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#user-phone-change-modal-enter-new-number-content.hidden{
+    display: none
+}
+
+#user-phone-change-modal-code-confirm-content{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#user-phone-change-modal-code-confirm-content.hidden{
+    display: none;
 }
