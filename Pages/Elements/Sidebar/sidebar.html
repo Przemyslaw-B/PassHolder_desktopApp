@@ -1,25 +1,52 @@
-  <!-- Rozwijane menu z ikony -->
+  <!-- MENU -->
+   <div id="sidebar-menu">
+      <!-- Rozwijane menu z ikony -->
     <div class="showMenu" id="showMenu">
         <!-- ☰ -->
         <div class="icon-menu showMenu" id="menu-icon"></div>
     </div>
   <!-- Menu boczne -->
     <div class="sidebar" id="sidebar">
+      
       <!-- <a href="#" onclick="loadPage('home-content')" >Strona Główna</a> -->
-      <a href="#" onclick="loadPage('storage-content'); loadStorage();" id="storage-sidebar-space">
-        <div class="sidebar-icon" id="passwords-icon"></div>
-        <span class="label" id="passwords-label">Hasła</span>
-      </a>
-      <a href="#" onclick="loadPage('logs-content'); loadLogs()" id="logs-sidebar-space">
-        <div class="sidebar-icon" id="logs-icon"></div>
-        <span class="label" id="logs-label">Logi</span>
-      </a>
-      <a href="#" onclick="loadPage('role-content'); loadRoles()" id="roles-sidebar-space">
-        <div class="sidebar-icon" id="roles-icon"></div>
-        <span class="label" id="roles-label">Role</span>
-      </a>
-      <a href="#" onclick="loadPage('settings-content'); loadSettings()" id="settings-sidebar-space">
-        <div class="sidebar-icon" id="settings-icon"></div>
-        <span class="label" id="settings-label">Ustawienia</span>
-      </a>
+      <div id="storage-content-space">
+        <a href="#" onclick="loadPage('storage-content'); loadStorage();" id="storage-sidebar-space">
+          <div class="sidebar-icon" id="passwords-icon"></div>
+          <div class="label-space">
+            <span class="label" id="passwords-label">Hasła</span>
+          </div>
+        </a>
+      </div>
+      
+      <div id="logs-content-space" >
+        <a href="#" onclick="loadPage('logs-content'); loadLogs()" id="logs-sidebar-space">
+          <div class="sidebar-icon" id="logs-icon"></div>
+          <div class="label-space">
+            <span class="label" id="logs-label">Logi</span>
+          </div>
+        </a>
+      </div>
+      
+      <div id="role-content-space" >
+        <a href="#" onclick="loadPage('role-content'); loadRoles()" id="roles-sidebar-space">
+          <div class="sidebar-icon" id="roles-icon"></div>
+          <div class="label-space">
+            <span class="label" id="roles-label">Role</span>
+          </div>
+        </a>
+      </div>
+      
+
+      <div id="settings-content-space">
+        <a href="#" onclick="loadPage('settings-content');" id="settings-sidebar-space">
+          <div class="sidebar-icon" id="settings-icon"></div>
+          <div class="label-space">
+            <span class="label" id="settings-label">Ustawienia</span>
+          </div>
+        </a>
+      </div>
+      
     </div>
+
+   </div>
+  

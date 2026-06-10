@@ -3,6 +3,8 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   //Załaduj konfigurację endpointów.
   loadApiConfig: () => ipcRenderer.invoke("load-apiConfig"),
+  setRole: (role)=> ipcRenderer.invoke("set-role", role),
+  getRole: ()=> ipcRenderer.invoke("get-role"),
 
   //Generuj losowe hasło
   generateRandomPassword: () => ipcRenderer.invoke("generate-random-password"),

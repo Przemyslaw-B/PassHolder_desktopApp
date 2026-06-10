@@ -72,10 +72,13 @@
 <div id="role-edit-modal" class="hidden">
   <div id="role-edit-modal-content">
     <span id="role-edit-modal-title">Edycja roli użytkownika</span>
+
     <div id="role-edit-modal-select-content">
       <span id="role-edit-modal-describtion">Wybierz nową rolę:</span>
-      <span id="role-edit-modal-select-title">Rola:</span>
-      <select id="user-role-change-modal" name="rola"></select>
+      <div id="new-role-select-space">
+        <span id="role-edit-modal-select-title">Rola:</span>
+        <select id="user-role-change-modal"  class="role-selector" name="rola"></select>
+      </div>
       <div class="role-edit-modal-button-row">
         <button type="button" id="role-edit-modal-cancel-button" class="default-role-button">Anuluj</button>
         <button type="button" id="role-edit-modal-confirm-button" class="default-role-button">Zatwierdź</button>

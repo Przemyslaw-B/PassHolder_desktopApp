@@ -77,6 +77,7 @@ let isQuitting = false; // Flaga zamknięcia aplikacji
 
 let user;
 let userId;
+let role;
 
 const getInstanceLock = app.requestSingleInstanceLock();
 
@@ -892,7 +893,27 @@ ipcMain.handle('validate-password', async (event, input)=>{
         return false;
     }catch(error){
         console.error("error", error);
-        return false
+        return false;
+    }
+});
+
+ipcMain.handle('set-role', (event, input)=>{
+    try{
+        if(input){
+            role=input;
+        }
+    }catch(error){
+        console.error("error", error);
+        return;
+    }
+});
+
+ipcMain.handle('get-role', ()=>{
+    try{
+        return role;
+    }catch(error){
+        console.error("error", error);
+        return;
     }
 });
 

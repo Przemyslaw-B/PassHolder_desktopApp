@@ -13,7 +13,7 @@ function loadPage(name){
 document.addEventListener("DOMContentLoaded", () => {
   fetch("../Elements/Sidebar/sidebar.html")
     .then(res => res.text())
-    .then(html => {
+    .then(async html => {
       const container = document.getElementById("sidebar-container");   //import kontenera gdzie ma być zaimportowany fragment z sidebar
       container.innerHTML = html
       sidebarButtonsInit();
@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("sidebarStatus", sidebar.classList.contains("active"));
         document.body.classList.toggle("sidebar-open"); //Dodaje/usuwa klasę sidebar-open aby móc jej używać do przesuwania treści po aktywacji rozwijanego menu
       });
+
+      await loadSettings();
     });
   });
 
@@ -103,4 +105,37 @@ document.addEventListener("DOMContentLoaded", () => {
       rolesIcon.classList.add("pressed");
       rolesLabel.classList.add("pressed");
     }
+  }
+
+  async function loadSettings(){
+    const logOptions = document.getElementById("logs-content-space");
+    const roleOptions = document.getElementById("role-content-space");
+    let role = await window.api.getRole();
+    console.log("sidebar result:", role);
+    role=4;
+    switch(role){
+    case 1:
+      // user
+      break;
+
+    case 2:
+      // admin
+      logOptions.classList.remove("hidden");
+      break;
+
+    case 3:
+      // head-admin
+      logOptions.classList.remove("hidden");
+      roleOptions.classList.remove("hidden");
+      break;
+
+    case 4:
+      // master
+      logOptions.classList.remove("hidden");
+      roleOptions.classList.remove("hidden");
+      break;
+
+      default: 
+      break;
+  }
   }

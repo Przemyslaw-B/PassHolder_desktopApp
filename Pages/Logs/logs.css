@@ -165,11 +165,11 @@
 }
 
 .single-log-data{
-    min-width: 0;
-    overflow: hidden;
+    min-width: 0.8rem;
     text-overflow: ellipsis;
-    white-space: nowrap;
     text-align: center;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .log-row{

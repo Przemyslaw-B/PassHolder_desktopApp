@@ -116,6 +116,7 @@ async function loadRoles(){
 
   async function editRoleRow(){
     if(userRoleSelected){
+      await userChangeRoleInit();
       showEditModal();
     }
   }
@@ -322,10 +323,31 @@ function hideUserSearchList(){
       if(role && userMail){
         let result = await window.api.setUserRole(userMail, role);
         hideConfirmModal();
-        loadRoles();
+        await loadRoles();
         if(result){
           
         }
       }
+    });
+  }
+
+  async function userChangeRoleInit(){
+    const selector = document.getElementById("user-role-change-modal");
+    let userRole = 4;//await window.api.getRole();
+    selector.innerHTML = "";
+    if(userRole && userRole===4){
+      const option = document.createElement("option");
+      option.value = "master";
+      option.textContent = "master";
+      selector.appendChild(option);
+    }
+    allRolesList.forEach(role => {
+      const option = document.createElement("option");
+      option.value = role;
+      option.textContent = role;
+      if (role === userRoleSelected) {
+        option.selected = true;
+      }
+      selector.appendChild(option);
     });
   }

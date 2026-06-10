@@ -176,6 +176,10 @@ function editPhoneNumberButton(){
     modalContent.classList.remove("hidden");
     const messageBox = document.getElementById("phone-change-message-space");
     messageBox.classList.add("hidden");
+    const newNumberModal = document.getElementById("user-phone-change-modal-enter-new-number-content");
+    newNumberModal.classList.add("hidden");
+    const codeContent = document.getElementById("user-phone-change-modal-code-confirm-content");
+    codeContent.classList.add("hidden");
   });
 }
 
@@ -496,6 +500,7 @@ function logoutButtonInit(){
 
 function setPrefixSelectorOptions(){
   const prefixSelect = document.getElementById("phone-number-prefix");
+  const phoneChangePrefixesSelect = document.getElementById("change-phone-number-prefix");
   prefixes.forEach(item => {
     const option = document.createElement("option");
     option.value = item.code;
@@ -505,6 +510,7 @@ function setPrefixSelectorOptions(){
         option.selected = true;
     }
     prefixSelect.appendChild(option);
+    phoneChangePrefixesSelect.appendChild(option);
 });
 }
 
@@ -760,11 +766,12 @@ userPhoneChangeModalConfirmButton.addEventListener("click", async ()=>{
   const messageContent = document.getElementById("phone-change-message-content");
   messageBox.classList.add("hidden");
   if(passInput && passInput.value.length>0){
-    let hashPassword = passInput.value
+    let hashPassword = await window.api.hashPassword(passInput.value);
     let result = await window.api.validatePassword(hashPassword);
-    console.log("zmiana numeru hasło input result:", result);
     if(passwordAttempt<5){
-      if(result && result.success){
+      if(result===true){
+        const selector = document.getElementById("change-phone-number-prefix");
+        selector.value="+48";
         passwordAttempt=0;
         const oldContent = document.getElementById("user-phone-change-modal-user-confirm-content");
         oldContent.classList.add("hidden");

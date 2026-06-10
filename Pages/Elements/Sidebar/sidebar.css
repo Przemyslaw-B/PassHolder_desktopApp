@@ -6,6 +6,11 @@
   --sidebar-icon-size: 2rem;
 }
 
+#sidebar-menu{
+  display: flex;
+  flex-direction: column;
+}
+
 body.sidebar-open .content-global {
     margin-left: var(--sidebar-size-active);
 }
@@ -36,9 +41,14 @@ body.sidebar-open .content-global {
   color: #fff;
   padding: 1.5px;
   box-sizing: border-box;
-  /*transition: left 0.3s ease;  animacja wysuwania */
-  z-index: 99998;  /* zawsze na wierzchu */
-  padding-top: 10vh;   /* <-- odstęp od góry */
+  z-index: 99998; 
+  padding-top: 7%;   /*  odstęp opcji  menu od góry */
+}
+
+#sidebar{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 #passwords-icon.pressed,
@@ -61,13 +71,20 @@ body.sidebar-open .content-global {
 }
   */
 
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+
+  .sidebar > div{
+    display: flex;
+  }
+
 .sidebar a {
-  display: flex;
-  margin: 1.2rem 0;
   text-decoration: none;
   color: #ecf0f1;
   font-weight: bold;
-  align-items: center;
   justify-content: flex-start;
 }
 
@@ -76,6 +93,10 @@ body.sidebar-open .content-global {
 }
 
 .sidebar a:hover {
+  color: var(--hover-color);
+}
+
+.sidebar > div:hover {
   color: var(--hover-color);
 }
 
@@ -99,19 +120,28 @@ body.sidebar-open .content-global{
   width: var(--sidebar-size-not-active);
 }
 
+.label-space{
+  display: flex;
+  flex-direction: row;
+  width: var(--sidebar-size-active);
+  justify-content: start;
+  align-items: center;
+  margin-left: calc(var(--sidebar-size-active) / 4);
+}
+
 .label{
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.1s ease;
 }
 
 .sidebar.active .sidebar-icon{
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.1s ease;
 }
 
 .sidebar.active .label{
   opacity: 1;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.1s ease;
 }
 
 .icon-menu{
@@ -132,7 +162,7 @@ body.sidebar-open .content-global{
   height: var(--sidebar-icon-size);
   flex-shrink: 0;
   opacity: 1;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.1s ease;
   margin-left: 0.5rem;
   background-color: white;
   cursor: pointer;
@@ -180,4 +210,20 @@ body.sidebar-open .content-global{
   mask-image: url("../../../Fonts/Roles/accessIcon.svg");
   mask-size: contain;
   mask-repeat: no-repeat;
+}
+
+#logs-content-space{
+  display: flex;
+}
+
+#logs-content-space.hidden{
+  display: none;
+}
+
+#role-content-space{
+  display: flex;
+}
+
+#role-content-space.hidden{
+  display: none;
 }

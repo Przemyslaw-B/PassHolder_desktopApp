@@ -85,7 +85,7 @@
 
 #security-password-modal-title{
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: bolder;
 }
 
 #security-password-modal.hidden{
