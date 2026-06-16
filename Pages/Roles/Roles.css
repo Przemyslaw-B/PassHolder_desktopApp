@@ -253,6 +253,18 @@
     user-select: none;
 }
 
+.modal-title{
+    font-size: 1rem;
+    font-weight: bolder;
+    user-select: none;
+}
+
+.modal-describtion{
+    font-size: 1rem;
+    font-weight: normal;
+    user-select: none;
+}
+
 .title-role{
     overflow: hidden;
     text-overflow: ellipsis;

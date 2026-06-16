@@ -48,7 +48,6 @@ body.sidebar-open .content-global {
 #sidebar{
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 #passwords-icon.pressed,
@@ -72,20 +71,21 @@ body.sidebar-open .content-global {
   */
 
 .sidebar {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-
-  .sidebar > div{
-    display: flex;
-  }
+.sidebar > div{
+  display: flex;
+}
 
 .sidebar a {
   text-decoration: none;
   color: #ecf0f1;
   font-weight: bold;
   justify-content: flex-start;
+  height: var(--sidebar-icon-size);
 }
 
 .sidebar:not(.active) .label {
@@ -117,22 +117,36 @@ body.sidebar-open .content-global{
 }
 
 .sidebar:not(.active){
+  display: flex;
+  flex-direction: column;
   width: var(--sidebar-size-not-active);
+}
+  
+
+.sidebar:not(.active) .label-space{
+  display: none;
+}
+
+.sidebar.active .label-space{
+  display: flex;
+  margin-left: calc(var(--sidebar-size-active) / 4);
+  min-width: 1rem;
+  max-width: calc(var(--sidebar-size-active)-3*(var(--sidebar-size-active) / 4));;
 }
 
 .label-space{
   display: flex;
   flex-direction: row;
-  width: var(--sidebar-size-active);
   justify-content: start;
   align-items: center;
-  margin-left: calc(var(--sidebar-size-active) / 4);
 }
 
 .label{
   opacity: 0;
   transition: opacity 0.1s ease;
 }
+
+
 
 .sidebar.active .sidebar-icon{
   opacity: 0;
@@ -167,6 +181,7 @@ body.sidebar-open .content-global{
   background-color: white;
   cursor: pointer;
   user-select: none;
+  margin-top: 2.5rem;
 }
 
 .sidebar-icon:hover{

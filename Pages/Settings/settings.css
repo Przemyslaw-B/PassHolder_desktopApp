@@ -245,6 +245,12 @@
     background-color: #3c4d5f;
     color: white;
     border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.settings-button:hover{
+    background-color: #3c4d5f;
+    color: #1abc9c;
 }
 
 #phone-confirm-modal-secure-code{
@@ -286,12 +292,6 @@
     display: flex;
     justify-content: center;
     gap: 30%;
-}
-
-.settings-button:hover{
-    background-color: #3c4d5f;
-    color: #1abc9c;
-    cursor: pointer;
 }
 
 #settings-add-number:hover{ 
@@ -630,6 +630,10 @@
     gap: 1rem;
     align-items: center;
     justify-content: center;
+}
+
+.modal-padding{
+    padding: 1rem 1.5rem;
 }
 
 .describtion{
