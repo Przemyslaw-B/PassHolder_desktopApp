@@ -51,8 +51,6 @@ async function saveSecurityPasswordHash(){
 async function loginRequest(email, password, url){
   let result = await window.api.sendLoginRequest(email, password);
   authMethod = result.data.authMethode;
-  //qrCode = result.data.qrCode;
-  //console.log("zapisany qrCode:", qrCode);
   return result;
 }
 
@@ -217,6 +215,7 @@ async function authentication(authCode){
     msgBox.classList.remove("show");
   }
 
+  //Pokaż wersję aplikacji
   async function showAppVersion(){
     let result = await window.api. getAppVersion();
     console.log("version:", result)

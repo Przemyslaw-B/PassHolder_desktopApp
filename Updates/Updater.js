@@ -1,6 +1,8 @@
 const { autoUpdater } = require("electron-updater");
 const { app } = require("electron");
 
+autoUpdater.forceDevUpdateConfig = true;
+
 function initUpdater() {
     check();
     setInterval(() => {
@@ -10,7 +12,10 @@ function initUpdater() {
 
 function check() {
     console.log("Checking for updates...");
-    autoUpdater.checkForUpdates();
+    console.log("isPackaged:", app.isPackaged);
+    console.log("version:", app.getVersion());
+    console.log("appPath:", app.getAppPath());
+    autoUpdater.checkForUpdates().catch(console.error);
 }
 
 autoUpdater.on("checking-for-update", () => {
@@ -42,12 +47,7 @@ autoUpdater.on("error", (err) => {
 
 function forceRestart() {
     console.log("Restarting application...");
-    setTimeout(() => {
-        autoUpdater.quitAndInstall(
-            false,
-            true
-        );
-    }, 1000*60*30);
+    autoUpdater.quitAndInstall();
 }
 
 function getAppVersion() {

@@ -1,6 +1,6 @@
 {
   "name": "passholder",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -38,7 +38,7 @@
     },
     "publish": [{
     "provider": "generic",
-    "url": "http://31.70.88.182:8081/api/update/"
+    "url": "https://passholder.pl/api/update/"
     }]
   }
 }
