@@ -2,13 +2,25 @@ const {BrowserWindow,screen} = require('electron')
 const path = require('path')
 
 const pathPage = path.join(__dirname, '../../Pages/Login/login.html');
-const setWidth = 0.2;
-const setHeigh = 0.6;
+const setWidth = 0.23;
+const setHeigh = 0.65;
 
 function makeLoginWindow(){
     const {width, height} = screen.getPrimaryDisplay().workAreaSize;
-    const newWidth = width * setWidth;
-    const newHeight = height * setHeigh;
+    
+    console.log("parametry ekranu..");
+    const display = screen.getPrimaryDisplay();
+    const scale = display.scaleFactor;
+
+    const newWidth = Math.round((width * setWidth));
+    const newHeight = Math.round((height * setHeigh));
+
+    const workAreaSize = display.workAreaSize;
+    //console.log(display.scaleFactor);
+    //console.log(display.workAreaSize);
+    //console.log("szerokosc okna:", newWidth);
+    //console.log("wysokosc okna:", newHeight);
+
     loginWindow=new BrowserWindow({
         title: "PassHolder",
         width: newWidth,

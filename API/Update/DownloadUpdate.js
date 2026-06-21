@@ -12,7 +12,7 @@ async function downloadUpdate() {
       return { success: false, error: "brak zapisanego tokenu"};
     }
     if(url===null || url === ""){
-      return { success: false, error: "brak zapisanego url"};
+      return { success: false, error: "brak zapisanego url"};+
     }
     const response = await axios.get(
       url,

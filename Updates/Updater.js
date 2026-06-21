@@ -1,7 +1,7 @@
 const { autoUpdater } = require("electron-updater");
 const { app } = require("electron");
 
-autoUpdater.forceDevUpdateConfig = true;
+//autoUpdater.forceDevUpdateConfig = true;
 
 function initUpdater() {
     check();
