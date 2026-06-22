@@ -59,7 +59,42 @@
   </div>
 </div>
 
-<div class="message-container" id="message-container">
+<div id="reset-password-container" class="hidden">
+  <div id="reset-password-email-content" class="hidden">
+    <div id="reset-password-container-email-describtion">
+      <span id="reset-password-email-describtion" class="password-reset-describtion">Podaj email w celu otrzymania tokenu resetowania hasła.</span>
+    </div>
+    <input type="text" id="reset-password-email-input" class="formular-row" placeholder="Email">
+    <div class="reset-password-button-row">
+      <button type="button" id="reset-password-email-cancel-button" class="default-button">Anuluj</button>
+      <button type="button" id="reset-password-email-confirm-button" class="default-button">Potwierdź</button>
+    </div>
+  </div>
+
+  <div id="reset-password-restore-token-content" class="hidden">
+    <div class="reset-password-button-row">
+      <button type="button" id="reset-password-token-cancel-button" class="default-button">Anuluj</button>
+      <button type="button" id="reset-password-token-confirm-button" class="default-button">Potwierdź</button>
+    </div>
+  </div>
+
+  <div id="reset-password-enter-new-password-content" class="hidden">
+    <div class="reset-password-button-row">
+      <button type="button" id="reset-password-new-password-cancel-button" class="default-button">Anuluj</button>
+      <button type="button" id="reset-password-new-password-confirm-button" class="default-button">Potwierdź</button>
+    </div>
+  </div>
+
+  <div id="reset-password-auth-content" class="hidden">
+    <div class="reset-password-button-row">
+      <button type="button" id="reset-password-auth-cancel-button" class="default-button">Anuluj</button>
+      <button type="button" id="reset-password-auth-confirm-button" class="default-button">Potwierdź</button>
+    </div>
+  </div>
+
+</div>
+
+<div id="message-container" class="message-container hidden">
   <p id="message" class="notification-message">Message</p>
 </div>
 

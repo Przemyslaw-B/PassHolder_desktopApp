@@ -5,6 +5,7 @@ window.addEventListener('DOMContentLoaded', async ()=>{
   document.getElementById('loginButton').addEventListener('click', async ()=>loginValidation());
   loginButtonsInit();
   await setLoginContent();
+  await resetPasswordButtonsInit();
 });
 
 // Walidacja użytkownika
@@ -128,6 +129,13 @@ async function authentication(authCode){
     clearInputsRegistration();
   }
 
+  //Zmiana zawartości okna na resetowanie hasła
+  function setRestorePasswordContent(){
+    hideLoginContent();
+    hideAuthenticationContent();
+    showRestorePasswordContent();
+  }
+
   // Zmiana zawartości okna na logowanie
   async function setLoginContent(){
     hideAuthenticationContent();
@@ -202,6 +210,40 @@ async function authentication(authCode){
     }
   }
 
+  //Pokaż treść okna resetowania hasła
+  function showRestorePasswordContent(){
+    const resetPassContainer = document.getElementById("reset-password-container");
+    resetPassContainer.classList.remove("hidden");
+    const emailInput = document.getElementById("reset-password-email-input");
+    emailInput.value="";
+    emailInput.textContent="";
+    const emailContainer = document.getElementById("reset-password-email-content");
+    emailContainer.classList.remove("hidden");
+    const tokenContainer = document.getElementById("reset-password-restore-token-content");
+    tokenContainer.classList.add("hidden");
+    const newPassContainer = document.getElementById("reset-password-enter-new-password-content");
+    newPassContainer.classList.add("hidden");
+    const authContainer = document.getElementById("reset-password-auth-content");
+    authContainer.classList.add("hidden");
+    const messageContainer = document.getElementById("message-container");
+    messageContainer.classList.add("hidden");
+  }
+
+  function hideRestorePasswordContent(){
+    const resetPassContainer = document.getElementById("reset-password-container");
+    const emailContainer = document.getElementById("reset-password-email-content");
+    const tokenContainer = document.getElementById("reset-password-restore-token-content");
+    const newPassContainer = document.getElementById("reset-password-enter-new-password-content");
+    const authContainer = document.getElementById("reset-password-auth-content");
+    const messageContainer = document.getElementById("message-container");
+    resetPassContainer.classList.add("hidden");
+    emailContainer.classList.add("hidden");
+    tokenContainer.classList.add("hidden");
+    newPassContainer.classList.add("hidden");
+    authContainer.classList.add("hidden");
+    messageContainer.classList.add("hidden");
+  }
+
   //pokaż powiadomienie
   function showMessage(text){
     const msgBox = document.querySelector(".message-container");
@@ -264,6 +306,11 @@ async function authentication(authCode){
     setCreatingAccountContent();
   });
 
+  //Obsługa przycisku resetu hasła
+  document.getElementById("forgotPassword").addEventListener("click", ()=>{
+    setRestorePasswordContent();
+  });
+
   // Obsługa powrotu z tworzenia konta do ekranu logowania
   document.getElementById("new-account-cancel-button").addEventListener("click", async ()=>{
     await setLoginContent();
@@ -273,8 +320,63 @@ async function authentication(authCode){
   document.getElementById("auth-cancel-button").addEventListener("click", async ()=>{
     await setLoginContent();
   });
-
   }
+
+  //Przyciski resetowsania hasła
+  async function resetPasswordButtonsInit(){
+    const emailCancelButton = document.getElementById("reset-password-email-cancel-button");
+    const tokenCancelButton = document.getElementById("reset-password-token-cancel-button");
+    const newPassCancelButton = document.getElementById("reset-password-new-password-cancel-button");
+    const authCancelButton = document.getElementById("reset-password-auth-cancel-button");
+
+    const emailConfirmButton = document.getElementById("reset-password-email-confirm-button");
+    const tokenConfirmButton = document.getElementById("reset-password-token-confirm-button");
+    const newPassConfirmButton = document.getElementById("reset-password-new-password-confirm-button");
+    const authConfirmButton = document.getElementById("reset-password-auth-confirm-button");
+
+    emailCancelButton.addEventListener("click", async ()=>{
+      hideRestorePasswordContent();
+      await setLoginContent();
+    });
+    tokenCancelButton.addEventListener("click", async ()=>{
+      hideRestorePasswordContent();
+      await setLoginContent();
+    });
+    newPassCancelButton.addEventListener("click", async ()=>{
+      hideRestorePasswordContent();
+      await setLoginContent();
+    });
+    authCancelButton.addEventListener("click", async ()=>{
+      hideRestorePasswordContent();
+      await setLoginContent();
+    });
+
+    emailConfirmButton.addEventListener("click", ()=>{
+      const emailContent = document.getElementById("reset-password-email-content");
+      const tokenContent = document.getElementById("reset-password-restore-token-content");
+      const messageContainer = document.getElementById("message-container");
+      const messageContent = document.getElementById("message");
+      //TODO 
+      // let result = await send restoration token
+      let result = true;
+      if(result && result===true){
+        emailContent.classList.add("hidden");
+        tokenContent.classList.remove("hidden");
+      } else {
+        messageContent.textContent("Niepoprawny adres email");
+        messageContainer.classList.remove("hidden");
+      }
+    });
+    tokenConfirmButton.addEventListener("click", ()=>{
+
+    });
+    newPassConfirmButton.addEventListener("click", ()=>{
+
+    });
+    authConfirmButton.addEventListener("click", ()=>{
+
+    });
+  } 
 
 
   
