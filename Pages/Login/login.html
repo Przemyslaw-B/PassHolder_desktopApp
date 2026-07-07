@@ -18,12 +18,6 @@
 </head>
 
 <body>
-  <!-- 
-  <div class="language-switch">
-    <button id="lang-PL">PL</button>
-    <button id="lang-EN">EN</button>
-  </div>
-  -->
 
   <div class="login-container">
     <h1 id="loginTitle" class="title-class">Logowanie</h1>
@@ -59,7 +53,7 @@
   </div>
 </div>
 
-<div id="reset-password-container" class="hidden">
+<div id="reset-password-container" class="reset-content-format hidden">
   <div id="reset-password-email-content" class="hidden">
     <div id="reset-password-container-email-describtion">
       <span id="reset-password-email-describtion" class="password-reset-describtion">Podaj email w celu otrzymania tokenu resetowania hasła.</span>
@@ -71,21 +65,34 @@
     </div>
   </div>
 
-  <div id="reset-password-restore-token-content" class="hidden">
+  <div id="reset-password-restore-token-content" class="reset-content-format hidden">
+    <div id="reset-password-container-token-describtion">
+      <span id="reset-password-token-describtion" class="password-reset-describtion">Podaj kod resetowania hasła otrzymany na Twój email.</span>
+    </div>
+    <input type="text" id="token-reset-password-input" class="formular-row" name="code" maxlength="9">
     <div class="reset-password-button-row">
       <button type="button" id="reset-password-token-cancel-button" class="default-button">Anuluj</button>
       <button type="button" id="reset-password-token-confirm-button" class="default-button">Potwierdź</button>
     </div>
   </div>
 
-  <div id="reset-password-enter-new-password-content" class="hidden">
+  <div id="reset-password-enter-new-password-content" class="reset-content-format hidden">
+    <div id="reset-password-container-token-describtion">
+      <span id="reset-password-new-password-describtion" class="password-reset-describtion">Utwórz nowe hasło użytkownika.</span>
+    </div>
+    <input type="text" id="new-password-reset-input" class="formular-row" placeholder="podaj hasło">
+    <input type="text" id="repeat-password-reset-input" class="formular-row" placeholder="powtórz hasło">
     <div class="reset-password-button-row">
       <button type="button" id="reset-password-new-password-cancel-button" class="default-button">Anuluj</button>
       <button type="button" id="reset-password-new-password-confirm-button" class="default-button">Potwierdź</button>
     </div>
   </div>
 
-  <div id="reset-password-auth-content" class="hidden">
+  <div id="reset-password-auth-content" class="reset-content-format hidden">
+    <div id="reset-password-container-auth-describtion">
+      <span id="reset-password-new-password-describtion" class="password-reset-describtion">Podaj kod otrzymany wybraną metodą.</span>
+    </div>
+    <input type="text" id="auth-reset-password-input" class="formular-row" name="code" maxlength="6">
     <div class="reset-password-button-row">
       <button type="button" id="reset-password-auth-cancel-button" class="default-button">Anuluj</button>
       <button type="button" id="reset-password-auth-confirm-button" class="default-button">Potwierdź</button>

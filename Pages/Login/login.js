@@ -367,12 +367,43 @@ async function authentication(authCode){
         messageContainer.classList.remove("hidden");
       }
     });
-    tokenConfirmButton.addEventListener("click", ()=>{
 
+    tokenConfirmButton.addEventListener("click", ()=>{
+      const messageContainer = document.getElementById("message-container");
+      const messageContent = document.getElementById("message");
+      const tokenContent = document.getElementById("reset-password-restore-token-content");
+      const newPasswordContent = document.getElementById("reset-password-enter-new-password-content");
+      const tokenInput = document.getElementById("token-reset-password-input");
+      const tokenValue = tokenInput.value;
+      if(tokenValue===null || tokenValue.length<9){
+        messageContent.textContent("Należy podać token");
+        messageContainer.classList.remove("hidden");
+      } else{
+        //TODO
+        //let result = validate tokenValue
+        /*
+        if(result && result.data===true){
+          // Otwarcie kolejnej strony
+          */
+          tokenContent.classList.add("hidden");
+          newPasswordContent.classList.remove("hidden");
+          const newPassword = document.getElementById("new-password-reset-input");
+          newPassword.value="";
+          const repeatPassword = document.getElementById("repeat-password-reset-input");
+          repeatPassword.value="";
+         /*
+        } else {
+          messageContent.textContent("Podano nieprawidłowy token");
+          messageContainer.classList.remove("hidden");
+          }
+        */
+      }
     });
+
     newPassConfirmButton.addEventListener("click", ()=>{
 
     });
+
     authConfirmButton.addEventListener("click", ()=>{
 
     });
