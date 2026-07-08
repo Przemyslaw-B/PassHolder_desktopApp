@@ -2,11 +2,20 @@ let email;
 let authMethod;
 
 window.addEventListener('DOMContentLoaded', async ()=>{
-  document.getElementById('loginButton').addEventListener('click', async ()=>loginValidation());
+  //document.getElementById('loginButton').addEventListener('click', async ()=>loginValidation());
+  loginUserButtonInit();
   loginButtonsInit();
   await setLoginContent();
   await resetPasswordButtonsInit();
 });
+
+function loginUserButtonInit(){
+  const loginButton = document.getElementById('loginButton');
+  loginButton.addEventListener('click', async (event)=>{
+    event.stopPropagation();
+    await loginValidation();
+  });
+}
 
 // Walidacja użytkownika
 async function loginValidation(){
@@ -225,8 +234,7 @@ async function authentication(authCode){
     newPassContainer.classList.add("hidden");
     const authContainer = document.getElementById("reset-password-auth-content");
     authContainer.classList.add("hidden");
-    const messageContainer = document.getElementById("message-container");
-    messageContainer.classList.add("hidden");
+    hideMessage();
   }
 
   function hideRestorePasswordContent(){
@@ -235,17 +243,17 @@ async function authentication(authCode){
     const tokenContainer = document.getElementById("reset-password-restore-token-content");
     const newPassContainer = document.getElementById("reset-password-enter-new-password-content");
     const authContainer = document.getElementById("reset-password-auth-content");
-    const messageContainer = document.getElementById("message-container");
     resetPassContainer.classList.add("hidden");
     emailContainer.classList.add("hidden");
     tokenContainer.classList.add("hidden");
     newPassContainer.classList.add("hidden");
     authContainer.classList.add("hidden");
-    messageContainer.classList.add("hidden");
+    hideMessage();
   }
 
   //pokaż powiadomienie
   function showMessage(text){
+    console.log("Pokazuje wiadomość.");
     const msgBox = document.querySelector(".message-container");
     msgBox.classList.add("show");
     document.getElementById("message").textContent=text;
@@ -253,6 +261,7 @@ async function authentication(authCode){
 
   //ukryj powiadomienie
   function hideMessage(){
+    console.log("Ukrywam wiadomość.");
     const msgBox = document.querySelector(".message-container");
     msgBox.classList.remove("show");
   }
@@ -271,6 +280,7 @@ async function authentication(authCode){
   function loginButtonsInit(){
   // Przycisk wysłania weryfikacji 2FA
   document.getElementById("auth-confirm-button").addEventListener("click", async () => {
+    event.stopPropagation();
     const authCode = document.getElementById("auth-input").value.trim();
     if(authCode==="" || authCode.length != 6){
       const message = "Podany kod jest nieprawidłowy";
@@ -335,49 +345,54 @@ async function authentication(authCode){
     const authConfirmButton = document.getElementById("reset-password-auth-confirm-button");
 
     emailCancelButton.addEventListener("click", async ()=>{
+      hideMessage();
       hideRestorePasswordContent();
       await setLoginContent();
     });
     tokenCancelButton.addEventListener("click", async ()=>{
+      hideMessage();
       hideRestorePasswordContent();
       await setLoginContent();
     });
     newPassCancelButton.addEventListener("click", async ()=>{
+      hideMessage();
       hideRestorePasswordContent();
       await setLoginContent();
     });
     authCancelButton.addEventListener("click", async ()=>{
+      hideMessage();
       hideRestorePasswordContent();
       await setLoginContent();
     });
 
     emailConfirmButton.addEventListener("click", ()=>{
+      event.stopPropagation();
       const emailContent = document.getElementById("reset-password-email-content");
       const tokenContent = document.getElementById("reset-password-restore-token-content");
-      const messageContainer = document.getElementById("message-container");
-      const messageContent = document.getElementById("message");
       //TODO 
       // let result = await send restoration token
       let result = true;
       if(result && result===true){
         emailContent.classList.add("hidden");
         tokenContent.classList.remove("hidden");
+        const tokenInput = document.getElementById("token-reset-password-input");
+        tokenInput.value="";
       } else {
-        messageContent.textContent("Niepoprawny adres email");
-        messageContainer.classList.remove("hidden");
+        let message = "Niepoprawny adres email."
+        showMessage(message);
       }
     });
 
-    tokenConfirmButton.addEventListener("click", ()=>{
-      const messageContainer = document.getElementById("message-container");
-      const messageContent = document.getElementById("message");
+    tokenConfirmButton.addEventListener("click", (event)=>{
+      event.stopPropagation();
       const tokenContent = document.getElementById("reset-password-restore-token-content");
       const newPasswordContent = document.getElementById("reset-password-enter-new-password-content");
       const tokenInput = document.getElementById("token-reset-password-input");
       const tokenValue = tokenInput.value;
       if(tokenValue===null || tokenValue.length<9){
-        messageContent.textContent("Należy podać token");
-        messageContainer.classList.remove("hidden");
+        console.log("Token pusty lub zbyt krótki!");
+        let message = "Należy podać token";
+        showMessage(message);
       } else{
         //TODO
         //let result = validate tokenValue
@@ -385,27 +400,69 @@ async function authentication(authCode){
         if(result && result.data===true){
           // Otwarcie kolejnej strony
           */
+         console.log("Token prawidłowy!");
           tokenContent.classList.add("hidden");
           newPasswordContent.classList.remove("hidden");
           const newPassword = document.getElementById("new-password-reset-input");
           newPassword.value="";
           const repeatPassword = document.getElementById("repeat-password-reset-input");
           repeatPassword.value="";
+          hideMessage();
          /*
         } else {
-          messageContent.textContent("Podano nieprawidłowy token");
-          messageContainer.classList.remove("hidden");
+          let message = "Podano nieprawidłowy token.";
+          showMessage(message);
           }
         */
       }
     });
 
     newPassConfirmButton.addEventListener("click", ()=>{
-
+      event.stopPropagation();
+      const passwordContent = document.getElementById("reset-password-enter-new-password-content");
+      const authContent = document.getElementById("reset-password-auth-content");
+      const passwordInput = document.getElementById("new-password-reset-input");
+      const repeatPasswordInput = document.getElementById("repeat-password-reset-input");
+      if(passwordInput === null || repeatPasswordInput === null){
+        let message = "Należy wypełnić formularz.";
+        showMessage(message);
+      } else if(passwordInput !== repeatPasswordInput){
+        let message = "Podane hasła muszą być identyczne.";
+        showMessage(message);
+      } else{
+        //TODO tutaj weryfikacja czy hasło spełnia wymagania bycia odpowiednim hasłem tj. znaki specjalne, duże litery itp..
+        let result = true;
+        if(result && result === true){
+          hideMessage();
+          passwordContent.classList.add("hidden");
+          authContent.classList.remove("hidden");
+          const authInput = document.getElementById("auth-reset-password-input");
+          authInput.value="";
+        }
+      }
     });
 
-    authConfirmButton.addEventListener("click", ()=>{
-
+    authConfirmButton.addEventListener("click", async ()=>{
+      event.stopPropagation();
+      const authContent = document.getElementById("reset-password-auth-content");
+      const authInput = document.getElementById("auth-reset-password-input");
+      const authInputValue = authInput.value;
+      if(authInputValue.length<6){
+        let message = "Należy podać 6 znakowy kod."
+        showMessage(message);
+      } else {
+        //TODO post na serwer z weryfikacją kodu 
+        let result = true;
+        if(result && result === true){
+          hideMessage();
+          authContent.classList.add("hidden");
+          hideRestorePasswordContent();
+          await setLoginContent();
+        } else{
+          let message = "Podano nieprawidłowy kod.";
+          showMessage(message);
+        }
+      }
     });
   } 
 
