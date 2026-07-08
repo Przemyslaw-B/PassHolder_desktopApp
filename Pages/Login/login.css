@@ -35,11 +35,14 @@ body {
 .login-container {
   background-color: white;
   border-radius: 10px;
-  padding: 30px;
-  width: 75%;
+  padding: 2rem;
+  width: 85%;
   height: 50%;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  padding: 2rem 1rem;
   text-align: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .title-class{
