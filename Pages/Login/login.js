@@ -389,9 +389,11 @@ async function authentication(authCode){
       const newPasswordContent = document.getElementById("reset-password-enter-new-password-content");
       const tokenInput = document.getElementById("token-reset-password-input");
       const tokenValue = tokenInput.value;
-      if(tokenValue===null || tokenValue.length<9){
-        console.log("Token pusty lub zbyt krótki!");
+      if(tokenValue===null || tokenValue.length===0){
         let message = "Należy podać token";
+        showMessage(message);
+      } else if(tokenValue.length<9){
+        let message = "Podany token jest zbyt krótki.";
         showMessage(message);
       } else{
         //TODO
@@ -423,10 +425,10 @@ async function authentication(authCode){
       const authContent = document.getElementById("reset-password-auth-content");
       const passwordInput = document.getElementById("new-password-reset-input");
       const repeatPasswordInput = document.getElementById("repeat-password-reset-input");
-      if(passwordInput === null || repeatPasswordInput === null){
+      if(passwordInput === null || repeatPasswordInput === null || passwordInput.value==="" || repeatPasswordInput.value===""){
         let message = "Należy wypełnić formularz.";
         showMessage(message);
-      } else if(passwordInput !== repeatPasswordInput){
+      } else if(passwordInput.value !== repeatPasswordInput.value){
         let message = "Podane hasła muszą być identyczne.";
         showMessage(message);
       } else{
