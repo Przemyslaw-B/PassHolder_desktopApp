@@ -38,5 +38,9 @@
     "requestPhoneCode":"https://passholder.pl/api/requestPhoneActivationKey",
     "activatePhone": "https://passholder.pl/api/activatePhone",
 
-    "validatePassword": "https://passholder.pl/api/validatePassword"
+    "validatePassword": "https://passholder.pl/api/validatePassword",
+
+    "restorePassword": "https://passholder.pl/api/restorePassword",
+    "restorePasswordValidateToken": "https://passholder.pl/api/restorePassword/validateToken",
+    "restorePasswordSaveNewPassword": "https://passholder.pl/api/restorePassword/saveNewPassword"
 }
