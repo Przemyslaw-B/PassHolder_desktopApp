@@ -4,7 +4,7 @@ let authMethod;
 let restorePasswordEmail;
 let newPassword;
 let restorePasswordToken;
-let restorePasswordAuthCode;
+let passwordAuthCode;
 
 window.addEventListener('DOMContentLoaded', async ()=>{
   //document.getElementById('loginButton').addEventListener('click', async ()=>loginValidation());
@@ -374,15 +374,15 @@ async function authentication(authCode){
       event.stopPropagation();
       const emailContent = document.getElementById("reset-password-email-content");
       const tokenContent = document.getElementById("reset-password-restore-token-content");
-      //TODO 
-      // let result = await send restoration token
-      let result = true;
-      if(result && result===true){
+      const emailInput = document.getElementById("reset-password-email-input");
+      if(emailInput && emailInput.value!==""){
+        restorePasswordEmail = emailInput.value;
         emailContent.classList.add("hidden");
         tokenContent.classList.remove("hidden");
         const tokenInput = document.getElementById("token-reset-password-input");
         tokenInput.value="";
       } else {
+         estorePasswordEmail="";
         let message = "Niepoprawny adres email."
         showMessage(message);
       }
