@@ -64,6 +64,11 @@ const { setSecurityPasswordHash } = require("./SecurityPassword/SecurityPassword
 
 const {validatePassword} = require("./API/Password/ValidatePassword.js");
 
+const {validatAccountPassword} = require("./AccountPassword/ValidateAccountPassword.js");
+const {setNewAccountPassword} = require("./API/Account/SetNewAccountPassword.js");
+const {sendAccountPasswordResetRequest} = require("./API/Account/SendAccountPasswordResetRequest.js");
+const {validatePasswordResetToken} = require("./API/Account/ValidatePasswordResetToken.js");
+
 const appName="PassHolder";
 
 let loginWindow;
@@ -727,8 +732,6 @@ ipcMain.handle('set-new-security-password', async (event, newSecurityPassword)=>
     return false;
 });
 
-
-
 ipcMain.handle('auth-methode-change-validate-user', async (event, password)=>{
     try{
         let result = await changeAuthMethodeVerifyUser(password);
@@ -915,6 +918,41 @@ ipcMain.handle('get-role', ()=>{
         console.error("error", error);
         return;
     }
+});
+
+//wyślij żądanie resetu hasła użytkownika
+ipcMain.handle('send-password-reset-request', async (event, mail)=>{
+    if(mail && mail !== null){
+        let result = await sendAccountPasswordResetRequest(mail);
+        return {success: true, data: ""};
+    }
+    return {success: false, data: "Brak danych"};
+});
+
+//zweryfikuj poprawność tokenu resetowania hasła
+ipcMain.handle('validate-password-reset-token', async (event, mail, token)=>{
+    if(mail && token && mail!==null && token!== null){
+        let result = await validatePasswordResetToken(mail, token);
+        return {success: result.data.success, data: result.data};
+    }
+    return {success: false, data: "Brak danych"};
+});
+
+//zmień hasło użytkownika na nowe
+ipcMain.handle('set-new-user-password', async (event, data)=>{
+    if(data && data.password!==null && data.passwordChangeToken !== null && data.authCode !== null){
+        let result = await setNewAccountPassword(data);
+        return {success: result.success, data: result.data};
+    }
+    return {success: false, data: "Błąd wysyłania formularza."};
+});
+
+//zweryfikuj hasło użytkownika do konta
+ipcMain.handle('validate-account-password', (event, password)=>{
+    if(password === null){return {success: false, data: "nie podano hasła"};}
+    let result = validatAccountPassword(password);
+    if(result !== null){return result;}
+    return {success: false, data: "nie podano hasła"};
 });
 
 // Wywołanie aplikacji w Tray - menu ukrytych ikon

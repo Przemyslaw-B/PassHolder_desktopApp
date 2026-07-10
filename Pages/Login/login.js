@@ -1,6 +1,11 @@
 let email;
 let authMethod;
 
+let restorePasswordEmail;
+let newPassword;
+let restorePasswordToken;
+let restorePasswordAuthCode;
+
 window.addEventListener('DOMContentLoaded', async ()=>{
   //document.getElementById('loginButton').addEventListener('click', async ()=>loginValidation());
   loginUserButtonInit();

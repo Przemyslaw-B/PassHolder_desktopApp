@@ -121,6 +121,15 @@ contextBridge.exposeInMainWorld('api', {
   //pobierz wszystkie dostępne metody autoryzacji
   getAllAuthMethodes: () => ipcRenderer.invoke('get-all-auth-methodes'),
 
+  //wyślij żądanie resetowania hasła
+  sendPasswordResetRequest: (mail) => ipcRenderer.invoke('send-password-reset-request'),
+  //zweryfikuj token resetu hasła
+  validatePasswordResetToken: (mail, token) => ipcRenderer.invoke('validate-password-reset-token'),
+  //ustaw nowe hasło
+  setNewUserPassword: (data) => ipcRenderer.invoke('set-new-user-password'),
+  //weryfikacja hasła poprawności formatu hashła konta użytkownika
+  validateAccountPassword: (password) => ipcRenderer.invoke('validate-account-password'),
+
   getQrCode: () => ipcRenderer.invoke('get-qr-code'),
 
   getAppVersion: ()=> ipcRenderer.invoke('get-app-version')
