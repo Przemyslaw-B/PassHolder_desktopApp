@@ -370,13 +370,14 @@ async function authentication(authCode){
       await setLoginContent();
     });
 
-    emailConfirmButton.addEventListener("click", ()=>{
+    emailConfirmButton.addEventListener("click", async ()=>{
       event.stopPropagation();
       const emailContent = document.getElementById("reset-password-email-content");
       const tokenContent = document.getElementById("reset-password-restore-token-content");
       const emailInput = document.getElementById("reset-password-email-input");
       if(emailInput && emailInput.value!==""){
         restorePasswordEmail = emailInput.value;
+        await window.api.sendPasswordResetRequest(emailInput.value);
         emailContent.classList.add("hidden");
         tokenContent.classList.remove("hidden");
         const tokenInput = document.getElementById("token-reset-password-input");

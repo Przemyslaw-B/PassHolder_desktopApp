@@ -5,8 +5,6 @@ async function sendAccountPasswordResetRequest(mail) {
   try {
     const tempUrls = await getConfigData();
     const url = tempUrls.restorePassword;
-    console.log("żądanie resetu hasła wysłane do:", mail);
-    console.log("na URL:", url);
 
     if(!url || url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};

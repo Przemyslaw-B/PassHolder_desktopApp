@@ -122,11 +122,11 @@ contextBridge.exposeInMainWorld('api', {
   getAllAuthMethodes: () => ipcRenderer.invoke('get-all-auth-methodes'),
 
   //wyślij żądanie resetowania hasła
-  sendPasswordResetRequest: (mail) => ipcRenderer.invoke('send-password-reset-request'),
+  sendPasswordResetRequest: (mail) => ipcRenderer.invoke('send-password-reset-request', mail),
   //zweryfikuj token resetu hasła
-  validatePasswordResetToken: (mail, token) => ipcRenderer.invoke('validate-password-reset-token'),
+  validatePasswordResetToken: (mail, token) => ipcRenderer.invoke('validate-password-reset-token', mail, token),
   //ustaw nowe hasło
-  setNewUserPassword: (data) => ipcRenderer.invoke('set-new-user-password'),
+  setNewUserPassword: (data) => ipcRenderer.invoke('set-new-user-password', data),
   //weryfikacja hasła poprawności formatu hashła konta użytkownika
   validateAccountPassword: (password) => ipcRenderer.invoke('validate-account-password'),
 
