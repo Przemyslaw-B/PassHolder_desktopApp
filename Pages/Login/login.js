@@ -2,7 +2,7 @@ let email;
 let authMethod;
 
 let restorePasswordEmail;
-let newPassword;
+let newUserPassword;
 let restorePasswordToken;
 let passwordAuthCode;
 
@@ -389,7 +389,7 @@ async function authentication(authCode){
       }
     });
 
-    tokenConfirmButton.addEventListener("click", (event)=>{
+    tokenConfirmButton.addEventListener("click", async (event)=>{
       event.stopPropagation();
       const tokenContent = document.getElementById("reset-password-restore-token-content");
       const newPasswordContent = document.getElementById("reset-password-enter-new-password-content");
@@ -403,12 +403,14 @@ async function authentication(authCode){
         showMessage(message);
       } else{
         //TODO
-        //let result = validate tokenValue
+        let result = await window.api.validatePasswordResetToken(restorePasswordEmail, tokenValue);
+        console.log("password token check result: ", result);
         /*
         if(result && result.data===true){
           // Otwarcie kolejnej strony
           */
-         console.log("Token prawidłowy!");
+          console.log("Token prawidłowy!");
+          restorePasswordToken = tokenValue;
           tokenContent.classList.add("hidden");
           newPasswordContent.classList.remove("hidden");
           const newPassword = document.getElementById("new-password-reset-input");
@@ -425,7 +427,7 @@ async function authentication(authCode){
       }
     });
 
-    newPassConfirmButton.addEventListener("click", ()=>{
+    newPassConfirmButton.addEventListener("click", async ()=>{
       event.stopPropagation();
       const passwordContent = document.getElementById("reset-password-enter-new-password-content");
       const authContent = document.getElementById("reset-password-auth-content");
@@ -439,8 +441,11 @@ async function authentication(authCode){
         showMessage(message);
       } else{
         //TODO tutaj weryfikacja czy hasło spełnia wymagania bycia odpowiednim hasłem tj. znaki specjalne, duże litery itp..
-        let result = true;
-        if(result && result === true){
+        let result = await window.api.validateAccountPassword(passwordInput.value);
+        if(result.success === true){
+          console.log("nowe hasło jest prawidłowe! ", passwordInput.value);
+          newUserPassword = passwordInput.value;
+          console.log("Zapisane hasło", newUserPassword);
           hideMessage();
           passwordContent.classList.add("hidden");
           authContent.classList.remove("hidden");
@@ -460,8 +465,10 @@ async function authentication(authCode){
         showMessage(message);
       } else {
         //TODO post na serwer z weryfikacją kodu 
-        let result = true;
-        if(result && result === true){
+        let data = {"email": restorePasswordEmail, "passwordChangeToken": restorePasswordToken, "authCode": authInputValue, "newPassword": newUserPassword};
+        let result = await window.api.setNewUserPassword(data);
+
+        if(result.success === true){
           hideMessage();
           authContent.classList.add("hidden");
           hideRestorePasswordContent();

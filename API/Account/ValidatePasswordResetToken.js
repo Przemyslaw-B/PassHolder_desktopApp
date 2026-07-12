@@ -13,7 +13,7 @@ async function validatePasswordResetToken(mail, token) {
     const response = await axios.post(
         url,{
             "email": mail,
-            "passwordChangeToken": token
+            "token": token
         });
     return { success: true, data: ""};
   } catch (error) {

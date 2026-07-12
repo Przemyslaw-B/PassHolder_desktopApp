@@ -32,7 +32,7 @@ function checkCapital(password){
     return {success: false, data: "Hasło musi zawierać dużą literę"};
 }
 
-function checkNumbers(){
+function checkNumbers(password){
     if(password !== null){
         let number = /[0-9]/.test(password);
         if(number===true){return {success: true, data: ""};}

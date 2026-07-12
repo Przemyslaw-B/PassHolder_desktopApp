@@ -933,7 +933,7 @@ ipcMain.handle('send-password-reset-request', async (event, mail)=>{
 ipcMain.handle('validate-password-reset-token', async (event, mail, token)=>{
     if(mail && token && mail!==null && token!== null){
         let result = await validatePasswordResetToken(mail, token);
-        return {success: result.data.success, data: result.data};
+        return {success: true, data: result.data};
     }
     return {success: false, data: "Brak danych"};
 });

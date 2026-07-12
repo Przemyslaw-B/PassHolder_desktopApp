@@ -128,7 +128,7 @@ contextBridge.exposeInMainWorld('api', {
   //ustaw nowe hasło
   setNewUserPassword: (data) => ipcRenderer.invoke('set-new-user-password', data),
   //weryfikacja hasła poprawności formatu hashła konta użytkownika
-  validateAccountPassword: (password) => ipcRenderer.invoke('validate-account-password'),
+  validateAccountPassword: (password) => ipcRenderer.invoke('validate-account-password', password),
 
   getQrCode: () => ipcRenderer.invoke('get-qr-code'),
 
