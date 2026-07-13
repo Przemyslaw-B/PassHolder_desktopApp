@@ -42,7 +42,7 @@ body.sidebar-open .content-global {
   padding: 1.5px;
   box-sizing: border-box;
   z-index: 99998; 
-  padding-top: 7%;   /*  odstęp opcji  menu od góry */
+  padding-top: 8rem;   
 }
 
 #sidebar{
@@ -81,6 +81,8 @@ body.sidebar-open .content-global {
 }
 
 .sidebar a {
+  display: flex;
+  align-items: center;
   text-decoration: none;
   color: #ecf0f1;
   font-weight: bold;
@@ -146,11 +148,11 @@ body.sidebar-open .content-global{
   transition: opacity 0.1s ease;
 }
 
-
-
 .sidebar.active .sidebar-icon{
   opacity: 0;
   transition: opacity 0.1s ease;
+  width:0;
+  margin:0;
 }
 
 .sidebar.active .label{
@@ -177,11 +179,10 @@ body.sidebar-open .content-global{
   flex-shrink: 0;
   opacity: 1;
   transition: opacity 0.1s ease;
-  margin-left: 0.5rem;
+  margin-left: 0.5rem;  
   background-color: white;
   cursor: pointer;
   user-select: none;
-  margin-top: 2.5rem;
 }
 
 .sidebar-icon:hover{

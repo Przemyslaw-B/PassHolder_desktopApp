@@ -34,13 +34,15 @@
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 0.5);
-    padding: 1.5rem;
     z-index: 9999;
 }
 
 #security-modal-content{
     background-color: white;
-    padding: 2rem;
+    padding-top: 2.5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 0.5rem;
     border-radius: 0.5rem;
     min-width: 10rem;
     min-height: 8rem;
@@ -714,4 +716,31 @@
 
 .storage-button:hover{
     color: #1abc9c;
+}
+
+.storage-message-space{
+    position: flex;
+    padding: 0.5rem 2rem;
+    border-radius: 10px;
+    min-height: 1rem;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+    align-items: center;
+    word-wrap: break-word;
+    /* Animacja zanikania */
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.storage-message-space.show{
+  opacity: 1;
+}
+
+.storage-message-content{
+    color: black;
+    font-weight: bolder;
+    position: center;
+    font-size: 0.8rem;
+    margin: 1rem;
 }

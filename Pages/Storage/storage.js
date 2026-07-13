@@ -562,9 +562,14 @@ function userPasswordSecurityModalButtons(){
   });
   userPasswordSecurityModalConfirmButton.addEventListener("click", async (e) => {
     let userSecurityPassInput = document.getElementById("security-modal-password").value;
-    if(userSecurityPassInput){
+    if(userSecurityPassInput.length===0){
+      const messageContainer = document.getElementById("storage-message-security-modal-container");
+      const messageContent = document.getElementById("storage-message-security-modal-content");
+      messageContent.textContent = "Należy podać hasło.";
+      messageContainer.classList.add("show");
+    } else if(userSecurityPassInput){
       let result = await validateSecurityPassword(userSecurityPassInput);
-      if(result){
+      if(result===true){
         await window.api.setSecurityPassword(userSecurityPassInput);
         tempSecPass = userSecurityPassInput;
         //let decryptedPass = await decryptUserPassword(pickedPassVal);
@@ -572,6 +577,11 @@ function userPasswordSecurityModalButtons(){
         if(pickedPass && pickedPassEye && pickedPassVal){
           await showPassword();
         }
+      } else{
+        const messageContainer = document.getElementById("storage-message-security-modal-container");
+        const messageContent = document.getElementById("storage-message-security-modal-content");
+        messageContent.textContent = "Podane hasło jest nieprawidłowe.";
+        messageContainer.classList.add("show");
       }
     }
   });
@@ -637,3 +647,8 @@ function randomPasswordGenerateButtonInit(){
     }
   });
 }
+
+document.addEventListener("click", ()=>{
+    const msgBox = document.querySelector(".storage-message-space");
+    msgBox.classList.remove("show");
+  });

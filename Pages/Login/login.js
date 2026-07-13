@@ -103,7 +103,8 @@ async function authentication(authCode){
     const name = document.getElementById("creatingAcc-name-input").value.trim();
     const passwordTemp = document.getElementById("creatingAcc-passwordinput").value.trim();
     const passSize = passwordTemp.length;
-    if(passSize > 6){
+    let resultPassValidation = await window.api.validateAccountPassword(passwordTmp);
+    if(resultPassValidation.success===true){
       if(email !== "" && name !== "" && passwordTemp !== ""){
       const password = await window.api.hashPassword(passwordTemp);
       let result = await window.api.createUserAccount(email, name, password);
@@ -130,7 +131,7 @@ async function authentication(authCode){
     }
   } else{
     //Hasło jest zbyt krótkie
-    const message = "Hasło jest zbyt krótkie. (Minimum 6 znaków)";
+    const message = resultPassValidation.data;
     showMessage(message);
   }
 }
@@ -409,8 +410,9 @@ async function authentication(authCode){
         if(result && result.data===true){
           // Otwarcie kolejnej strony
           */
-          console.log("Token prawidłowy!");
+          console.log("Token prawidłowy!:", tokenValue);
           restorePasswordToken = tokenValue;
+          console.log("Weryfikacja zmiennej restorePasswordToken:", restorePasswordToken);
           tokenContent.classList.add("hidden");
           newPasswordContent.classList.remove("hidden");
           const newPassword = document.getElementById("new-password-reset-input");
@@ -443,9 +445,7 @@ async function authentication(authCode){
         //TODO tutaj weryfikacja czy hasło spełnia wymagania bycia odpowiednim hasłem tj. znaki specjalne, duże litery itp..
         let result = await window.api.validateAccountPassword(passwordInput.value);
         if(result.success === true){
-          console.log("nowe hasło jest prawidłowe! ", passwordInput.value);
-          newUserPassword = passwordInput.value;
-          console.log("Zapisane hasło", newUserPassword);
+          newUserPassword = await window.api.hashPassword(passwordInput.value);
           hideMessage();
           passwordContent.classList.add("hidden");
           authContent.classList.remove("hidden");
