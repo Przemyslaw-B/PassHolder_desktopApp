@@ -15,7 +15,7 @@
     "getUsermailFilterData":"https://passholder.pl/api/recieveFilteredUsermailList",
     "getRoles": "https://passholder.pl/api/recieveRoles",
     "getAllRolesList": "https://passholder.pl/api/recieveAllRoles",
-    "setUserRole": "https://passholder.pl/api/modifytUserRole",
+    "setUserRole": "https://passholder.pl/api/modifyUserRole",
     "deleteRole": "https://passholder.pl/api/removeUserRole",
 
     "getLogs": "https://passholder.pl/api/recieveLogs",

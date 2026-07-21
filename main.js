@@ -365,9 +365,11 @@ ipcMain.handle('get-role-usermail-search-list', async(event, userMail) =>{
 });
 
 //Zmień rolę użytkownika
-ipcMain.on('set-user-role', async (event, userModMail, roleName)=>{
-    if(userModMail && roleName){
-        let result = await setUserRole(roleName, userModMail);
+ipcMain.handle('set-user-role', async (event, userModMail, roleName)=>{
+    console.log("Zmiana usera", userModMail);
+    console.log("nowa rola;", roleName);
+    if(userModMail !== null && roleName !== null){
+        let result = await setUserRole(userModMail, roleName);
         if(result){
             if(result.success){
                 return {success: true, data: result.data};
@@ -905,6 +907,7 @@ ipcMain.handle('set-role', (event, input)=>{
         if(input){
             role=input;
         }
+        return;
     }catch(error){
         console.error("error", error);
         return;
@@ -913,6 +916,7 @@ ipcMain.handle('set-role', (event, input)=>{
 
 ipcMain.handle('get-role', ()=>{
     try{
+        console.log("role", role);
         return role;
     }catch(error){
         console.error("error", error);

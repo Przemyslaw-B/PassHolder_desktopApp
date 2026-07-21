@@ -1,6 +1,7 @@
   let addUserRoleFormTimeout;
   let userRoleSelected;
   let allRolesList;
+  let userSelectedMail = false;
 
   document.addEventListener("DOMContentLoaded", ()=>{
     const rolesContainer = document.getElementById("role-content");
@@ -24,6 +25,7 @@ async function loadRoles(){
   try{
     //console.log("Ładowanie strony ról..");
     const data = await getRolesData();
+    console.log("roles data", data);
     //console.log("data:", data);
     await setRolesGUI(data);
   }catch(err){
@@ -143,6 +145,7 @@ async function loadRoles(){
         option.className = "role-usermail-option";
         option.textContent = mail;
         option.addEventListener("click", () => {
+            userSelectedMail = true;
             userMailInput.value = mail;
             resultsBox.innerHTML = "";
             resultsBox.classList.add("hidden");
@@ -171,6 +174,7 @@ function hideUserSearchList(){
     const resultsBox = document.getElementById("role-usermail-search-results");
     let debounceTimer = null;
     userMailInput.addEventListener("input", async (e) => {
+      userSelectedMail = false;
       const value = e.target.value.trim();
       clearTimeout(debounceTimer);
       if(value.length < 3){
@@ -239,9 +243,17 @@ function hideUserSearchList(){
   function addUserRoleConfirmButton(){
     let addUserRoleConfirmButton = document.getElementById("add-new-user-role-confirm-button");
     addUserRoleConfirmButton.addEventListener("click", async ()=>{
-      //TODO wysłanie do api
-
-      //TODO hideAddUserRoleForm();
+      if(userSelectedMail === true){
+        let role = document.getElementById("add-new-user-role-selector").value;
+        let userMail = document.getElementById("add-new-user-role-usermail").value;
+        let result = await window.api.setUserRole(userMail, role);
+        console.log("zmiana uprawnień:", result);
+        hideAddUserRoleForm();
+        await loadRoles();
+      } else {
+        document.getElementById("add-new-user-role-usermail").textContent="";
+        document.getElementById("add-new-user-role-usermail").value="";
+      }
     });
   }
 
@@ -297,14 +309,12 @@ function hideUserSearchList(){
     });
 
     confirmButton.addEventListener("click", async ()=>{
-      let role = document.getElementById("");
-      let userMail = document.getElementById("");
-      let result = await window.api.setUserRole();
+      let role = document.getElementById("user-role-change-modal").value;
+      let userMail = userRoleSelected.userMail;
+      let result = await window.api.setUserRole(userMail, role);
+      console.log("role change result:", result);
       hideEditModal();
-      loadRoles();
-      if(result){
-        
-      }
+      await loadRoles();
     });
   }
 
@@ -318,22 +328,19 @@ function hideUserSearchList(){
     });
 
     confirmButton.addEventListener("click", async ()=>{
-      let role = document.getElementById("add-new-user-role-selector").value;
-      let userMail = document.getElementById("add-new-user-role-usermail").value;
+      let role = "user";
+      let userMail = userRoleSelected.userMail;
       if(role && userMail){
         let result = await window.api.setUserRole(userMail, role);
         hideConfirmModal();
         await loadRoles();
-        if(result){
-          
-        }
       }
     });
   }
 
   async function userChangeRoleInit(){
     const selector = document.getElementById("user-role-change-modal");
-    let userRole = 4;//await window.api.getRole();
+    let userRole = await window.api.getRole();
     selector.innerHTML = "";
     if(userRole && userRole===4){
       const option = document.createElement("option");

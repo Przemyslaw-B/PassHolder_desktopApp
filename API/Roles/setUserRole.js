@@ -3,7 +3,7 @@ const {getToken} = require('../../SecureStorage/tokenStorage.js');
 const {getConfigData} = require('../GetConfigData.js');
 
 
-async function setUserRole(userModMail) { 
+async function setUserRole(userModMail, roleName) { 
   try {
     const tempUrls = await getConfigData();
     const url = tempUrls.setUserRole;
@@ -17,7 +17,11 @@ async function setUserRole(userModMail) {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    const response = await axios.get(url, {
+    const response = await axios.post(url, {
+      'userModMail': userModMail,
+      'newRoleName': roleName
+      },
+      {
       headers: {
         Authorization: `Bearer ${token}`
       }

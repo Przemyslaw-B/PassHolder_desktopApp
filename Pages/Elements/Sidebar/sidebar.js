@@ -1,3 +1,5 @@
+console.log("sidebar.js loaded");
+console.log(typeof loadSidebarOptions());
 let activePage="storage";
 
 function loadPage(name){
@@ -14,28 +16,37 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch("../Elements/Sidebar/sidebar.html")
     .then(res => res.text())
     .then(async html => {
+      console.log("sidebar html pobrany");
       const container = document.getElementById("sidebar-container");   //import kontenera gdzie ma być zaimportowany fragment z sidebar
-      container.innerHTML = html
+      container.innerHTML = html;
+      console.log("html wstawiony");
       sidebarButtonsInit();
+      console.log("sidebarButtonsInit OK");
       resetIconsColor();
-      const menuIcon = document.getElementById("menu-icon"); //Import ikonki
-      const sidebar = document.getElementById("sidebar");   //Import menu do rozwinięcia
+      console.log("resetIconsColor OK");
+       //Import ikonki
+         //Import menu do rozwinięcia
       //Odczytaj zapisany stan menu: rozwinięte/ukryte
       if(localStorage.getItem("sidebarStatus") == "true"){
+        let sidebar = document.getElementById("sidebar");
         sidebar.classList.add("active");
         document.body.classList.toggle("sidebar-open");
       }
 
+      const menuIcon = document.getElementById("menu-icon");
       // Obsługa kliknięcia ikonki rozwijanego Menu
       menuIcon.addEventListener("click", (e)=>{
+        let sidebar = document.getElementById("sidebar");
         resetIconsColor();
         sidebar.classList.toggle("active");
         //zapisz status menu: rozwinięte/ukryte
         localStorage.setItem("sidebarStatus", sidebar.classList.contains("active"));
         document.body.classList.toggle("sidebar-open"); //Dodaje/usuwa klasę sidebar-open aby móc jej używać do przesuwania treści po aktywacji rozwijanego menu
       });
+      console.log("elementy menu OK");
 
-      await loadSettings();
+      await loadSidebarOptions();
+      console.log("loadSidebarOptions zakończone");
     });
   });
 
@@ -107,20 +118,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function loadSettings(){
+  async function loadSidebarOptions(){
+    console.log("loadSettings start");
     const logOptions = document.getElementById("logs-content-space");
     const roleOptions = document.getElementById("role-content-space");
+    console.log("logOptions:", logOptions);
+    console.log("roleOptions:", roleOptions);
     let role = await window.api.getRole();
     console.log("sidebar result:", role);
-    role=4;
     switch(role){
     case 1:
       // user
+      logOptions.classList.add("hidden");
+      roleOptions.classList.add("hidden");
       break;
 
     case 2:
       // admin
       logOptions.classList.remove("hidden");
+      roleOptions.classList.add("hidden");
       break;
 
     case 3:
@@ -137,5 +153,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
       default: 
       break;
-  }
+    }
   }

@@ -103,7 +103,7 @@ async function authentication(authCode){
     const name = document.getElementById("creatingAcc-name-input").value.trim();
     const passwordTemp = document.getElementById("creatingAcc-passwordinput").value.trim();
     const passSize = passwordTemp.length;
-    let resultPassValidation = await window.api.validateAccountPassword(passwordTmp);
+    let resultPassValidation = await window.api.validateAccountPassword(passwordTemp);
     if(resultPassValidation.success===true){
       if(email !== "" && name !== "" && passwordTemp !== ""){
       const password = await window.api.hashPassword(passwordTemp);
@@ -113,12 +113,12 @@ async function authentication(authCode){
       //Nie wypełniono całego formularza
       const message = "Nie podano wszystkich danych";
       showMessage(message);
-  } else if(data.status==="alreadyExist"){
+  } else if(data.data.status==="alreadyExist"){
     //Email jest już zajęty
     const message = "Email jest już użyty";
     //console.log(labels);
     showMessage(message);
-  } else if(data.status==="accountCreated"){
+  } else if(data.data.status==="accountCreated"){
     //Konto zostało utworzone
     const message = "Konto zostało utowrzone";
     showMessage(message);
@@ -298,6 +298,7 @@ async function authentication(authCode){
         const rep = await window.api.setUser(response.data.username); //zapisz zalogowanego usera
         const tokenRes = await window.api.saveToken(response.data.token); //zapisz token
         await saveSecurityPasswordHash();
+        await window.api.setRole(response.role);
         const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
       } else{
         //Podano zły klucz autoryzacji
@@ -312,28 +313,33 @@ async function authentication(authCode){
   });
 
   //Obsługa przycisku zatwierdzenia utworzenia nowego konta
-  document.getElementById("new-account-confirm-button").addEventListener("click", ()=>{
-    creatingAccount();
+  document.getElementById("new-account-confirm-button").addEventListener("click", async ()=>{
+    event.stopPropagation();
+    await creatingAccount();
   });
 
 
   // Obsługa przycisku przejścia do tworzenia nowego konta
   document.getElementById("createAccount").addEventListener("click", ()=>{
+    event.stopPropagation();
     setCreatingAccountContent();
   });
 
   //Obsługa przycisku resetu hasła
   document.getElementById("forgotPassword").addEventListener("click", ()=>{
+    event.stopPropagation();
     setRestorePasswordContent();
   });
 
   // Obsługa powrotu z tworzenia konta do ekranu logowania
   document.getElementById("new-account-cancel-button").addEventListener("click", async ()=>{
+    event.stopPropagation();
     await setLoginContent();
   });
 
   // Obsługa powrotu z weryfikacji do ekranu logowania
   document.getElementById("auth-cancel-button").addEventListener("click", async ()=>{
+    event.stopPropagation();
     await setLoginContent();
   });
   }
