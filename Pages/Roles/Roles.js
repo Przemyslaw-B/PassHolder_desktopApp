@@ -49,30 +49,6 @@ async function loadRoles(){
       return result.data;
     }
     return;
-    /*
-    try{
-      const responseConfig = await window.api.loadApiConfig();
-      const config = responseConfig.config;
-      const url = config.getRoles;
-      const token = await getToken();
-      const response = await fetch(url,{
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      });
-      if(!response.ok){
-        throw new Error(`Błąd API: ${response.status}`);
-      }
-      const result = await response.json();
-      return result.data.roles;
-    }catch(err){
-      console.error("[loadRoles] błąd:", err);
-      //await window.api.logout();
-    }
-      */
   }
 
   async function setRolesGUI(data){

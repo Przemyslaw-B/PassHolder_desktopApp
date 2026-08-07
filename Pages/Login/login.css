@@ -150,13 +150,10 @@ body {
 /* Okno zakładania konta */
 .new-account-container{
   display: flex;
-  background-color: white;
-  border-radius: 10px;
-  width: 85%;
-  min-height: 50%;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  text-align: center;
-  padding-bottom: 2rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 
 .message-container{
@@ -194,6 +191,19 @@ body {
   font-size: 0.8rem;
   color: #999;
   user-select: none;
+}
+
+#new-account-container{
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  width: 85%;
+  min-height: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  text-align: center;
+  padding: 2rem 1rem;
+  align-items: center;
+  justify-content: center;
 }
 
 #reset-password-container{
