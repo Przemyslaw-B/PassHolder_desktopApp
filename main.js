@@ -49,7 +49,6 @@ const {changeAuthMethodeVerifyUser} = require('./API/AuthMethodes/ChangeMethodeV
 const {sendNewMethodeActivationCode} = require('./API/AuthMethodes/SendNewMethodeActivationCode.js');
 const {setUserNewAuthMethode} = require('./API/AuthMethodes/SetUserNewAuthMethode.js');
 
-
 const {getUsermailFilterData} = require('./API/Roles/GetUsermailFilterData.js');
 const {setUserRole} = require('./API/Roles/SetUserRole.js');
 const {getRolesData} = require('./API/Roles/GetRolesData.js');
@@ -61,6 +60,7 @@ const {getLogsData} = require('./API/Logs/GetLogsData.js');
 const {requestPhoneCode} = require('./API/AuthMethodes/RequestPhoneCode.js');
 const { activatePhone } = require("./API/AuthMethodes/ActivatePhone.js");
 const { setSecurityPasswordHash } = require("./SecurityPassword/SecurityPasswordHash.js");
+const { changeUserPhoneNumber} = require('./API/User/ChangePhoneNumber.js');
 
 const {validatePassword} = require("./API/Password/ValidatePassword.js");
 
@@ -833,6 +833,19 @@ ipcMain.handle('get-user-phone', async ()=>{
         }
         return {success: false, error: result.error};
     }catch(error){
+        console.error("Błąd odczytu metody numeru tel.", error);
+        return {success: false, error: error};
+    }
+});
+
+ipcMain.handle('change-phone-number', async (event, phone, code)=>{
+    try{
+        let result = await changeUserPhoneNumber(phone, code);;
+        if(result && result.success){
+            return {success: true, data: result.data};
+        }
+        return {success: false, error: result.error};
+    } catch{
         console.error("Błąd odczytu metody numeru tel.", error);
         return {success: false, error: error};
     }

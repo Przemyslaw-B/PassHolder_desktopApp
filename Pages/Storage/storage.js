@@ -9,6 +9,7 @@ let menuOpen = false;
 let pickedPass=null;
 let pickedPassVal=null;
 let pickedPassEye=null;
+const passwordHideTimers = new WeakMap();
 
 let tempSecPass=null;
 
@@ -174,7 +175,9 @@ async function setStorageGUI(data){
       const eye = clone.querySelector("#toggle-eye");
       const passField=clone.querySelector("#password");
       eye.classList.toggle("toggle-eye-visible");
+      /*
       eye.addEventListener("click", async ()=>{
+        pickedPass=passField;
         pickedPassEye = eye;
         if(passField.classList.contains("show-password")){
           passField.classList.remove("show-password");
@@ -187,8 +190,19 @@ async function setStorageGUI(data){
           await showPassword();
         }
       });
+      */
+      eye.addEventListener("click", async () => {
+      pickedPass = passField;
+      pickedPassEye = eye;
+      pickedPassVal = picked.password;
+      if (passField.classList.contains("show-password")) {
+        hidePassword(passField, eye);
+      } else {
+        await showPassword(passField, eye, picked.password);
+      }
+      });
       container.appendChild(clone);
-   }
+    }
   } else {
     //Brak zapisanych haseł lub Błąd odczytu z serwera
   }
@@ -588,17 +602,31 @@ function userPasswordSecurityModalButtons(){
 }
 
 function hidePassword(passField, pickedPassEye){
+  if (!passField) return;
+
+  const timer = passwordHideTimers.get(passField);
+
+  if(timer){
+    clearTimeout(timer);
+    passwordHideTimers.delete(passField);
+  }
+
   if(passField.classList.contains("show-password")){
     passField.classList.remove("show-password");
     pickedPassEye.classList.toggle("toggle-eye-visible");
     passField.textContent = "••••••";
   }
-  pickedPass = null;
-  pickedPassEye = null;
-  pickedPassVal = null;
+  if (pickedPass === passField) {
+    pickedPass = null;
+    pickedPassEye = null;
+    pickedPassVal = null;
+  }
 }
-
+/*
 async function showPassword(){
+  if (!pickedPass) {
+    return;
+  }
   let isSecurityPasswordRequired = await window.api.isSecurityPasswordRequired();
   if(isSecurityPasswordRequired){
     showUserPasswordSecurityModal();
@@ -608,18 +636,69 @@ async function showPassword(){
       pickedPassEye.classList.toggle("toggle-eye-visible");
       let decryptedPass = await decryptUserPassword(pickedPassVal);
       //console.log("decryptedPass:", decryptedPass);
-      if(!decryptedPass){
-        decryptedPass = "[złe hasło]";
+      if(decryptedPass===null || decryptedPass===undefined){
+        decryptedPass = "[błąd odczytu]";
       }
       pickedPass.textContent = decryptedPass;
       tempPass = pickedPass;
       tempEye = pickedPassEye;
-      setTimeout(() => {
+      const oldTimer = passwordHideTimers.get(tempPass);
+      if (oldTimer) {
+        clearTimeout(oldTimer);
+      }
+      const timer = setTimeout(() => {
       hidePassword(tempPass, tempEye);
       }, 15 * 1000);  //ukryj hasło po 15s
     }
+    passwordHideTimers.set(tempPass, timer);
   }
 }
+  */
+
+
+async function showPassword(passField, passEye, encryptedPassword) {
+  if (!passField) {
+    return;
+  }
+
+  let isSecurityPasswordRequired = await window.api.isSecurityPasswordRequired();
+
+  if (isSecurityPasswordRequired) {
+    pickedPass = passField;
+    pickedPassEye = passEye;
+    pickedPassVal = encryptedPassword;
+
+    showUserPasswordSecurityModal();
+    return;
+  }
+
+  if (passField.classList.contains("show-password")) {
+    return;
+  }
+
+  passField.classList.add("show-password");
+  passEye.classList.toggle("toggle-eye-visible");
+
+  let decryptedPass = await decryptUserPassword(encryptedPassword);
+
+  if (decryptedPass === null || decryptedPass === undefined) {
+    decryptedPass = "[błąd odczytu]";
+  }
+
+  passField.textContent = decryptedPass;
+
+  const oldTimer = passwordHideTimers.get(passField);
+
+  if (oldTimer) {
+    clearTimeout(oldTimer);
+  }
+  const timer = setTimeout(() => {
+    hidePassword(passField, passEye);
+  }, 15 * 1000);
+  passwordHideTimers.set(passField, timer);
+}
+
+
 
 async function validateSecurityPassword(securityPass){
   let result = await window.api.validateSecurityPassword(securityPass);

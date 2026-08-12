@@ -37,6 +37,7 @@
     "getUserPhoneNumber": "https://passholder.pl/api/getUserPhone",
     "requestPhoneCode":"https://passholder.pl/api/requestPhoneActivationKey",
     "activatePhone": "https://passholder.pl/api/activatePhone",
+    "changePhoneNumber": "https://passholder.pl/api/changePhoneNumber",
 
     "validatePassword": "https://passholder.pl/api/validatePassword",
 

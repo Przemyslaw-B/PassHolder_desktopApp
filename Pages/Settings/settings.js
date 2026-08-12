@@ -815,10 +815,16 @@ userPhoneChangeInputConfirmButton.addEventListener("click", async ()=>{
   const codeInput = document.getElementById("user-phone-change-modal-code-input");
   codeInput.value="";
   newModal.classList.remove("hidden");
+  const phoneAuthModal = document.getElementById("user-phone-change-modal-code-confirm-content");
+  const inputCodePhone = document.getElementById("user-phone-change-modal-code-input");
+  inputCodePhone.value="";
+  phoneAuthModal.classList.remove("hidden");
 });
 
+/*
 const userPhoneChangeNumberConfirmButton = document.getElementById("user-phone-change-new-number-confirm-button");
 const userPhoneChangeNumberCancelButton = document.getElementById("user-phone-change-new-number-confirm-button");
+const tempNewNumber="";
 
 userPhoneChangeNumberCancelButton.addEventListener("click", ()=>{
   const modal = document.getElementById("user-phone-change-modal");
@@ -827,6 +833,50 @@ userPhoneChangeNumberCancelButton.addEventListener("click", ()=>{
 
 userPhoneChangeNumberConfirmButton.addEventListener("click", async ()=>{
   const codeBox = document.getElementById("user-phone-change-modal-code-input");
+  tempNewNumber = document.getElementById("user-phone-change-modal-code-input").value;
+  if(tempNewNumber.length>0){
+    modal.classList.add("hidden");
+    const phoneAuthModal = document.getElementById("user-phone-change-modal-code-confirm-content");
+    const inputCodePhone = document.getElementById("user-phone-change-modal-code-input");
+    inputCodePhone.value="";
+    phoneAuthModal.classList.remove("hidden");
+  } else{
+    messageContent.textContent = "Należy podać nowy numer."; 
+    messageBox.classList.remove("hidden");
+  }
   //TODO weryfikacja kodu SMS i aktualizacja numeru
+});
+*/
+
+const userPhoneChangeNumberCodeConfirmButton = document.getElementById("user-phone-change-code-confirm-button");
+const userPhoneChangeNumberCodeCancelButton = document.getElementById("user-phone-change-code-cancel-button");
+
+userPhoneChangeNumberCodeCancelButton.addEventListener("click", ()=>{
+  const phoneChangeCodeModal = document.getElementById("user-phone-change-modal-code-confirm-content");
+  phoneChangeCodeModal.classList.add("hidden");
+});
+
+userPhoneChangeNumberCodeConfirmButton.addEventListener("click", async ()=>{
+  const messageContent = document.getElementById("phone-change-message-content"); 
+  const messageBox = document.getElementById("phone-change-message-space");
+  const phoneChangeCodeModal = document.getElementById("user-phone-change-modal-code-confirm-content");
+  const tempCodeInputValue = document.getElementById("user-phone-change-modal-code-input").value;
+  if(tempCodeInputValue.length!==6){
+    messageContent.textContent = "Należy podać poprawny kod."; 
+    messageBox.classList.remove("hidden");
+  } else {
+    let result = await window.api.changePhoneNumber(userTempPhone, tempCodeInputValue);
+    if(result.data.success===true){
+      phoneChangeModalAll = document.getElementById("user-phone-change-modal");
+      phoneChangeModalAll.classList.add("hidden");
+      phoneChangeCodeModal.classList.add("hidden");
+      messageBox.classList.add("hidden");
+    } else{
+      messageContent.textContent = "Podany kod jest nieprawidłowy."; 
+      messageBox.classList.remove("hidden");
+    }
+    
+    //TODO odświeżenie opcji
+  }
 });
 }

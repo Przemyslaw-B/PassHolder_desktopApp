@@ -114,6 +114,8 @@ contextBridge.exposeInMainWorld('api', {
   requestPhoneCode: (phone) => ipcRenderer.invoke('request-phone-code', phone),
   //aktywuj numer
   activatePhone: (phone,code) => ipcRenderer.invoke('activate-phone', phone,code),
+  //Zmiana numeru telefonu użytkownika
+  changePhoneNumber: (phone, code) => ipcRenderer.invoke('change-phone-number', phone, code),
   //Pobierz metodę autoryzacji użytkownika
   getUserAuthMethode: () => ipcRenderer.invoke('get-user-auth-methode'),
   //Pobierz numer telefonu usera
