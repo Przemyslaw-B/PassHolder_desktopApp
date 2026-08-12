@@ -109,6 +109,7 @@ function hideSecurityPasswordModal(){
 
 async function loadStorage(){
   try{
+    await setStorageGUI(null);
     const isSecurityPassword = await isSecurityPasswordSet();
     if(isSecurityPassword===true){  //brak ustawionego hasła bezpieczeństwa
       if(!tempSecPass || tempSecPass===null ||tempSecPass===""){
