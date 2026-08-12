@@ -36,7 +36,7 @@ const {encryptUserPassword, decryptUserPassword} = require('./Encryption/Encrypt
 
 const {haveSecurityPassword} = require('./API/SecurityPassword/HaveSecurityPassword.js');
 const {getSecurityPasswordIfExist, saveNewSecurityPassword, updateSecurityPasswordToNewOne, validateNewSecurityPassword} = require('./SecurityPassword/SecurityPasswordManagement.js');
-const {setSecurityPassword,getSecurityPassword} = require('./SecurityPassword/SecurityPassword.js');
+const {setSecurityPassword,getSecurityPassword,clearSecurityPassword} = require('./SecurityPassword/SecurityPassword.js');
 const {setUserEncryptionKey,getUserEncryptionKey} = require('./Encryption/UserPasswordEncryptionKey.js');
 const {changeSecurityPassword} = require('./API/SecurityPassword/ChangeSecurityPassword.js');
 const {removeSecurityPassword} = require('./API/SecurityPassword/RemoveSecurityPassword.js');
@@ -693,6 +693,7 @@ ipcMain.handle('change-security-password', async(event, newSecurityPassword, old
         let hashSecPass = hash(newSecurityPassword);
         let result = await changeSecurityPassword(hashSecPass, code, newStorage);
         setSecurityPassword(newSecurityPassword);
+        clearSecurityPassword();
         return{success: true};
     }catch(error){
         console.error("Błąd zmiany hasła bezpieczeństwa");

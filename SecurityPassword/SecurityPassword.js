@@ -1,6 +1,7 @@
 const {encrypt, decrypt} = require('./../Encryption/Encrypt.js');
 
 let securityPassword = null;
+let timeout = null;
 
 function setSecurityPassword(password) {
     if(password && password !== null){
@@ -8,8 +9,8 @@ function setSecurityPassword(password) {
         if(encryptedPass && encryptedPass !== null){
             securityPassword = encryptedPass;
             //Czyszczenie hasła po 60s
-            setTimeout(() => {
-                securityPassword = null;
+            timeout=setTimeout(() => {
+                clearSecurityPassword();
             }, 60 * 1000);
         }
     }
@@ -26,5 +27,10 @@ function getSecurityPassword() {
   return null;
 }
 
+function clearSecurityPassword(){
+    securityPassword = null;
+    timeout=null;
+}
 
-module.exports = {setSecurityPassword,getSecurityPassword};
+
+module.exports = {setSecurityPassword,getSecurityPassword, clearSecurityPassword};
