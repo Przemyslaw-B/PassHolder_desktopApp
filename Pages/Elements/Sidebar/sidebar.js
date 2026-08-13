@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
       roleOptions.classList.remove("hidden");
       break;
 
-      default: 
+    default: 
       break;
     }
   }

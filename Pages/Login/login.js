@@ -46,8 +46,13 @@ async function loginValidation(){
         setAuthenticationContent();
       } else if(loginData.status === "Invalid"){
         //Błędne dane logowania
-        const message = "Podano niewłaściwe dane logowania";
-        showMessage(message);
+        if(loginData.reason==="Blocked"){
+          const message = "Zbyt wiele prób. Spróbuj ponownie później.";
+          showMessage(message);
+        } else{
+          const message = "Podano niewłaściwe dane logowania";
+          showMessage(message);
+        }
       }
     }
   } else {
@@ -301,9 +306,14 @@ async function authentication(authCode){
         await window.api.setRole(response.role);
         const rep2 = await window.api.loginSuccess(); // Pomyślne logowanie i zmiana ekranu na główny
       } else{
-        //Podano zły klucz autoryzacji
-        const message = "Podany kod jest nieprawidłowy";
-        showMessage(message);
+        if(response.reason==="Blocked"){
+          const message = "Zbyt wiele prób, proszę spróbować później.";
+          showMessage(message);
+        } else{
+          //Podano zły klucz autoryzacji
+          const message = "Podany kod jest nieprawidłowy";
+          showMessage(message);
+        }
       }
     }
   });

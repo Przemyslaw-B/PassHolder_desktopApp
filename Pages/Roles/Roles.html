@@ -44,26 +44,32 @@
 <!-- okno zatwierdzenia usunięcia roli użytkownika -->
 <div id="role-confirmation-modal" class="hidden">
   <div id="role-confirmation-modal-content">
-    <span id="role-confirmation-modal-title" class="modal-title">Czy na pewno chcesz usunąć rolę użytkownika?</span>
-    <span id="role-confirmation-modal-describtion" class="modal-describtion">Usunięcie roli zmieni dostęp na usera.</span>
-    <div id="role-confirmation-modal-content-confirm">
-      <div class="role-confirmation-modal-button-row">
-        <button type="button" id="role-modal-account-cancel-button" class="default-role-button">Anuluj</button>
-        <button type="button" id="role-modal-confirm-button" class="default-role-button">Potwierdź</button>
+
+    <div id="role-confirmation-modal-describtion-content" class="hidden">
+      <span id="role-confirmation-modal-title" class="modal-title">Czy na pewno chcesz usunąć rolę użytkownika?</span>
+      <span id="role-confirmation-modal-describtion" class="modal-describtion">Usunięcie roli zmieni dostęp na usera.</span>
+      <div id="role-confirmation-modal-content-confirm">
+        <div class="role-confirmation-modal-button-row">
+          <button type="button" id="role-modal-account-cancel-button" class="default-role-button">Anuluj</button>
+          <button type="button" id="role-modal-confirm-button" class="default-role-button">Potwierdź</button>
+        </div>
       </div>
     </div>
 
     <div id="role-confirmation-modal-content-code-confirm" class="hidden">
-      <span id="role-confirmation-modal-code-describtion">Proszę podać otrzymany kod weryfikacyjny.</span>
-      <input type="text" id="role-confirmation-modal-security-code" class="" placeholder="podaj kod">
-      <div class="role-confirmation-modal-code=button-row">
-        <button type="button" id="role-confirmation-modal-code-cancel-button" class="default-role-button">Anuluj</button>
-        <button type="button" id="role-confirmation-modal-code-confirm-button" class="default-role-button">Potwierdź</button>
+      <span id="role-confirmation-modal-code-describtion" class="modal-describtion">Proszę podać otrzymany kod weryfikacyjny.</span>
+      <input type="text" id="role-confirmation-modal-security-code" class="default-code-input" placeholder="podaj kod">
+      <div id="role-auth-confirmation-modal-content-confirm">
+        <div class="role-confirmation-modal-code-button-row">
+          <button type="button" id="role-confirmation-modal-code-cancel-button" class="default-role-button">Anuluj</button>
+          <button type="button" id="role-confirmation-modal-code-confirm-button" class="default-role-button">Potwierdź</button>
+        </div>
       </div>
+
     </div>
 
-    <div id="role-confirmation-modal-message-space">
-      <span id="role-confirmation-modal-message"></span>
+    <div id="role-confirmation-modal-message-space" class="roles-message-space hidden">
+      <span id="role-confirmation-modal-message" class="roles-message-text"></span>
     </div>
 
   </div>
@@ -74,7 +80,7 @@
   <div id="role-edit-modal-content">
     <span id="role-edit-modal-title" class="modal-title">Edycja roli użytkownika</span>
 
-    <div id="role-edit-modal-select-content">
+    <div id="role-edit-modal-select-content" class="hidden">
       <span id="role-edit-modal-describtion" class="modal-describtion">Wybierz nową rolę:</span>
       <div id="new-role-select-space">
         <span id="role-edit-modal-select-title">Rola:</span>
@@ -88,16 +94,15 @@
 
     <div id="role-edit-modal-code-content" class="hidden">
       <span id="role-edit-modal-code-describtion">Podaj otrzymany kod:</span>
-      <input type="text" id="role-edit-modal-code-input" class="formular-row" name="code" maxlength="6"> 
+      <input type="text" id="role-edit-modal-code-input" class="default-code-input" name="code" maxlength="6" placeholder="otrzymany kod"> 
       <div class="role-edit-modal-code-button-row">
         <button type="button" id="role-edit-modal-code-cancel-button" class="default-role-button">Anuluj</button>
         <button type="button" id="role-edit-modal-code-confirm-button" class="default-role-button">Zatwierdź</button>
       </div>
     </div>
-
-  </div>
-  <div id="role-edit-modal-message-space">
-    <span id="role-edit-modal-message"></span>
-  </div>
+  
+    <div id="role-edit-modal-message-space" class="roles-message-space hidden">
+      <span id="role-edit-modal-message" class="roles-message-text"></span>
+    </div>
   </div>
 </div>

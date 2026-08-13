@@ -120,6 +120,7 @@ async function getAllMethodeList(){
 async function getUserAuthMethode(){
   let result = await window.api.getUserAuthMethode();
   userAuthMethode = result.data;
+  await window.api.localSaveAuthMethode(result.methodeId);
 }
 
 async function getUserNumber(){
@@ -547,7 +548,16 @@ function anonimate(){
 function securityPassResetButton(){
   const button = document.getElementById("security-password-reset-button");
   if(!button){return;}
-  button.addEventListener("click", ()=>{
+  button.addEventListener("click", async ()=>{
+    let userAuthMethode = await window.api.localReadUserAuthMethode();
+    let describtionField = document.getElementById("security-pass-reset-code-span");
+    if(userAuthMethode===2){
+      describtionField.textContent = "Podaj kod otrzymany w sms."
+    } else if(userAuthMethode===3){
+      describtionField.textContent = "Podaj kod z aplikacji uwierzytelniającej."
+    } else {
+      describtionField.textContent = "Podaj kod otrzymany wiadmoością email."
+    }
     const resetModal = document.getElementById("security-pass-reset-space");
     if(!resetModal){return;}
     resetModal.classList.remove("hidden");
@@ -687,6 +697,15 @@ function seucrityPassRemoveModalButtons(){
     const confirmContent = document.getElementById("security-pass-remove-confirm-content");
     confirmContent.classList.add("hidden");
     const codeContent = document.getElementById("security-pass-remove-code-confirm-content");
+    let userAuthMethode = await window.api.localReadUserAuthMethode();
+    let describtionField = document.getElementById("security-pass-remove-code-span");
+    if(userAuthMethode===2){
+      describtionField.textContent = "Podaj kod otrzymany w sms."
+    } else if(userAuthMethode===3){
+      describtionField.textContent = "Podaj kod z aplikacji uwierzytelniającej."
+    } else {
+      describtionField.textContent = "Podaj kod otrzymany wiadmoością email."
+    }
     codeContent.classList.remove("hidden");
   });
 

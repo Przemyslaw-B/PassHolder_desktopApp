@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('api', {
   //zdegraduj użytkownika do roli zwykłego usera
   removeRoleFromUser: (user) => ipcRenderer.invoke("remove-role-from-user", user),
 
-  //Zakładanie konta użytkownika
+  //Zakładanie konta użytkownika123123
   createUserAccount: (email, name, password) => ipcRenderer.invoke("create-user-account", email, name, password),
   
   //Wykonaj Zapytanie do API z danymi logowania.
@@ -48,7 +48,6 @@ contextBridge.exposeInMainWorld('api', {
   setUser: (username) => ipcRenderer.send('set-user', username),
   //Przełączanie zakładek
   switchCard: (pageName) => ipcRenderer.send('switch-card', pageName),
-
   
   //Zapis tokenu użytkownika
   saveToken: (token) => ipcRenderer.invoke('save-token', token),
@@ -76,6 +75,11 @@ contextBridge.exposeInMainWorld('api', {
   setSecurityPassword: (securityPassword) => ipcRenderer.invoke('set-security-password', securityPassword),
   //Czy należy podać hasło bezpieczeństwa
   isSecurityPasswordRequired:() => ipcRenderer.invoke('is-security-password-required'),
+
+  //Odczytaj metodę uwierzytelniania użytkownika
+  localReadUserAuthMethode:() => ipcRenderer.invoke('local-read-user-auth-methode'),
+  //zapisz metodę uwierzytelniania użytkownika
+  localSaveAuthMethode:(authMethode) => ipcRenderer.invoke('local-save-user-auth-methode', authMethode),
 
   //Wyczyść zapisane hasło bezpieczeństwa
   //clearSecurityPassword: () => ipcRenderer.invoke('clear-security-password'),
@@ -122,6 +126,10 @@ contextBridge.exposeInMainWorld('api', {
   getUserPhone: () => ipcRenderer.invoke('get-user-phone'),
   //pobierz wszystkie dostępne metody autoryzacji
   getAllAuthMethodes: () => ipcRenderer.invoke('get-all-auth-methodes'),
+
+  //wyślij zwykły kod autoryzacyjny
+  requestAuthCode: () => ipcRenderer.invoke('request-auth-code'),
+  authorization: (code)=> ipcRenderer.invoke('validate-auth-code', code),
 
   //wyślij żądanie resetowania hasła
   sendPasswordResetRequest: (mail) => ipcRenderer.invoke('send-password-reset-request', mail),

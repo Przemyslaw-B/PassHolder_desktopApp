@@ -240,6 +240,7 @@
     //console.log("setLogsGUI data:", data);
     const container = document.getElementById("log-list");
     container.innerHTML = "";
+    console.log("wyświetlam dane logów:", data);
     if(data != null && data.length > 0){
       const template = document.getElementById("log-row-template");
       let counter = pageNumber*rowAmount-rowAmount;

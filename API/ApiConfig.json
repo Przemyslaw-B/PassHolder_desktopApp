@@ -11,6 +11,8 @@
     "authentication": "https://passholder.pl/api/2FA",
     "creatingAccount": "https://passholder.pl/api/CreateNewAccount",
     "getPassword": "https://passholder.pl/api/getPassword",
+    "sendAuthCode": "https://passholder.pl/api/getAuthCode",
+    "authorization": "https://passholder.pl/api/codeAuthorization",
     
     "getUsermailFilterData":"https://passholder.pl/api/recieveFilteredUsermailList",
     "getRoles": "https://passholder.pl/api/recieveRoles",

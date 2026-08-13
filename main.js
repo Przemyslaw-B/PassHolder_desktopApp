@@ -69,6 +69,9 @@ const {setNewAccountPassword} = require("./API/Account/SetNewAccountPassword.js"
 const {sendAccountPasswordResetRequest} = require("./API/Account/SendAccountPasswordResetRequest.js");
 const {validatePasswordResetToken} = require("./API/Account/ValidatePasswordResetToken.js");
 
+const {requestAuthCode} = require("./API/AuthMethodes/RequestAuthCode.js");
+const {codeValidation} = require("./API/AuthMethodes/CodeValidation.js");
+
 const appName="PassHolder";
 
 let loginWindow;
@@ -83,6 +86,7 @@ let isQuitting = false; // Flaga zamknięcia aplikacji
 let user;
 let userId;
 let role;
+let userAuthMethode=1;
 
 const getInstanceLock = app.requestSingleInstanceLock();
 
@@ -971,6 +975,33 @@ ipcMain.handle('validate-account-password', (event, password)=>{
     let result = validatAccountPassword(password);
     if(result !== null){return result;}
     return {success: false, data: "nie podano hasła"};
+});
+
+ipcMain.handle('local-read-user-auth-methode', ()=>{
+    if(userAuthMethode){
+        return userAuthMethode;
+    }
+    return 1;
+});
+
+ipcMain.handle('local-save-user-auth-methode', (event, inputAuthMethode)=>{
+    if(inputAuthMethode){
+        userAuthMethode = inputAuthMethode;
+    }
+});
+
+//Zażądaj kodu autoryzacyjnego
+ipcMain.handle('request-auth-code', async ()=>{
+    let result = await requestAuthCode();
+});
+
+//Zweryfikuj kod autoryzacyjny
+ipcMain.handle('validate-auth-code', async (event, code)=>{
+    if(code === null){return {success: false, data: "nie podano kodu"};}
+    let result = await codeValidation(code);
+    if(result !== null){return result;}
+    return result;
+    //return {success: false, data: "nie podano kodu"};
 });
 
 // Wywołanie aplikacji w Tray - menu ukrytych ikon

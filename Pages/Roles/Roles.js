@@ -2,6 +2,8 @@
   let userRoleSelected;
   let allRolesList;
   let userSelectedMail = false;
+  let userPickedMail;
+  let userNewRole;
 
   document.addEventListener("DOMContentLoaded", ()=>{
     const rolesContainer = document.getElementById("role-content");
@@ -16,8 +18,6 @@
         editModalButtonsInit();
         confirmModalButtonsInit();
         setAddUserRoleSelectorOptions();
-
-        //loadRoles();
       });
   });
 
@@ -88,14 +88,14 @@ async function loadRoles(){
 
   async function deleteRoleRow(){
     if(userRoleSelected){
+      await showConfirmModal();
     }
-    showConfirmModal();
   }
 
   async function editRoleRow(){
     if(userRoleSelected){
       await userChangeRoleInit();
-      showEditModal();
+      await showEditModal();
     }
   }
 
@@ -255,9 +255,22 @@ function hideUserSearchList(){
     addUserRoleButton.classList.remove("hidden");
   }
 
-  function showConfirmModal(){
+  async function showConfirmModal(){
     let modal = document.getElementById("role-confirmation-modal");
+    let confirmContent = document.getElementById("role-confirmation-modal-describtion-content");
+    let authCodeContent = document.getElementById("role-confirmation-modal-content-code-confirm");
+    authCodeContent.classList.add("hidden");
+    confirmContent.classList.remove("hidden");
     modal.classList.remove("hidden");
+    let userAuthMehode = await window.api.localReadUserAuthMethode();
+    let removeRoleDescribtion = document.getElementById("role-confirmation-modal-code-describtion");
+    if(userAuthMehode===2){
+      removeRoleDescribtion.textContent="Proszę podać kod otrzymany w sms.";
+    } else if(userAuthMehode===3){
+      removeRoleDescribtion.textContent="Proszę podać kod z aplikacji uwierzytelniającej.";
+    } else{
+      removeRoleDescribtion.textContent="Proszę podać kod otrzymany w wiadomości email.";
+    }
   }
 
   function hideConfirmModal(){
@@ -265,19 +278,43 @@ function hideUserSearchList(){
     modal.classList.add("hidden");
   }
 
-  function showEditModal(){
-    let modal = document.getElementById("role-edit-modal");
+  async function showEditModal(){
+    const modal = document.getElementById("role-edit-modal");
+    const modalContent = document.getElementById("role-edit-modal-content");
+    const selectContent = document.getElementById("role-edit-modal-select-content");
+    const editAuthContent = document.getElementById("role-edit-modal-code-content");
     modal.classList.remove("hidden");
+    modalContent.classList.remove("hidden");
+    selectContent.classList.remove("hidden");
+    editAuthContent.classList.add("hidden");
+    let codeInput = document.getElementById("role-edit-modal-code-input");
+    codeInput.value="";
+    let userAuthMethode = await window.api.localReadUserAuthMethode();
+    let describtionContent = document.getElementById("role-edit-modal-code-describtion");
+    if(userAuthMethode===2){
+      describtionContent.textContent = "Proszę podać kod otrzymany w sms.";
+    } else if(userAuthMethode===3){
+      describtionContent.textContent = "Proszę podać kod z aplikacji uwierzytelniającej.";
+    } else{
+      describtionContent.textContent = "Proszę podać kod otrzymany w wiadomości email.";
+    }
   }
 
   function hideEditModal(){
     let modal = document.getElementById("role-edit-modal");
+    let selectContent = document.getElementById("role-edit-modal-select-content");
+    let editAuthContent = document.getElementById("role-edit-modal-code-content");
     modal.classList.add("hidden");
+    selectContent.classList.add("hidden");
+    editAuthContent.classList.add("hidden");
   }
 
   function editModalButtonsInit(){
     let cancelButton = document.getElementById("role-edit-modal-cancel-button");
     let confirmButton = document.getElementById("role-edit-modal-confirm-button");
+
+    let authCancelButton = document.getElementById("role-edit-modal-code-cancel-button");
+    let authConfirmButton = document.getElementById("role-edit-modal-code-confirm-button");
 
     cancelButton.addEventListener("click", ()=>{
       userRoleSelected=null;
@@ -286,11 +323,44 @@ function hideUserSearchList(){
 
     confirmButton.addEventListener("click", async ()=>{
       let role = document.getElementById("user-role-change-modal").value;
-      let userMail = userRoleSelected.userMail;
-      let result = await window.api.setUserRole(userMail, role);
-      console.log("role change result:", result);
+      let roleChangePickContent = document.getElementById("role-edit-modal-select-content");
+      let roleChangeAuthContent = document.getElementById("role-edit-modal-code-content");
+      roleChangePickContent.classList.add("hidden");
+      roleChangeAuthContent.classList.remove("hidden");
+      userPickedMail = userRoleSelected.userMail;
+      userNewRole = role;
+      await window.api.requestAuthCode(); //Wyślij kod 
+    });
+
+    authCancelButton.addEventListener("click", ()=>{
+      userRoleSelected=null;
       hideEditModal();
-      await loadRoles();
+    });
+
+    authConfirmButton.addEventListener("click", async (e)=>{
+      e.stopPropagation();
+      let userCodeInput = document.getElementById("role-edit-modal-code-input");
+      let userCodeValue = userCodeInput.value;
+      if(userCodeValue===""){
+        messageContent.textContent = "Podany kod jest nieprawidłowy.";
+        messageBox.classList.remove("hidden");
+      } else {
+        let result = await window.api.authorization(userCodeValue);
+        console.log("autoryzacja?", result);
+        if(result.data.auth==="success"){
+          let result = await window.api.setUserRole(userPickedMail, userNewRole);
+          hideEditModal();
+          await loadRoles();
+        } else{
+          if(result.data.reason==="Blocked"){
+            let message = "Zbyt wiele prób, spróbuj ponownie później.";
+            showEditModalMessage(message);
+          } else{
+            let message = "Podany kod jest nieprawidłowy.";
+            showEditModalMessage(message);
+          }
+        }
+      }
     });
   }
 
@@ -298,18 +368,53 @@ function hideUserSearchList(){
     let cancelButton = document.getElementById("role-modal-account-cancel-button");
     let confirmButton = document.getElementById("role-modal-confirm-button");
 
+    let authCodeCancelButton = document.getElementById("role-confirmation-modal-code-cancel-button");
+    let authCodeConfirmButton = document.getElementById("role-confirmation-modal-code-confirm-button");
+
     cancelButton.addEventListener("click", ()=>{
       userRoleSelected=null;
       hideConfirmModal();
     });
 
     confirmButton.addEventListener("click", async ()=>{
-      let role = "user";
-      let userMail = userRoleSelected.userMail;
-      if(role && userMail){
-        let result = await window.api.setUserRole(userMail, role);
-        hideConfirmModal();
-        await loadRoles();
+      let confirmContent = document.getElementById("role-confirmation-modal-describtion-content");
+      let authContent = document.getElementById("role-confirmation-modal-content-code-confirm");
+      confirmContent.classList.add("hidden");
+      authContent.classList.remove("hidden");
+    });
+
+    authCodeCancelButton.addEventListener("click", ()=>{
+      userRoleSelected=null;
+      hideConfirmModal();
+    });
+
+    authCodeConfirmButton.addEventListener("click", async (e)=>{
+      e.stopPropagation();
+      let userCodeInput = document.getElementById("role-confirmation-modal-security-code");
+      let userCodeValue = userCodeInput.value;
+      if(userCodeValue===""){
+        messageContent.textContent = "Podany kod jest nieprawidłowy.";
+        messageBox.classList.remove("hidden");
+      } else {
+        let result = await window.api.authorization(userCodeValue);
+        console.log("autoryzacja?", result);
+        if(result.data.auth==="success"){
+          let role = "user";
+          let userMail = userRoleSelected.userMail;
+          if(role && userMail){
+            let result = await window.api.setUserRole(userMail, role);
+            hideConfirmModal();
+            await loadRoles();
+          }
+        } else{
+          if(result.data.reason==="Blocked"){
+            let message = "Zbyt wiele prób, spróbuj ponownie później.";
+            showRemoveModalMessage(message);
+          } else{
+            let message = "Podany kod jest nieprawidłowy.";
+            showRemoveModalMessage(message);
+          }
+        }
       }
     });
   }
@@ -328,9 +433,44 @@ function hideUserSearchList(){
       const option = document.createElement("option");
       option.value = role;
       option.textContent = role;
-      if (role === userRoleSelected) {
+      if (role === userRoleSelected.roleName) {
         option.selected = true;
       }
       selector.appendChild(option);
     });
   }
+
+  function showEditModalMessage(message){
+    let messageBox = document.getElementById("role-edit-modal-message-space");
+    let messageText = document.getElementById("role-edit-modal-message");
+    messageText.textContent = message;
+    messageBox.classList.remove("hidden");
+    console.log("Pokazuje message od edit boxa");
+  }
+
+  function hideEditModalMessage(){
+    let messageBox = document.getElementById("role-edit-modal-message-space");
+    let messageText = document.getElementById("role-edit-modal-message");
+    messageText.textContent = "";
+    messageBox.classList.add("hidden");
+    console.log("Ukrywam message od edit boxa");
+  }
+
+  function showRemoveModalMessage(message){
+    let messageBox = document.getElementById("role-confirmation-modal-message-space");
+    let messageText = document.getElementById("role-confirmation-modal-message");
+    messageText.textContent = message;
+    messageBox.classList.remove("hidden");
+  }
+
+  function hideRemoveModalMessage(){
+    let messageBox = document.getElementById("role-confirmation-modal-message-space");
+    let messageText = document.getElementById("role-confirmation-modal-message");
+    messageText.textContent = "";
+    messageBox.classList.add("hidden");
+  }
+
+  document.addEventListener("click", () => {
+    hideEditModalMessage();
+    hideRemoveModalMessage();
+  });
