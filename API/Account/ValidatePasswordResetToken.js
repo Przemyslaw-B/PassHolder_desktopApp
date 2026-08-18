@@ -15,9 +15,9 @@ async function validatePasswordResetToken(mail, token) {
             "email": mail,
             "token": token
         });
-    return { success: true, data: ""};
+    return { success: true, data: response.data.success, authMethode: response.data.authMethode};
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, data: false, error: error.message };
   }
 }
 

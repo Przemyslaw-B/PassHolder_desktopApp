@@ -110,11 +110,15 @@ async function authentication(authCode){
     const passwordTemp = document.getElementById("creatingAcc-passwordinput").value.trim();
     const passSize = passwordTemp.length;
     let resultPassValidation = await window.api.validateAccountPassword(passwordTemp);
-    if(resultPassValidation.success===true){
+    if(passwordTemp.length===0 || email.length===0 || name.length===0){
+      const message = "Nie podano wszystkich danych";
+      showMessage(message);
+    } else if(resultPassValidation.success===true){
       if(email !== "" && name !== "" && passwordTemp !== ""){
       const password = await window.api.hashPassword(passwordTemp);
       let result = await window.api.createUserAccount(email, name, password);
       let data = result.data;
+      console.log("tworzenie konta data:", data);
     if(data.status==="emptyForm"){
       //Nie wypełniono całego formularza
       const message = "Nie podano wszystkich danych";
@@ -401,7 +405,7 @@ async function authentication(authCode){
         const tokenInput = document.getElementById("token-reset-password-input");
         tokenInput.value="";
       } else {
-         estorePasswordEmail="";
+        restorePasswordEmail="";
         let message = "Niepoprawny adres email."
         showMessage(message);
       }
@@ -420,16 +424,31 @@ async function authentication(authCode){
         let message = "Podany token jest zbyt krótki.";
         showMessage(message);
       } else{
-        //TODO
         let result = await window.api.validatePasswordResetToken(restorePasswordEmail, tokenValue);
         console.log("password token check result: ", result);
-        /*
         if(result && result.data===true){
-          // Otwarcie kolejnej strony
-          */
-          console.log("Token prawidłowy!:", tokenValue);
+          let authMethode = Number(result.authMethode);
           restorePasswordToken = tokenValue;
-          console.log("Weryfikacja zmiennej restorePasswordToken:", restorePasswordToken);
+          console.log("reset hasła, authMethode:", authMethode);
+          const authDescribtion = document.getElementById("reset-password-new-password-auth-describtion");
+          console.log("authMethode:", authMethode);
+          console.log("element:", authDescribtion);
+          console.log("tekst przed:", authDescribtion.textContent);
+          switch (authMethode){
+            case 2:
+              authDescribtion.textContent = "Podaj kod otrzymany w SMS.";
+              break;
+
+            case 3:
+              authDescribtion.textContent = "Podaj kod z aplikacji autoryzacyjnej";
+              break;
+
+            default:
+              authDescribtion.textContent = "Podaj kod otrzymany mailowo.";
+              break;  
+          }
+          console.log("tekst po:", authDescribtion.textContent);
+
           tokenContent.classList.add("hidden");
           newPasswordContent.classList.remove("hidden");
           const newPassword = document.getElementById("new-password-reset-input");
@@ -437,12 +456,12 @@ async function authentication(authCode){
           const repeatPassword = document.getElementById("repeat-password-reset-input");
           repeatPassword.value="";
           hideMessage();
-         /*
+        
         } else {
           let message = "Podano nieprawidłowy token.";
           showMessage(message);
           }
-        */
+        
       }
     });
 
@@ -459,7 +478,6 @@ async function authentication(authCode){
         let message = "Podane hasła muszą być identyczne.";
         showMessage(message);
       } else{
-        //TODO tutaj weryfikacja czy hasło spełnia wymagania bycia odpowiednim hasłem tj. znaki specjalne, duże litery itp..
         let result = await window.api.validateAccountPassword(passwordInput.value);
         if(result.success === true){
           newUserPassword = await window.api.hashPassword(passwordInput.value);
@@ -468,6 +486,9 @@ async function authentication(authCode){
           authContent.classList.remove("hidden");
           const authInput = document.getElementById("auth-reset-password-input");
           authInput.value="";
+        } else{
+          let message = result.data;
+          showMessage(message);
         }
       }
     });
@@ -481,15 +502,21 @@ async function authentication(authCode){
         let message = "Należy podać 6 znakowy kod."
         showMessage(message);
       } else {
-        //TODO post na serwer z weryfikacją kodu 
         let data = {"email": restorePasswordEmail, "passwordChangeToken": restorePasswordToken, "authCode": authInputValue, "newPassword": newUserPassword};
         let result = await window.api.setNewUserPassword(data);
-
+        console.log("Password restore result:", result);
         if(result.success === true){
-          hideMessage();
-          authContent.classList.add("hidden");
-          hideRestorePasswordContent();
-          await setLoginContent();
+          if(result.data.success===true){
+            hideMessage();
+            authContent.classList.add("hidden");
+            hideRestorePasswordContent();
+            await setLoginContent();
+            let message = "Hasło zostało zmienione.";
+            showMessage(message);
+          } else{
+            let message = result.data.message;
+            showMessage(message);
+          }
         } else{
           let message = "Podano nieprawidłowy kod.";
           showMessage(message);

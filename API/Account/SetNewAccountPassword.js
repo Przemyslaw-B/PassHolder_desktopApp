@@ -10,12 +10,6 @@ async function setNewAccountPassword(data) {
     if(!url || url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    console.log("SetNewAccountPassword data.inputs:");
-    console.log("new password:",data.newPassword);
-    console.log("email:",data.email);
-    console.log("change token",data.passwordChangeToken);
-    console.log("auth code:",data.authCode);
-    console.log("------ END PRINT ------");
     const response = await axios.post(
         url,{
             "newPassword": data.newPassword,

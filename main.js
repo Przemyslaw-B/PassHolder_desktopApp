@@ -183,7 +183,7 @@ function createMainWindow(){
 //Zakładanie nowego konta użytkownika
 ipcMain.handle('create-user-account', async (event, email, name, password) =>{
     try{
-        if(email && name && password){
+        if(email.length>0 && name.length>0 && password.length>0){
             let result = await createNewAccount(email, name, password);
             return {success: true, data: result};
         }
@@ -506,11 +506,8 @@ ipcMain.handle('remove-storage-record', async (event, record)=>{
 
 ipcMain.handle('modify-storage-record', async (event, data)=>{
     try{
-        console.log("new data:", data);
         if(data){
-            console.log("new data copy:", data);
             let result = await modifyStorageRecord(data);
-            console.log("new data updated:", result);
             return {success: true, data: result};
         } else{
             return {success: false, error: "brak otrzymanych danych"};
@@ -960,7 +957,8 @@ ipcMain.handle('send-password-reset-request', async (event, mail)=>{
 ipcMain.handle('validate-password-reset-token', async (event, mail, token)=>{
     if(mail && token && mail!==null && token!== null){
         let result = await validatePasswordResetToken(mail, token);
-        return {success: true, data: result.data};
+        //console.log("validate-pass-token-reset result:", result);
+        return {success: true, data: result.data, authMethode: result.authMethode};
     }
     return {success: false, data: "Brak danych"};
 });
@@ -1010,7 +1008,6 @@ ipcMain.handle('validate-auth-code', async (event, code)=>{
 });
 
 ipcMain.handle('set-default-encryption-key', async(event, code)=>{
-    //console.log("'set-default-encryption-key input:", code);
     if(!code){
         return null;
     }
@@ -1027,10 +1024,8 @@ ipcMain.handle('encrypt-default', async(event, text)=>{
         if(!text || text===""){
             return "";
         }
-        console.log("encryption-default input:", text);
         let result = await defaultEncrypt(text);
         if (result!==null){
-            console.log("encryption-default output:", result);
             return result;
         }
         return "";
@@ -1045,9 +1040,7 @@ ipcMain.handle('decrypt-default', async(event, text)=>{
         if(!text || text===""){
             return "";
         }
-        console.log("decryption-default input:", text);
         let result = await defaultDecrypt(text);
-        console.log("decryption-default output", result);
         if(result !== null){
             return result;
         }

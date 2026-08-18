@@ -141,6 +141,10 @@ body {
   border-radius: 5px;
 }
 
+.password-reset-center{
+  text-align: center;
+}
+
 
 /* Okno autoryzacji */
 .auth-container{
