@@ -72,24 +72,26 @@ function securityPasswordModal(){
   document.getElementById("add-security-password-modal-password-input").value="";
   document.getElementById("add-security-password-modal-password-input-repeat").value="";
   securityPasswordModalConfirmButton.addEventListener("click", async (e) => {
+    e.stopPropagation();
     const securityPassword = document.getElementById("add-security-password-modal-password-input").value;
     const securityPasswordRepeat = document.getElementById("add-security-password-modal-password-input-repeat").value;
-    if((securityPassword === null || securityPassword === "")&& (securityPasswordRepeat === null || securityPasswordRepeat === "")){
+    if(securityPassword.length===0 || securityPasswordRepeat.length===0){
       message = "Oba pola muszą zostać wypełnione."
-    }
-    if(securityPassword === securityPasswordRepeat){
+      showGlobalStorageMessage(message);
+    } else if(securityPassword === securityPasswordRepeat){
       const result = await window.api.validateNewSecurityPassword(securityPassword);
       if(result.success === true){
+        hideGlobalStorageMessage();
         const res = await window.api.setNewSecurityPassword(securityPassword);
         await loadStorage();
       } else{
         message = result.message;
+        showGlobalStorageMessage(message);
       }
     } else{
       message = "Podane hasła muszą być identyczne."
+      showGlobalStorageMessage(message);
     }
-    //console.log('securityModalMessage:', message);
-    //TODO wyśietlenie komunikatu
   });
 }
 
@@ -268,31 +270,35 @@ async function initAddRecordForm(){
   //Zapisanie zmian formularza
   saveRecordButton.replaceWith(saveRecordButton.cloneNode(true));
   const newSaveButton = document.getElementById("saveRecord-button");
-  newSaveButton.addEventListener("click", async ()=>{
+  newSaveButton.addEventListener("click", async (e)=>{
+    e.stopPropagation();
     valUrl=await window.api.defaultEncrypt(newUrl.value);
     valLogin=await window.api.defaultEncrypt(newLogin.value);
     valPassword=await encryptUserPassword(newPassword.value, tempSecPass);
-    const data = {
-      url: valUrl,
-      login: valLogin,
-      password: valPassword
-    };
-    if(valUrl !="" && valPassword != "" && valLogin != ""){
-      console.log("dodawanie nowego rekordu data:", data);
+    if(!valUrl){valUrl=""};
+    if(valPassword.length===0 || valLogin.length===0){
+      let message = "Należy podać przynajmniej login oraz hasło.";
+      showGlobalStorageMessage(message);
+    } else {
+      const data = {
+        url: valUrl,
+        login: valLogin,
+        password: valPassword
+      };
       const result = await addCredentialRecordToDataBase(data);
       if(result){
         await loadStorage();  //załaduj nową listę
+        hideGlobalStorageMessage();
+        newUrl.value="";
+        newLogin.value="";
+        newPassword.value="";
+        form.classList.add("hidden"); //ukryj formularz
+        addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
       } else{
-        //TODO błąd dodawania rekordu
+        let message = "Wystąpił nieoczekiwany błąd.";
+        showGlobalStorageMessage(message);
       }
-    } else{
-      //TODO Powiadomienie o nie wypełnieniu całego formularza
     }
-    newUrl.value="";
-    newLogin.value="";
-    newPassword.value="";
-    form.classList.add("hidden"); //ukryj formularz
-    addRecordButton.style.display="inline-flex"; //pokaż przycisk dodania rekordu
   });
 }
 
@@ -302,7 +308,7 @@ async function addCredentialRecordToDataBase(data){
   if(result && result.success){
     return result.data;
   } 
-  onsole.log("error:", result.error)
+  console.log("error:", result.error);
   return;
 }
 
@@ -353,7 +359,11 @@ function showModifyModal(url, login){
   document.getElementById("modify-password").placeholder="Password";
   //Values
   document.getElementById("modify-modal").classList.remove("hidden");
-  document.getElementById("modify-url").value = url;
+  if(url==null){
+    document.getElementById("modify-url").value = "";
+  } else{
+    document.getElementById("modify-url").value = url;
+  }
   document.getElementById("modify-login").value = login;
   document.getElementById("modify-password").value="";
 }
@@ -368,20 +378,30 @@ function cancelModifyModal(){
 
 //Obsługa przycisku zatwierdzenia zmian rekordu
 function confirmModify(){
-  document.getElementById("confirm-modify").addEventListener("click", async () => {
+  document.getElementById("confirm-modify").addEventListener("click", async (e) => {
+    e.stopPropagation();
     const urlInput = document.getElementById("modify-url");
     const loginInput = document.getElementById("modify-login");
     const passwordInput = document.getElementById("modify-password");
     let newUrl = await window.api.defaultEncrypt(urlInput.value);
     let newLogin = await window.api.defaultEncrypt(loginInput.value);
     let newPassword = await encryptUserPassword(passwordInput.value, tempSecPass);
-    await sendModifyToApi(newUrl, newLogin, newPassword);
-    document.getElementById("modify-modal").classList.add("hidden");
-    recordToModify = null;
-    newLogin="";
-    newUrl="";
-    newPassword="";
-    await loadStorage();
+
+    if(newLogin.length===0){
+      let message = "Należy podać login.";
+      showStorageEditMessage(message);
+    } else{
+      await sendModifyToApi(newUrl, newLogin, newPassword);
+      document.getElementById("modify-modal").classList.add("hidden");
+      recordToModify = null;
+      newLogin="";
+      newUrl="";
+      newPassword="";
+      await loadStorage();
+      hideStorageEditMessage();
+    }
+
+    
   });
 }
 
@@ -601,6 +621,9 @@ function userPasswordSecurityModalButtons(){
     hideUserPasswordSecurityModal();
   });
   userPasswordSecurityModalConfirmButton.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    const messageContainer = document.getElementById("storage-message-security-modal-container");
+    const messageContent = document.getElementById("storage-message-security-modal-content");
     let userSecurityPassInput = document.getElementById("security-modal-password").value;
     if(userSecurityPassInput.length===0){
       const messageContainer = document.getElementById("storage-message-security-modal-container");
@@ -618,8 +641,6 @@ function userPasswordSecurityModalButtons(){
           await showPassword();
         }
       } else{
-        const messageContainer = document.getElementById("storage-message-security-modal-container");
-        const messageContent = document.getElementById("storage-message-security-modal-content");
         messageContent.textContent = "Podane hasło jest nieprawidłowe.";
         messageContainer.classList.add("show");
       }
@@ -755,5 +776,32 @@ function randomPasswordGenerateButtonInit(){
 
 document.addEventListener("click", ()=>{
     const msgBox = document.querySelector(".storage-message-space");
+    const msgBoxGlobalStorage = document.querySelector(".global-storage-message-space");
+    const msgBoxEditStorage = document.querySelector(".edit-storage-message-space");
     msgBox.classList.remove("show");
+    msgBoxGlobalStorage.classList.remove("show");
+    msgBoxEditStorage.classList.remove("show");
   });
+
+  function showGlobalStorageMessage(text){
+    const msgBox = document.querySelector(".global-storage-message-space");
+    msgBox.classList.add("show");
+    document.getElementById("storage-message-content").textContent=text;
+  }
+
+  function hideGlobalStorageMessage(){
+    const msgBox = document.querySelector(".global-storage-message-space");
+    msgBox.classList.remove("show");
+  }
+
+  function showStorageEditMessage(text){
+    const msgBox = document.querySelector(".edit-storage-message-space");
+    msgBox.classList.add("show");
+    document.getElementById("edit-storage-message-content").textContent=text;
+  }
+
+  function hideStorageEditMessage(){
+    const msgBox = document.querySelector(".edit-storage-message-space");
+    msgBox.classList.remove("show");
+  }
+

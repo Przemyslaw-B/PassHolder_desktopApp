@@ -744,3 +744,67 @@
     font-size: 0.8rem;
     margin: 1rem;
 }
+
+.global-storage-message-space{
+    position: fixed;
+    display: flex;
+    bottom: 3rem;
+    border-radius: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-height: 2rem;
+    min-width: 20rem;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    word-wrap: break-word;
+    /* Animacja zanikania */
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.global-storage-message-space.show{
+    opacity: 1;
+}
+
+.global-storage-message-content{
+    color: black;
+    font-weight: bolder;
+    position: center;
+    font-size: 0.8rem;
+    margin: 1rem;
+}
+
+.edit-storage-message-space{
+    position: fixed;
+    display: flex;
+    bottom: 3rem;
+    border-radius: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-height: 2rem;
+    min-width: 10rem;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    word-wrap: break-word;
+    /* Animacja zanikania */
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.edit-storage-message-space.show{
+    opacity: 1;
+}
+
+.edit-storage-message-content{
+    color: black;
+    font-weight: bolder;
+    position: center;
+    font-size: 0.8rem;
+    margin: 1rem;
+}

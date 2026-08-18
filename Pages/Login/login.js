@@ -269,7 +269,7 @@ async function authentication(authCode){
 
   //pokaż powiadomienie
   function showMessage(text){
-    console.log("Pokazuje wiadomość.");
+    //console.log("Pokazuje wiadomość.");
     const msgBox = document.querySelector(".message-container");
     msgBox.classList.add("show");
     document.getElementById("message").textContent=text;

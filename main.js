@@ -471,7 +471,7 @@ ipcMain.handle('get-storage', async (event)=>{
 
 ipcMain.handle('add-new-storage-record', async (event, data)=>{
     try{
-        if(data && data.url && data.login && data.password){
+        if(data!==null && data.login.length>0 && data.password.length>0){
             let result = await addNewStorageRecord(data.url, data.login, data.password);
             return {success: true, data: result};
         }
