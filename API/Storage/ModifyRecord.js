@@ -4,7 +4,6 @@ const {getConfigData} = require('./../GetConfigData.js');
 
 
 async function modifyStorageRecord(data) {
-  if(data && data.recordId && data.url && data.login && data.password){
     try {
     const tempUrls = await getConfigData();
     const url = tempUrls.modifyRecord;
@@ -18,7 +17,7 @@ async function modifyStorageRecord(data) {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
-    console.log("modify-storage-record",data);
+    console.log("dane wysyłane do API:", data);
     const response = await axios.post(url, {
       'recordId': data.recordId,
       'url': data.url,
@@ -36,8 +35,7 @@ async function modifyStorageRecord(data) {
     console.error("AXIOS ERROR:", error);
     return { success: false, error: error.message };
   }
-  } 
-  return { success: false, error: "dane niekompletne"};
-}
+} 
+
 
 module.exports = { modifyStorageRecord };

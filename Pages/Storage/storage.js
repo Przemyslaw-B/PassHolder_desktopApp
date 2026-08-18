@@ -143,8 +143,6 @@ async function setStorageGUI(data){
     for(let i =0; i<data.length; i++){
     const picked = data[i];
     
-    console.log("nie podmienione picked.url", picked.url);
-    console.log("nie podmienione picked.login", picked.login);
     let decryptedURL = await window.api.defaultDecrypt(picked.url);
     let decryptedLogin = await window.api.defaultDecrypt(picked.login);
     if(decryptedLogin.success===false || decryptedURL.success===false){
@@ -152,8 +150,6 @@ async function setStorageGUI(data){
     }
     picked.url = decryptedURL.data;
     picked.login = decryptedLogin.data;
-    console.log("podmienione picked.url", picked.url);
-    console.log("podmienione picked.login", picked.login);
     
     counter = counter+1;
     const clone = template.content.cloneNode(true);
@@ -397,6 +393,10 @@ async function sendModifyToApi(newUrl, newLogin, newPassword){
     'login': newLogin,
     'password': newPassword
   }
+  console.log("recordID:", recordToModify);
+  console.log("newUrl:", newUrl);
+  console.log("newLogin:", newLogin);
+  console.log("newPassword:", newPassword);
   //let result = await window.api.modifyRecord(data);
   let result = await window.api.storageUpdate(data);
   if(result){
@@ -464,6 +464,7 @@ async function decryptUserPassword(password){
       return result.password;
     } else{
       console.log("error:", result.message);
+      return "";
     }
   }else{
     console.log("błąd odczytywania hasła");
@@ -547,8 +548,8 @@ function initMenuActions() {
       showUserPasswordSecurityModal();
       return;
     } else{
-      console.log("showModifyModal() - url:", pickedRecordData.url);
-      console.log("showModifyModal() - login:", pickedRecordData.login);
+      //console.log("showModifyModal() - url:", pickedRecordData.url);
+      //console.log("showModifyModal() - login:", pickedRecordData.login);
       showModifyModal(pickedRecordData.url, pickedRecordData.login);
       menu.classList.add("hidden");
     }

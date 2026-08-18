@@ -289,7 +289,7 @@ ipcMain.handle('encrypt-user-password', async (event,password, key)=>{
         return {success: true, password: encryptedPass};
     }
     message = "Błąd zapisu hasła.";
-    return {success: false, message: message};
+    return {success: false, password: "", message: message};
 });
 
 //odszyfrowanie hasła użytkownika
@@ -506,8 +506,11 @@ ipcMain.handle('remove-storage-record', async (event, record)=>{
 
 ipcMain.handle('modify-storage-record', async (event, data)=>{
     try{
+        console.log("new data:", data);
         if(data){
+            console.log("new data copy:", data);
             let result = await modifyStorageRecord(data);
+            console.log("new data updated:", result);
             return {success: true, data: result};
         } else{
             return {success: false, error: "brak otrzymanych danych"};
