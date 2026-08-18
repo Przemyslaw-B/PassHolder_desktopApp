@@ -18,6 +18,7 @@ async function modifyStorageRecord(data) {
     if(url===null || url === ""){
       return { success: false, error: "brak zapisanego url"};
     }
+    console.log("modify-storage-record",data);
     const response = await axios.post(url, {
       'recordId': data.recordId,
       'url': data.url,

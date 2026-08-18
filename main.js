@@ -72,6 +72,8 @@ const {validatePasswordResetToken} = require("./API/Account/ValidatePasswordRese
 const {requestAuthCode} = require("./API/AuthMethodes/RequestAuthCode.js");
 const {codeValidation} = require("./API/AuthMethodes/CodeValidation.js");
 
+const {setDefaultEncryptionKey, defaultDecrypt, defaultEncrypt} = require("./Encryption/DefaultEncryption.js");
+
 const appName="PassHolder";
 
 let loginWindow;
@@ -1002,6 +1004,55 @@ ipcMain.handle('validate-auth-code', async (event, code)=>{
     if(result !== null){return result;}
     return result;
     //return {success: false, data: "nie podano kodu"};
+});
+
+ipcMain.handle('set-default-encryption-key', async(event, code)=>{
+    //console.log("'set-default-encryption-key input:", code);
+    if(!code){
+        return null;
+    }
+    try{
+        let result = await setDefaultEncryptionKey(code);
+    } catch(error){
+        console.error("error", error);
+        return null;
+    }
+});
+
+ipcMain.handle('encrypt-default', async(event, text)=>{
+    try{
+        if(!text || text===""){
+            return "";
+        }
+        console.log("encryption-default input:", text);
+        let result = await defaultEncrypt(text);
+        if (result!==null){
+            console.log("encryption-default output:", result);
+            return result;
+        }
+        return "";
+    } catch(error){
+        console.error("error", error);
+        return "";
+    }
+});
+
+ipcMain.handle('decrypt-default', async(event, text)=>{
+    try{
+        if(!text || text===""){
+            return "";
+        }
+        console.log("decryption-default input:", text);
+        let result = await defaultDecrypt(text);
+        console.log("decryption-default output", result);
+        if(result !== null){
+            return result;
+        }
+        return "";
+    } catch(error){
+        console.error("error", error);
+        return "";
+    }
 });
 
 // Wywołanie aplikacji w Tray - menu ukrytych ikon

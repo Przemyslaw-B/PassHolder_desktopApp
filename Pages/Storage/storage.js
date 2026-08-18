@@ -142,6 +142,19 @@ async function setStorageGUI(data){
     counter =0;
     for(let i =0; i<data.length; i++){
     const picked = data[i];
+    
+    console.log("nie podmienione picked.url", picked.url);
+    console.log("nie podmienione picked.login", picked.login);
+    let decryptedURL = await window.api.defaultDecrypt(picked.url);
+    let decryptedLogin = await window.api.defaultDecrypt(picked.login);
+    if(decryptedLogin.success===false || decryptedURL.success===false){
+      continue;
+    }
+    picked.url = decryptedURL.data;
+    picked.login = decryptedLogin.data;
+    console.log("podmienione picked.url", picked.url);
+    console.log("podmienione picked.login", picked.login);
+    
     counter = counter+1;
     const clone = template.content.cloneNode(true);
       clone.querySelector("#number").textContent = counter;
@@ -164,7 +177,6 @@ async function setStorageGUI(data){
           navigator.clipboard.writeText(tempPass);//await decryptPassword(picked.password)
         }
       });
-
       //MENU
       const dotsBtn = clone.querySelector("#dots-menu");
       dotsBtn.addEventListener("click", (e) => {
@@ -261,8 +273,8 @@ async function initAddRecordForm(){
   saveRecordButton.replaceWith(saveRecordButton.cloneNode(true));
   const newSaveButton = document.getElementById("saveRecord-button");
   newSaveButton.addEventListener("click", async ()=>{
-    valUrl=newUrl.value;
-    valLogin=newLogin.value;
+    valUrl=await window.api.defaultEncrypt(newUrl.value);
+    valLogin=await window.api.defaultEncrypt(newLogin.value);
     valPassword=await encryptUserPassword(newPassword.value, tempSecPass);
     const data = {
       url: valUrl,
@@ -270,7 +282,8 @@ async function initAddRecordForm(){
       password: valPassword
     };
     if(valUrl !="" && valPassword != "" && valLogin != ""){
-      const result = await addCredentialRecordToDataBase(data)
+      console.log("dodawanie nowego rekordu data:", data);
+      const result = await addCredentialRecordToDataBase(data);
       if(result){
         await loadStorage();  //załaduj nową listę
       } else{
@@ -363,10 +376,10 @@ function confirmModify(){
     const urlInput = document.getElementById("modify-url");
     const loginInput = document.getElementById("modify-login");
     const passwordInput = document.getElementById("modify-password");
-    newUrl = urlInput.value;
-    newLogin = loginInput.value;
-    newPassword = await encryptUserPassword(passwordInput.value, tempSecPass);
-    await sendModifyToApi();
+    let newUrl = await window.api.defaultEncrypt(urlInput.value);
+    let newLogin = await window.api.defaultEncrypt(loginInput.value);
+    let newPassword = await encryptUserPassword(passwordInput.value, tempSecPass);
+    await sendModifyToApi(newUrl, newLogin, newPassword);
     document.getElementById("modify-modal").classList.add("hidden");
     recordToModify = null;
     newLogin="";
@@ -377,7 +390,7 @@ function confirmModify(){
 }
 
 //Zatwierdź zmiany rekordu i wyślij do api
-async function sendModifyToApi(){
+async function sendModifyToApi(newUrl, newLogin, newPassword){
   let data = {
     'recordId': recordToModify,
     'url': newUrl,
@@ -526,20 +539,31 @@ function initMenuActions() {
   const editBtn = menu.querySelector(".edit-btn");
   const deleteBtn = menu.querySelector(".delete-btn");
 
-  editBtn.addEventListener("click", (e) => {
+  editBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
     recordToModify = selectedRecord;
-    //showModifyModalById(recordToModify);
-    //console.log(pickedRecordData);
-    showModifyModal(pickedRecordData.url, pickedRecordData.login);
-    menu.classList.add("hidden");
+    let isSecurityPasswordRequired = await window.api.isSecurityPasswordRequired();
+    if (isSecurityPasswordRequired) {
+      showUserPasswordSecurityModal();
+      return;
+    } else{
+      console.log("showModifyModal() - url:", pickedRecordData.url);
+      console.log("showModifyModal() - login:", pickedRecordData.login);
+      showModifyModal(pickedRecordData.url, pickedRecordData.login);
+      menu.classList.add("hidden");
+    }
   });
 
-  deleteBtn.addEventListener("click", (e) => {
+  deleteBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
     recordToDelete = selectedRecord;
-    showDeletingPopUp();
-    menu.classList.add("hidden");
+    if (await isSecurityPasswordRequired()) {
+      showUserPasswordSecurityModal();
+      return;
+    } else{
+      showDeletingPopUp();
+      menu.classList.add("hidden");
+    }
   });
 }
 

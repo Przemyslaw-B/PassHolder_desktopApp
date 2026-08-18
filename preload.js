@@ -76,6 +76,13 @@ contextBridge.exposeInMainWorld('api', {
   //Czy należy podać hasło bezpieczeństwa
   isSecurityPasswordRequired:() => ipcRenderer.invoke('is-security-password-required'),
 
+  //Zapisz klucz szyfrowania domyślnego
+  setDefaultEncryptionKey: (text) => ipcRenderer.invoke('set-default-encryption-key', text), 
+  //Domyślne szyfrowanie
+  defaultEncrypt: (text) => ipcRenderer.invoke('encrypt-default', text),
+  //Domyślne odszyfrowanie
+  defaultDecrypt: (text) => ipcRenderer.invoke('decrypt-default', text),
+
   //Odczytaj metodę uwierzytelniania użytkownika
   localReadUserAuthMethode:() => ipcRenderer.invoke('local-read-user-auth-methode'),
   //zapisz metodę uwierzytelniania użytkownika
