@@ -378,8 +378,20 @@
     display: none;
 }
 
+#role-confirmation-modal-message-space{
+    display: flex;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 #role-confirmation-modal-message-space.hidden{
     display: none;
+}
+
+#role-edit-modal-message-space{
+    display: flex;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 #role-edit-modal-message-space.hidden{
@@ -427,5 +439,26 @@
 }
 
 #role-confirmation-modal-content-code-confirm.hidden{
+    display: none;
+}
+
+#roles-message-container{
+    position: fixed;
+    display: flex;
+    bottom: 3rem;
+    border-radius: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-height: 2rem;
+    min-width: 20rem;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    word-wrap: break-word;
+}
+
+#roles-message-container.hidden{
     display: none;
 }

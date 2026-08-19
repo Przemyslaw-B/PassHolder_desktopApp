@@ -23,14 +23,11 @@
 
 async function loadRoles(){
   try{
-    //console.log("Ładowanie strony ról..");
     const data = await getRolesData();
     console.log("roles data", data);
-    //console.log("data:", data);
     await setRolesGUI(data);
   }catch(err){
     console.error("[loadRoles] błąd:", err);
-    //await window.api.logout();
   }
   }
 
@@ -70,9 +67,23 @@ async function loadRoles(){
         clone.querySelector(".roles-role").textContent = picked.roleName;
         clone.querySelector(".admin-role").textContent = picked.adminMail;
         let recordRoleDeleteButton = clone.querySelector(".delete-role-data-icon");
-        recordRoleDeleteButton.addEventListener("click", async () =>{
-          userRoleSelected = picked;
-          let result = await deleteRoleRow();
+        recordRoleDeleteButton.addEventListener("click", async (e) =>{
+          e.stopPropagation();
+          let localRole = await window.api.getRole();
+          console.log("aktualna rola usera:", localRole);
+          console.log("aktualny wybrany user:", picked);
+          let userMail = await window.api.getMail();
+          if(userMail===picked.userMail){
+            let message="Nie można usunąć własnych uprawnień";
+            showMessageGlobalRoles(message);
+          }else if(localRole>=picked.id){
+            userRoleSelected = picked;
+            let result = await deleteRoleRow();
+          }else{
+            let message = "Brak uprawnień."
+            showMessageGlobalRoles(message);
+          }
+          
         });
         let recordEditButton = clone.querySelector(".edit-role-data-icon");
         recordEditButton.addEventListener("click", async () =>{
@@ -108,6 +119,7 @@ async function loadRoles(){
     const userMailInput = document.getElementById("add-new-user-role-usermail");
     const userMailVal = userMailInput.value;
     let result= await window.api.getUsermailSearchFilter(userMailVal);
+    console.log("Lista odnalezionych danych:", result);
     if(!result || !result.success){
       return;
     }
@@ -223,7 +235,6 @@ function hideUserSearchList(){
         let role = document.getElementById("add-new-user-role-selector").value;
         let userMail = document.getElementById("add-new-user-role-usermail").value;
         let result = await window.api.setUserRole(userMail, role);
-        console.log("zmiana uprawnień:", result);
         hideAddUserRoleForm();
         await loadRoles();
       } else {
@@ -322,14 +333,19 @@ function hideUserSearchList(){
     });
 
     confirmButton.addEventListener("click", async ()=>{
-      let role = document.getElementById("user-role-change-modal").value;
+      let modal = document.getElementById("role-edit-modal");
       let roleChangePickContent = document.getElementById("role-edit-modal-select-content");
       let roleChangeAuthContent = document.getElementById("role-edit-modal-code-content");
-      roleChangePickContent.classList.add("hidden");
-      roleChangeAuthContent.classList.remove("hidden");
-      userPickedMail = userRoleSelected.userMail;
-      userNewRole = role;
-      await window.api.requestAuthCode(); //Wyślij kod 
+      let role = document.getElementById("user-role-change-modal").value;
+      if(userRoleSelected.roleName===role){
+        modal.classList.add("hidden");
+      } else{
+        roleChangePickContent.classList.add("hidden");
+        roleChangeAuthContent.classList.remove("hidden");
+        userPickedMail = userRoleSelected.userMail;
+        userNewRole = role;
+        await window.api.requestAuthCode(); //Wyślij kod 
+      }
     });
 
     authCancelButton.addEventListener("click", ()=>{
@@ -377,8 +393,11 @@ function hideUserSearchList(){
     });
 
     confirmButton.addEventListener("click", async ()=>{
+      await window.api.requestAuthCode();
       let confirmContent = document.getElementById("role-confirmation-modal-describtion-content");
       let authContent = document.getElementById("role-confirmation-modal-content-code-confirm");
+      let input = document.getElementById("role-confirmation-modal-security-code");
+      input.value="";
       confirmContent.classList.add("hidden");
       authContent.classList.remove("hidden");
     });
@@ -393,8 +412,10 @@ function hideUserSearchList(){
       let userCodeInput = document.getElementById("role-confirmation-modal-security-code");
       let userCodeValue = userCodeInput.value;
       if(userCodeValue===""){
-        messageContent.textContent = "Podany kod jest nieprawidłowy.";
-        messageBox.classList.remove("hidden");
+        //messageContent.textContent = "Podany kod jest nieprawidłowy.";
+        //messageBox.classList.remove("hidden");
+        let message = "Podany kod jest nieprawidłowy.";
+        showRemoveModalMessage(message);
       } else {
         let result = await window.api.authorization(userCodeValue);
         console.log("autoryzacja?", result);
@@ -473,4 +494,17 @@ function hideUserSearchList(){
   document.addEventListener("click", () => {
     hideEditModalMessage();
     hideRemoveModalMessage();
+    hideMessageGlobalRoles();
   });
+
+  function showMessageGlobalRoles(message){
+    let msgBox = document.getElementById("roles-message-container");
+    let content = document.getElementById("roles-message-content");
+    content.textContent = message;
+    msgBox.classList.remove("hidden");
+  }
+
+  function hideMessageGlobalRoles(){
+    let msgBox = document.getElementById("roles-message-container");
+    msgBox.classList.add("hidden");
+  }

@@ -202,6 +202,7 @@ function confirmPhoneModalButtonsInit(){
   });
 
   setNumberCancelButton.addEventListener("click", ()=>{
+    hideMessageSetPhone();
     const modal = document.getElementById("phone-confirm-modal");
     modal.classList.add("hidden");
     let input = document.getElementById("phone-confirm-modal-secure-code");
@@ -212,27 +213,30 @@ function confirmPhoneModalButtonsInit(){
     contentConfirmNumber.classList.add("hidden");
   });
 
-  confirmSetNumberButton.addEventListener("click", async ()=>{
+  confirmSetNumberButton.addEventListener("click", async (e)=>{
+    e.stopPropagation();
     let userInput = document.getElementById("settings-phone-input");
     let prefix = document.getElementById("phone-number-prefix");
-    if(!userInput || !prefix){
-      return;
+    if(userInput.value.length===0 || prefix.value.length===0){
+      let message ="Należy podać numer telefonu";
+      showMessageSetPhone(message);
+    } else{
+      userTempPhone = `${prefix.value} ${userInput.value}`;
+      userInput.value="";
+      let setNumberBox = document.getElementById("phone-set-number-modal-content");
+      let activateNumberBox = document.getElementById("phone-confirm-modal-content");
+      let userCodeInput = document.getElementById("phone-confirm-modal-secure-code");
+      userCodeInput.value="";
+      setNumberBox.classList.add("hidden");
+      activateNumberBox.classList.remove("hidden");
+      await window.api.requestPhoneCode(userTempPhone);
     }
-
-    userTempPhone = `${prefix.value} ${userInput.value}`;
-    userInput.value="";
-    let setNumberBox = document.getElementById("phone-set-number-modal-content");
-    let activateNumberBox = document.getElementById("phone-confirm-modal-content");
-    let userCodeInput = document.getElementById("phone-confirm-modal-secure-code");
-    userCodeInput.value="";
-    setNumberBox.classList.add("hidden");
-    activateNumberBox.classList.remove("hidden");
-    await window.api.requestPhoneCode(userTempPhone);
   });
 
-  confirmButton.addEventListener("click", async ()=>{
-    let message = document.getElementById("phone-confirm-modal-message");
-    message.classList.add("hidden");
+  confirmButton.addEventListener("click", async (e)=>{
+    e.stopPropagation();
+    //let message = document.getElementById("phone-confirm-modal-message");
+    //message.classList.add("hidden");
     let inputCode = document.getElementById("phone-confirm-modal-secure-code");
     let codeVal = inputCode.value;
     if(codeVal.length === 6){
@@ -243,8 +247,8 @@ function confirmPhoneModalButtonsInit(){
         phoneModal.classList.add("hidden");
       }
     }
-    message.classList.remove("hidden");
-    message.textContent = "Nieprawidłowy kod."
+    let message = "Nieprawidłowy kod.";
+    showMessageSetPhone(message);
   });
 } 
 
@@ -348,23 +352,34 @@ async function showAuthMethodeChangeModal(){
 
 async function authMethodeButtonsInit(){
   const typeSelectCancelButton = document.getElementById("authMethode-change-modal-type-button-cancel");
-  const typeSelectConfirmButton = document.getElementById("authMethode-change-modal-type=button-confirm");
+  const typeSelectConfirmButton = document.getElementById("authMethode-change-modal-type-button-confirm");
 
   typeSelectCancelButton.addEventListener("click", ()=>{
     hideAuthMethodeChangeModal();
   });
 
-  typeSelectConfirmButton.addEventListener("click", async ()=>{
-    const typeSelectButtonsSpace = document.getElementById("authMethode-change-modal-type-select-button-space");
-    const confirmMethodButtonsSpace = document.getElementById("authMethode-change-modal-buttons-space");
-    typeSelectButtonsSpace.classList.add("hidden");
-    confirmMethodButtonsSpace.classList.remove("hidden");
-    const methodeSelectorSpace = document.getElementById("authMethode-change-modal-select-space");
+  typeSelectConfirmButton.addEventListener("click", async (e)=>{
+    e.stopPropagation();
     const selectedValue = document.getElementById("auth-methode-selector").value;
-    if(selectedValue){
-      await sendNewAuthMethodeActivationCode(selectedValue);
-      methodeSelectorSpace.classList.add("hidden");
-      await handleAuthMethodeChange(selectedValue);
+    console.log("userAuthMethode:", userAuthMethode);
+    console.log("selectedValue:", selectedValue);
+    if(selectedValue===userAuthMethode){
+      const modal = document.getElementById("authMethode-change-modal");
+      modal.classList.add("hidden");
+    } else{
+      if(selectedValue.length>0){
+        const typeSelectButtonsSpace = document.getElementById("authMethode-change-modal-type-select-button-space");
+        const confirmMethodButtonsSpace = document.getElementById("authMethode-change-modal-buttons-space");
+        typeSelectButtonsSpace.classList.add("hidden");
+        confirmMethodButtonsSpace.classList.remove("hidden");
+        const methodeSelectorSpace = document.getElementById("authMethode-change-modal-select-space");
+        await sendNewAuthMethodeActivationCode(selectedValue);
+        methodeSelectorSpace.classList.add("hidden");
+        await handleAuthMethodeChange(selectedValue);
+      } else{
+        const modal = document.getElementById("authMethode-change-modal");
+        modal.classList.add("hidden");
+      }
     }
   });
 
@@ -511,6 +526,15 @@ function setPrefixSelectorOptions(){
         option.selected = true;
     }
     prefixSelect.appendChild(option);
+});
+prefixes.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item.code;
+    option.textContent = `${item.country} (${item.code})`;
+    // domyślnie wybrana Polska
+    if(item.code === "+48"){
+        option.selected = true;
+    }
     phoneChangePrefixesSelect.appendChild(option);
 });
 }
@@ -907,6 +931,7 @@ userPhoneChangeNumberCodeConfirmButton.addEventListener("click", async ()=>{
 
 document.addEventListener("click", ()=>{
   hideMessagePassReset();
+  hideMessageSetPhone();
 });
 
 function showMessagePassReset(message){
@@ -918,5 +943,17 @@ function showMessagePassReset(message){
 
 function hideMessagePassReset(){
   let msgBox = document.getElementById("security-pass-reset-message-space");
+  msgBox.classList.add("hidden");
+}
+
+function showMessageSetPhone(message){
+  let msgBox = document.getElementById("phone-set-message-space");
+  let content = document.getElementById("phone-set-message-content");
+  content.textContent = message;
+  msgBox.classList.remove("hidden");
+}
+
+function hideMessageSetPhone(){
+  let msgBox = document.getElementById("phone-set-message-space");
   msgBox.classList.add("hidden");
 }

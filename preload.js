@@ -6,6 +6,9 @@ contextBridge.exposeInMainWorld('api', {
   setRole: (role)=> ipcRenderer.invoke("set-role", role),
   getRole: ()=> ipcRenderer.invoke("get-role"),
 
+  setMail: (mail)=> ipcRenderer.invoke("set-mail", mail),
+  getMail: ()=> ipcRenderer.invoke("get-mail"),
+
   //Generuj losowe hasło
   generateRandomPassword: () => ipcRenderer.invoke("generate-random-password"),
 

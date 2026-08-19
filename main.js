@@ -86,6 +86,7 @@ let isLoggedIn = false; //flaga zalogowania
 let isQuitting = false; // Flaga zamknięcia aplikacji
 
 let user;
+let userMail;
 let userId;
 let role;
 let userAuthMethode=1;
@@ -372,8 +373,8 @@ ipcMain.handle('get-role-usermail-search-list', async(event, userMail) =>{
 
 //Zmień rolę użytkownika
 ipcMain.handle('set-user-role', async (event, userModMail, roleName)=>{
-    console.log("Zmiana usera", userModMail);
-    console.log("nowa rola;", roleName);
+    //console.log("Zmiana usera", userModMail);
+    //console.log("nowa rola;", roleName);
     if(userModMail !== null && roleName !== null){
         let result = await setUserRole(userModMail, roleName);
         if(result){
@@ -426,6 +427,19 @@ ipcMain.on('logout', ()=>{
     mainWindow=null;
     createLoginWindow();
 });
+
+//Zapisz mail usera
+ipcMain.handle('set-mail', (event, input)=>{
+    userMail = input;
+    return;
+});
+
+//Zapisz mail usera
+ipcMain.handle('get-mail', ()=>{
+    return userMail;
+});
+
+
 
 // Ustaw nazwę zalogowanego użytkownika
 ipcMain.on('set-user', (event, username)=>{
@@ -943,7 +957,7 @@ ipcMain.handle('set-role', (event, input)=>{
 
 ipcMain.handle('get-role', ()=>{
     try{
-        console.log("role", role);
+        //console.log("role", role);
         return role;
     }catch(error){
         console.error("error", error);

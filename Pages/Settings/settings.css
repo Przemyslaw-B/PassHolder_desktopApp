@@ -671,4 +671,22 @@
     justify-content: center;
     align-items: center;
     align-content: center;
+    text-align: center;
+}
+
+#phone-change-message-space{
+    display: flex;
+}
+
+#phone-change-message-space.hidden{
+    display: none;
+}
+
+#phone-set-message-space{
+    display: flex;
+    margin-top: 2rem;
+}
+
+#phone-set-message-space.hidden{
+    display: none;
 }

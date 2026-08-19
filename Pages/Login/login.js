@@ -44,6 +44,7 @@ async function loginValidation(){
       let loginData = responseData.data;
       if(loginData.status === "Validated"){
         await window.api.setDefaultEncryptionKey(passwordTemp);
+        await window.api.setMail(email);
         setAuthenticationContent();
       } else if(loginData.status === "Invalid"){
         //Błędne dane logowania
