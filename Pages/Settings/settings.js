@@ -548,7 +548,8 @@ function anonimate(){
 function securityPassResetButton(){
   const button = document.getElementById("security-password-reset-button");
   if(!button){return;}
-  button.addEventListener("click", async ()=>{
+  button.addEventListener("click", async (e)=>{
+    e.stopPropagation();
     let userAuthMethode = await window.api.localReadUserAuthMethode();
     let describtionField = document.getElementById("security-pass-reset-code-span");
     if(userAuthMethode===2){
@@ -560,9 +561,10 @@ function securityPassResetButton(){
     }
     const resetModal = document.getElementById("security-pass-reset-space");
     if(!resetModal){return;}
+    hideMessagePassReset();
     resetModal.classList.remove("hidden");
-    const messageBox = document.getElementById("security-pass-reset-message-space");
-    messageBox.classList.add("hidden");
+    //const messageBox = document.getElementById("security-pass-reset-message-space");
+    //messageBox.classList.add("hidden");
     const resetModalInputContent = document.getElementById("security-pass-reset-input-content");
     const resetModalCodeContent = document.getElementById("security-pass-reset-code-confirm-content");
     if(!resetModalInputContent || !resetModalCodeContent){return;}
@@ -571,14 +573,13 @@ function securityPassResetButton(){
     const oldInput = document.getElementById("security-pass-reset-old-input");
     const newInput = document.getElementById("security-pass-reset-new-input");
     const repeatInput = document.getElementById("security-pass-reset-new-repeat-input");
-    if(!oldInput || !newInput || !repeatInput){return;}
+    if(oldInput.value.length===0 || oldInput.value.length===0 || oldInput.value.length===0){return;}
     oldInput.value="";
     newInput.value="";
     repeatInput.value="";
   });
 }
 
-//TODO
 function securityPassResetModalButtons(){
   const cancelButton = document.getElementById("reset-security-pass-modal-button-cancel");
   const confirmButton = document.getElementById("reset-security-pass-modal-button-confirm");
@@ -586,11 +587,15 @@ function securityPassResetModalButtons(){
   cancelButton.addEventListener("click", ()=>{
     const modal = document.getElementById("security-pass-reset-space");
     modal.classList.add("hidden");
+    hideMessagePassReset();
   });
 
-  confirmButton.addEventListener("click", async ()=>{
-    const messageBox = document.getElementById("security-pass-reset-message-space");
-    messageBox.classList.add("hidden");
+  confirmButton.addEventListener("click", async (e)=>{
+    e.stopPropagation();
+    //const messageBox = document.getElementById("security-pass-reset-message-space");
+    //messageBox.classList.add("hidden");
+    console.log("weryfikacja hasel!: pass reset..");
+    hideMessagePassReset();
     const oldInput = document.getElementById("security-pass-reset-old-input");
     const newInput = document.getElementById("security-pass-reset-new-input");
     const repeatInput = document.getElementById("security-pass-reset-new-repeat-input");
@@ -598,38 +603,40 @@ function securityPassResetModalButtons(){
     let oldValue = oldInput.value;
     let newValue = newInput.value;
     let repeatValue = repeatInput.value;
-    if(!oldValue || !newValue || !repeatValue){return;}
-    let compareOldPass = await window.api.compareSecurityPassword(oldValue);
-    console.log("compare old Pass result:", compareOldPass);
-    if(!compareOldPass || compareOldPass===false){
-      message = "Niepoprawne stare hasło";
-    } else if(newValue!==repeatValue){
-      message = "Hasła muszą być identyczne";
-    } else {
-      let isPassOk = await window.api.validateNewSecurityPassword(newValue);
-      if(isPassOk && isPassOk.success===true){ 
-        oldSecPass = oldValue;
-        newSecPass = newValue;
-        const inputContent = document.getElementById("security-pass-reset-input-content");
-        inputContent.classList.add("hidden");
-        const codeContent = document.getElementById("security-pass-reset-code-confirm-content");
-        codeContent.classList.remove("hidden");
-        const codeInput = document.getElementById("security-pass-reset-code-input");
-        codeInput.value="";
-      } else {
-        console.log("isPassOk:", isPassOk);
-        message = isPassOk.message;
+    if(oldValue.length===0 || newValue.length===0 || repeatValue.length===0){
+      let message = "Należy uzupełnić wszystkie pola.";
+      showMessagePassReset(message);
+    } else{
+      let compareOldPass = await window.api.compareSecurityPassword(oldValue);
+      console.log("compare old Pass result:", compareOldPass);
+      if(compareOldPass===false){
+        let message = "Niepoprawne stare hasło";
+        showMessagePassReset(message);
+      } else if(newValue!==repeatValue){
+        let message = "Hasła muszą być identyczne";
+        showMessagePassReset(message);
+      } else{
+          let isPassOk = await window.api.validateNewSecurityPassword(newValue);
+          console.log("isPassOk:", isPassOk);
+          if(isPassOk.success===true){
+            oldSecPass = oldValue;
+            newSecPass = newValue;
+            const inputContent = document.getElementById("security-pass-reset-input-content");
+            inputContent.classList.add("hidden");
+            const codeContent = document.getElementById("security-pass-reset-code-confirm-content");
+            codeContent.classList.remove("hidden");
+            const codeInput = document.getElementById("security-pass-reset-code-input");
+            codeInput.value="";
+          } else if(isPassOk.success===false && isPassOk.message.length>0){
+            let message = isPassOk.message;
+            showMessagePassReset(message);
+          } else{
+            let message = "Wystąpił nieoczekiwany błąd.";
+            showMessagePassReset(message);
+          }
+        }
       }
-    }
-    //Pokaż wiadomość
-    if(message && message.length>0){
-      const messageBox = document.getElementById("security-pass-reset-message-space");
-      const messageText = document.getElementById("security-pass-reset-message-span");
-      console.log("message content:", message);
-      messageText.textContent=message;
-      messageBox.classList.remove("hidden");
-    }
-  });
+    });
 
   const codeCancelButton = document.getElementById("security-pass-reset-code-button-cancel");
   const codeConfirmButton = document.getElementById("security-pass-reset-code-button-confirm");
@@ -637,32 +644,26 @@ function securityPassResetModalButtons(){
   codeCancelButton.addEventListener("click", ()=>{
     const modal = document.getElementById("security-pass-reset-space");
     modal.classList.add("hidden");
+    hideMessagePassReset();
   });
 
-  codeConfirmButton.addEventListener("click", async ()=>{
-    const messageBox = document.getElementById("security-pass-reset-message-space");
-    messageBox.classList.add("hidden");
-    let message = "";
+  codeConfirmButton.addEventListener("click", async (e)=>{
+    e.stopPropagation();
     const codeInput = document.getElementById("security-pass-reset-code-input");
     const codeValue = codeInput.value;
     if(codeValue.length !== 6){
-      message = "nieprawidłowy kod";
+      let message = "Podano nieprawidłowy kod.";
+      showMessagePassReset(message);
     } else{
-
       let result = await window.api.changeSecurityPassword(newSecPass, oldSecPass, codeValue);
-      console.log("change security password result:", result);
+      //console.log("change security password result:", result);
       if(result.success===true){
         const modal = document.getElementById("security-pass-reset-space");
         modal.classList.add("hidden");
       } else{
-        message = "nieprawidłowy kod";
+        let message = "Podano nieprawidłowy kod.";
+        showMessagePassReset(message);
       }
-    }
-    if(message && message.length>0){
-      const messageBox = document.getElementById("security-pass-reset-message-space");
-      const messageText = document.getElementById("security-pass-reset-message-span");
-      messageText.textContent=message;
-      messageBox.classList.remove("hidden");
     }
   });
 }
@@ -691,7 +692,7 @@ function seucrityPassRemoveModalButtons(){
   });
 
   confirmButton.addEventListener("click", async ()=>{
-    //TODO wysłanie kodu weryfikacyjnego
+    await window.api.requestAuthCode();
     const codeInput = document.getElementById("security-pass-remove-code-input");
     codeInput.value = "";
     const confirmContent = document.getElementById("security-pass-remove-confirm-content");
@@ -704,7 +705,7 @@ function seucrityPassRemoveModalButtons(){
     } else if(userAuthMethode===3){
       describtionField.textContent = "Podaj kod z aplikacji uwierzytelniającej."
     } else {
-      describtionField.textContent = "Podaj kod otrzymany wiadmoością email."
+      describtionField.textContent = "Podaj kod otrzymany wiadmością email."
     }
     codeContent.classList.remove("hidden");
   });
@@ -730,10 +731,11 @@ function seucrityPassRemoveModalButtons(){
       message="nieprawidłowy kod";
     } else{
       let result = await window.api.removeSecurityPassword(codeValue);
-      console.log("usuwanie hasła result", result);
+      //console.log("usuwanie hasła result", result);
       if(result && result.success===true){
         const modal = document.getElementById("security-pass-remove-space");
         modal.classList.add("hidden");
+        await loadSettings();
       } else{
         message="nieprawidłowy kod";
       }
@@ -748,8 +750,10 @@ function seucrityPassRemoveModalButtons(){
 
 async function haveSecurityPassword(){
   let result = await window.api.isSecurityPasswordSet();
-  if(result){
-    haveSecPass = result;
+  if(result===true){
+    haveSecPass = true;
+  } else{
+    haveSecPass = false;
   }
 }
 
@@ -898,4 +902,21 @@ userPhoneChangeNumberCodeConfirmButton.addEventListener("click", async ()=>{
     //TODO odświeżenie opcji
   }
 });
+}
+
+
+document.addEventListener("click", ()=>{
+  hideMessagePassReset();
+});
+
+function showMessagePassReset(message){
+  let msgBox = document.getElementById("security-pass-reset-message-space");
+  let content = document.getElementById("security-pass-reset-message-span");
+  content.textContent = message;
+  msgBox.classList.remove("hidden");
+}
+
+function hideMessagePassReset(){
+  let msgBox = document.getElementById("security-pass-reset-message-space");
+  msgBox.classList.add("hidden");
 }

@@ -100,6 +100,10 @@ function showSecurityPasswordModal(){
   securityPasswordModal.classList.remove("hidden");
   const addNewRecordButton = document.getElementById("storage-header");
   addNewRecordButton.classList.add("hidden");
+  let input = document.getElementById("add-security-password-modal-password-input");
+  let repeat = document.getElementById("add-security-password-modal-password-input-repeat");
+  input.value="";
+  repeat.value="";
 }
 
 function hideSecurityPasswordModal(){

@@ -143,6 +143,7 @@
 }
 
 #settings-phone-input{
+    display: flex;
     min-width: 10rem;
     min-height: 1.5rem;
     border-radius: 0.5rem;
@@ -664,4 +665,10 @@
 
 #user-phone-change-modal-code-confirm-content.hidden{
     display: none;
+}
+
+.center{
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }

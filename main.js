@@ -681,6 +681,7 @@ ipcMain.handle('is-security-password-required', () =>{
 ipcMain.handle('remove-security-password', async(event, code)=>{
     try{
         let result = await removeSecurityPassword(code);
+        clearSecurityPassword();
         if(result && result.data && result.data.success===true){return {success: true};}
         return {success: false};
     }catch(error){
@@ -689,13 +690,14 @@ ipcMain.handle('remove-security-password', async(event, code)=>{
     }
 });
 
-ipcMain.handle('change-security-password', async(event, newSecurityPassword, oldSecurityPassword, code, storage)=>{
+ipcMain.handle('change-security-password', async(event, newSecurityPassword, oldSecurityPassword, code)=>{
     try{
-        if(!newSecurityPassword || !oldSecurityPassword || !code ){return {success: false};}
-        const hashNewPass = await hash(newSecurityPassword);
+        if(newSecurityPassword.length===0 || oldSecurityPassword.length===0 || code.length===0 ){
+            return {success: false};
+        }
         let resultStorage = await getStorage();
-        if(!resultStorage || !resultStorage.success || resultStorage.success===false || !resultStorage.data){return {success: false};}
-        let newStorage = reEncryptStorage(oldSecurityPassword, resultStorage.data);
+        if(resultStorage==null || resultStorage.success==null || resultStorage.success===false || resultStorage.data==null){return {success: false};}
+        let newStorage = await reEncryptStorage(oldSecurityPassword, newSecurityPassword, resultStorage.data);
         let hashSecPass = hash(newSecurityPassword);
         let result = await changeSecurityPassword(hashSecPass, code, newStorage);
         setSecurityPassword(newSecurityPassword);
@@ -703,6 +705,9 @@ ipcMain.handle('change-security-password', async(event, newSecurityPassword, old
         return{success: true};
     }catch(error){
         console.error("Błąd zmiany hasła bezpieczeństwa");
+        console.error(error);
+        console.error("message:", error?.message);
+        console.error("stack:", error?.stack);
         return{success: false};
     }
 });
@@ -712,7 +717,7 @@ ipcMain.handle('user-password-encryption-key', async (event, userPassword)=>{
         if(userPassword){
             let result = await setUserEncryptionKey(userPassword);  
         }else{
-            console.log('Brak podanego hasła użytkownika.');
+            //console.log('Brak podanego hasła użytkownika.');
             return {success: false, error: 'Brak podanego hasła użytkownika.'};
         }
     }catch(err){
@@ -721,8 +726,10 @@ ipcMain.handle('user-password-encryption-key', async (event, userPassword)=>{
     }
 });
 
-ipcMain.handle('validate-new-security-password', (event, newSecurityPassword)=>{
+ipcMain.handle('validate-new-security-password', async (event, newSecurityPassword)=>{
     const response = validateNewSecurityPassword(newSecurityPassword);
+    let result = await requestAuthCode();
+    //console.log("request code:", result);
     return response;
 });
 
@@ -871,16 +878,16 @@ ipcMain.handle('get-all-auth-methodes', async ()=>{
 ipcMain.handle('is-security-password-set', async()=>{
     try{
         let response = await getSecurityPasswordIfExist();
-        if(response){
+        if(response!=null){
             securityPassword = response.securityPassword;
-            if(securityPassword && securityPassword !== null){
+            if(securityPassword != null){
                 return true;
             }
         }
         return false;
     }catch(err){
         console.error("Błąd weryfikacji zapisu securityPassword:", err);
-        return {success: false};
+        return false;
     }
 });
 

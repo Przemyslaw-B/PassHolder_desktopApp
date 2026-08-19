@@ -5,7 +5,7 @@ const {getConfigData} = require('./../GetConfigData.js');3
 async function requestAuthCode() {
   try {
     const tempUrls = await getConfigData();
-    const url = tempUrls.activatePhone;
+    const url = tempUrls.sendAuthCode;
     const token = await getToken();
     if(!token || token === null){
       return { success: false, error: "brak zapisanego tokenu"};
